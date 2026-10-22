@@ -5,7 +5,6 @@ import { AppState } from 'react-native';
 
 import { type Content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
-import { hintsAvailable } from '@/engine/hints';
 import {
   type Difficulty,
   isFilled,
@@ -17,7 +16,7 @@ import {
 import type { SolveResult } from '@/engine/streak';
 
 import { cellFlags } from './flags';
-import { completePuzzle, consumeHint, openPuzzle, type PuzzleRef, saveProgress } from './session';
+import { completePuzzle, consumeHint, hintsLeft, openPuzzle, type PuzzleRef, saveProgress } from './session';
 import { today } from './today';
 
 export type Completion = { clean: boolean; streak: SolveResult | null };
@@ -160,7 +159,7 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
     flags,
     used,
     message,
-    hintsLeft: hintsAvailable(hints, today()),
+    hintsLeft: hintsLeft(hints, today()),
     showTimer: settings.showTimer,
     onSelect,
     onLetter,

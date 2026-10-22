@@ -21,7 +21,7 @@ Push to GitHub at the end of every session.
 - `src/engine/`: pure TS, no React. `cipher.ts` (seeded derangement), `layout.ts` (word wrapping), `puzzle.ts` (reducer), `daily.ts`, `picker.ts` (unseen-first).
 - `src/data/`: MMKV repo, `schema.ts`, `migrations/` + fixtures.
 - `src/ads/policy.ts`: all ad timing logic (unit-tested). `src/iap/`: products and restore.
-- `config/features.json`: the **ads** and **payments** switches. **Both are off for the first release.** Every ad or payment entry point checks `src/config/features.ts` first; with a switch off, no SDK call, prompt (UMP/ATT) or shop/restore UI appears. Turning one on needs a new native build, and the guard test in `src/config/__tests__/features.test.ts` must be updated at the same time.
+- `config/features.json`: the **ads** and **payments** switches. **Both are off for the first release.** Every ad or payment entry point checks `src/config/features.ts` first; with a switch off, no SDK call, prompt (UMP/ATT) or shop/restore UI appears. Turning one on needs a new native build, and the guard test in `src/config/__tests__/features.test.ts` must be updated at the same time. **Note:** while both are off, players get 5 free hints a day. Turning either switch on drops that to the spec's 2 a day automatically, so decide whether that's wanted and tell players.
 - `src/ui/`: the **Ink & Parchment** design system. Only this app uses it.
 - `modules/icloud-kv/`: local Expo module (NSUbiquitousKeyValueStore).
 - `tools/quotes/`: offline content pipeline (extract → filter → human review CSV → build). Never runs in the app.

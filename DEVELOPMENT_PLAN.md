@@ -120,7 +120,7 @@ Done when: a quote can be solved end to end from the seed file, kill-and-relaunc
 - add their config plugins only when the matching switch is on, via `app.config.ts`;
 - turn the switch on, and update the guard test.
 
-Without ads or packs, players get only the 2 free hints a day. Revisit that allowance before launch.
+**Hints while both switches are off:** 5 free a day (`freeHintsPerDay()` in `src/config/features.ts`), since there's no other way to get hints. **When turning ads or payments on**, the allowance drops automatically to the spec's 2 a day. Decide whether that's wanted, and tell players in the release notes or in the app. The note is repeated in `config/features.json` and next to the guard test.
 
 - `src/ads/`: AdMob init, UMP consent before any request, ATT soft prompt after the 3rd session (never mid-puzzle), interstitial gated only by `policy.ts`, rewarded ad grants +1 hint on `EARNED_REWARD` only, muted, G-rated content filters. Ad failures never block Next.
 - `src/iap/`: the 5 v1.0 products, StoreKit prices only, Restore, purchase cache in MMKV, hints balance merge = max.

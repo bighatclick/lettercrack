@@ -12,6 +12,7 @@ export type HintsState = {
   rewardedCount: number;
 };
 
+/** Free hints per day with ads/payments live (spec). The app may pass a different allowance. */
 export const FREE_HINTS_PER_DAY = 2;
 export const REWARDED_HINTS_PER_DAY = 5;
 
@@ -23,15 +24,20 @@ export const emptyHints = (): HintsState => ({
   rewardedCount: 0,
 });
 
-export function freeHintsLeft(h: HintsState, today: LocalDate): number {
-  return h.freeUsedDate === today ? Math.max(0, FREE_HINTS_PER_DAY - h.freeUsedCount) : FREE_HINTS_PER_DAY;
+export function freeHintsLeft(h: HintsState, today: LocalDate, perDay: number = FREE_HINTS_PER_DAY): number {
+  return h.freeUsedDate === today ? Math.max(0, perDay - h.freeUsedCount) : perDay;
 }
 
-export const hintsAvailable = (h: HintsState, today: LocalDate) => freeHintsLeft(h, today) + h.balance;
+export const hintsAvailable = (h: HintsState, today: LocalDate, perDay: number = FREE_HINTS_PER_DAY) =>
+  freeHintsLeft(h, today, perDay) + h.balance;
 
 /** Spends one hint, free allowance first. Returns null when none are left. */
-export function spendHint(h: HintsState, today: LocalDate): { state: HintsState; source: 'free' | 'balance' } | null {
-  if (freeHintsLeft(h, today) > 0) {
+export function spendHint(
+  h: HintsState,
+  today: LocalDate,
+  perDay: number = FREE_HINTS_PER_DAY,
+): { state: HintsState; source: 'free' | 'balance' } | null {
+  if (freeHintsLeft(h, today, perDay) > 0) {
     const used = h.freeUsedDate === today ? h.freeUsedCount : 0;
     return { state: { ...h, freeUsedDate: today, freeUsedCount: used + 1 }, source: 'free' };
   }

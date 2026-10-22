@@ -48,6 +48,15 @@ describe('hints (F7)', () => {
     expect(onRewardedAdEvent(h, D2, 'EARNED_REWARD').balance).toBe(6);
   });
 
+  it('accepts a different daily allowance', () => {
+    let h = emptyHints();
+    expect(hintsAvailable(h, D1, 5)).toBe(5);
+    for (let i = 0; i < 5; i++) h = spendHint(h, D1, 5)!.state;
+    expect(spendHint(h, D1, 5)).toBeNull();
+    // If the allowance drops mid-day (a switch turned on), nothing goes negative.
+    expect(freeHintsLeft(h, D1, 2)).toBe(0);
+  });
+
   it('rejects invalid purchase amounts', () => {
     expect(() => addPurchasedHints(emptyHints(), 0)).toThrow();
     expect(() => addPurchasedHints(emptyHints(), 1.5)).toThrow();

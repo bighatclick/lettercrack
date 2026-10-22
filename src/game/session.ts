@@ -2,6 +2,7 @@
  * Glue between the pure engine, the persisted Root and the quote content.
  * Pure functions (Root in, Root out) so the screens stay thin and everything here is unit-tested.
  */
+import { freeHintsPerDay } from '@/config/features';
 import type { Content } from '@/content/quotes';
 import type { PuzzleSave, Root } from '@/data/schema';
 import { afterSolve } from '@/ads/policy';
@@ -139,11 +140,11 @@ export function completePuzzle(
   };
 }
 
-export const hintsLeft = (root: Root, today: LocalDate) => hintsAvailable(root.hints, today);
+export const hintsLeft = (hints: Root['hints'], today: LocalDate) => hintsAvailable(hints, today, freeHintsPerDay());
 
 /** Spends one hint (free first). Null when none are left; the UI then offers the rewarded ad (Phase 5). */
 export function consumeHint(root: Root, today: LocalDate): Root | null {
-  const r = spendHint(root.hints, today);
+  const r = spendHint(root.hints, today, freeHintsPerDay());
   return r ? { ...root, hints: r.state } : null;
 }
 

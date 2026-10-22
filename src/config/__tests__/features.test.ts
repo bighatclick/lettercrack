@@ -3,7 +3,9 @@ import { shouldOfferRewardedHint } from '@/ads/rewarded';
 import { defaultRoot, type Root } from '@/data/schema';
 import { restorePurchasesAvailable, shopAvailable } from '@/iap/availability';
 
-import { features } from '../features';
+import { FREE_HINTS_PER_DAY } from '@/engine/hints';
+
+import { features, FREE_HINTS_NO_MONETISATION, freeHintsPerDay } from '../features';
 
 const NOW = 1_800_000_000_000;
 const TODAY = '2027-01-10';
@@ -22,7 +24,16 @@ function adReadyRoot(): Root {
 describe('monetisation switches', () => {
   it('ships with ads and payments switched off', () => {
     // Deliberate guard: flip config/features.json AND this expectation together when going live.
+    // Remember: turning either on drops free hints from 5/day to 2/day (see src/config/features.ts).
     expect(features).toEqual(OFF);
+    expect(freeHintsPerDay()).toBe(FREE_HINTS_NO_MONETISATION);
+  });
+
+  it('gives 5 free hints a day with no ads or payments, and the spec 2 once either is on', () => {
+    expect(freeHintsPerDay(OFF)).toBe(5);
+    expect(freeHintsPerDay(ON)).toBe(FREE_HINTS_PER_DAY);
+    expect(freeHintsPerDay({ ads: true, payments: false })).toBe(2);
+    expect(freeHintsPerDay({ ads: false, payments: true })).toBe(2);
   });
 
   it('ads off: no interstitial even when every rule passes and an ad is loaded', async () => {

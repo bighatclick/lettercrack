@@ -1,4 +1,5 @@
 {
+  "_note": "Turning ads or payments on: (1) add the SDK and a new native build, (2) update the guard test in src/config/__tests__/features.test.ts, (3) free hints drop from 5/day to 2/day automatically; decide if that is wanted and tell players. See src/config/features.ts.",
   "ads": false,
   "payments": false
 }

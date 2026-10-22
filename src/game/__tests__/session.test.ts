@@ -1,3 +1,4 @@
+import { freeHintsPerDay } from '@/config/features';
 import { content as seedContent, createContent, type QuoteDb } from '@/content/quotes';
 import { defaultRoot, type Root } from '@/data/schema';
 import { isLetterCell, isLockedCell, puzzleReducer, type PuzzleState } from '@/engine/puzzle';
@@ -6,6 +7,7 @@ import {
   completePuzzle,
   consumeHint,
   dailyRef,
+  hintsLeft,
   lifetimeSolves,
   nextLevelRef,
   onAppOpen,
@@ -122,12 +124,15 @@ describe('session glue', () => {
     expect(() => completePuzzle(root, ref, 'easy', openPuzzle(root, ref, content).state, TODAY)).toThrow();
   });
 
-  it('spends free hints first, then nothing', () => {
+  it('spends the free allowance set by the switches, then nothing', () => {
     let r: Root | null = root;
-    r = consumeHint(r, TODAY);
-    r = consumeHint(r!, TODAY);
-    expect(r).not.toBeNull();
+    expect(hintsLeft(root.hints, TODAY)).toBe(freeHintsPerDay());
+    for (let i = 0; i < freeHintsPerDay(); i++) {
+      r = consumeHint(r!, TODAY);
+      expect(r).not.toBeNull();
+    }
     expect(consumeHint(r!, TODAY)).toBeNull();
+    expect(hintsLeft(r!.hints, '2027-01-11')).toBe(freeHintsPerDay());
   });
 
   it('works with the shipped seed content', () => {
