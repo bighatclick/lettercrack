@@ -1,0 +1,16 @@
+{
+  "app": {
+    "name": "LetterCrack"
+  },
+  "home": {
+    "title": "Today's quote",
+    "dailyLocked": "A new quote is waiting to be decoded.",
+    "play": "Start puzzle",
+    "streak_one": "{{count}}-day streak",
+    "streak_other": "{{count}}-day streak"
+  },
+  "common": {
+    "loading": "Loading…",
+    "dataRecovered": "We restored your saved progress from a backup."
+  }
+}
