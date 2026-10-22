@@ -23,4 +23,10 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test -- --ci
+      - name: Daily determinism across device timezones (F5)
+        run: |
+          for tz in America/Los_Angeles America/New_York Europe/London Asia/Kolkata Australia/Sydney Pacific/Kiritimati Pacific/Pago_Pago; do
+            echo "TZ=$tz"
+            TZ=$tz npx jest --ci src/engine/__tests__/daily.test.ts -t "device path"
+          done
       - run: npm run quotes:validate

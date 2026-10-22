@@ -15,19 +15,54 @@
   },
   "progress": {
     "levelIndex": 42,
-    "seenQuoteIds": [3, 7, 11, 12, 19, 25, 31, 44, 58, 102, 377, 599],
+    "seenQuoteIds": [
+      3,
+      7,
+      11,
+      12,
+      19,
+      25,
+      31,
+      44,
+      58,
+      102,
+      377,
+      599
+    ],
     "solved": {
-      "3": { "date": "2026-11-01", "clean": true, "timeMs": 183000, "difficulty": "medium" },
-      "7": { "date": "2026-11-02", "clean": false, "timeMs": null, "difficulty": "easy" },
-      "599": { "date": "2026-12-24", "clean": true, "timeMs": 402500, "difficulty": "expert" }
+      "3": {
+        "date": "2026-11-01",
+        "clean": true,
+        "timeMs": 183000,
+        "difficulty": "medium"
+      },
+      "7": {
+        "date": "2026-11-02",
+        "clean": false,
+        "timeMs": null,
+        "difficulty": "easy"
+      },
+      "599": {
+        "date": "2026-12-24",
+        "clean": true,
+        "timeMs": 402500,
+        "difficulty": "expert"
+      }
     },
-    "reportedQuoteIds": [58]
+    "reportedQuoteIds": [
+      58
+    ]
   },
   "daily": {
     "streak": 37,
     "best": 61,
     "freezeUsedWeek": "2026-W51",
-    "solvedDates": ["2026-12-22", "2026-12-23", "2026-12-24"]
+    "solvedDates": [
+      "2026-12-22",
+      "2026-12-23",
+      "2026-12-24"
+    ],
+    "highestDateSeen": "2026-12-25"
   },
   "hints": {
     "balance": 63,
@@ -42,24 +77,72 @@
       "mode": "daily",
       "dailyDate": "2026-12-25",
       "difficulty": "expert",
-      "guesses": { "Q": "T", "X": "H", "M": "E" },
-      "revealed": ["M"],
+      "revealed": [
+        "M"
+      ],
       "hintsUsed": 1,
       "checksUsed": 0,
       "elapsedMs": 51000,
-      "updatedAt": 1798150000000
+      "updatedAt": 1798150000000,
+      "entries": [
+        "T",
+        "H",
+        "E",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     }
   },
-  "unlocks": { "removeAds": true, "packs": ["app.lettercrack.pack.bard"] },
+  "unlocks": {
+    "removeAds": true,
+    "packs": [
+      "app.lettercrack.pack.bard"
+    ]
+  },
   "purchasesCache": {
-    "productIds": ["app.lettercrack.removeads", "app.lettercrack.pack.bard"],
+    "productIds": [
+      "app.lettercrack.removeads",
+      "app.lettercrack.pack.bard"
+    ],
     "updatedAt": 1798000000000
   },
   "meta": {
     "sessionCount": 214,
     "solvesSinceInterstitial": 1,
     "lastInterstitialAt": 1797990000000,
-    "reviewPromptAt": [1795000000000],
+    "reviewPromptAt": [
+      1795000000000
+    ],
     "attPrompted": true,
     "reminderOffered": true
   }

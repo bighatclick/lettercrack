@@ -57,6 +57,18 @@ Also here: `src/ads/policy.ts` (pure): decides `shouldShowInterstitial(event)` w
 
 Done when: all engine tests green, 100% branch coverage on `cipher.ts`, `daily.ts`, `picker.ts`, `policy.ts`.
 
+**Status (22 Oct 2026): done.** 672 tests in ~16 s. Decisions where the spec was open:
+- **Frozen RNG:** `rng.ts` and `makeCipherKey` are pinned by literal golden values, because changing them would change every cipher already played.
+- **Cell-based puzzle state:** state is one entry per character, so auto-fill off works. The save schema stores `entries` instead of a cipher→plain map. No build had shipped, so this stayed schema v1 with no migration.
+- **What hints cost:** "Reveal" and "Check" each cost one hint. Either one removes the Clean solve badge. The gentle "full but wrong" highlight is free.
+- **Layout:** a word longer than a line breaks after a hyphen or dash, filling the current line first. A dash-free word that is still too long is hard-split, and the split is counted.
+- **Length bands per difficulty:** easy 40–80, medium 40–120, hard 60–160, expert 100–160. Givens always leave at least 2 letters to solve.
+- **Clock-change rule (F5) is interpreted, not literal.** Offline, the app can't tell a moved clock from a player who was away, so it can't cap forward jumps without breaking returning players. Instead: future dailies are never playable, and streak credit is refused when the clock is set back below the highest date already seen. **Needs product sign-off.**
+- **Streak freezes:** one per ISO week, applied automatically. Two missed days in the same week break the streak. Archive solves never count.
+- **Ad policy and the clock:** if the clock moves backwards, the 4-minute rule is skipped and only the 2-solve rule applies.
+- **`LAUNCH_DATE` is a placeholder (2027-01-01).** It must be fixed before the first external build.
+- **Timezone testing:** Node on Windows ignores the `TZ` variable, so CI on Linux reruns the device-date test under 7 timezones.
+
 ## 3. Phase 2: content pipeline (parallel track, ~4 h incl. editorial review)
 
 `tools/quotes/`, Node scripts, never bundled.

@@ -44,8 +44,8 @@ export type PuzzleSave = {
   /** Set for dailies: the date the daily belongs to. */
   dailyDate: LocalDate | null;
   difficulty: Difficulty;
-  /** cipher letter → guessed plain letter. */
-  guesses: Record<string, string>;
+  /** One entry per character of the quote: the guessed letter, or "" (always "" for non-letters). */
+  entries: string[];
   /** Cipher letters revealed by hints. */
   revealed: string[];
   hintsUsed: number;
@@ -75,6 +75,8 @@ export type RootV1 = {
     freezeUsedWeek: string | null;
     /** Dates whose daily was solved on that same date. */
     solvedDates: LocalDate[];
+    /** Highest local date seen; streak credit is refused after the clock is wound back below it. */
+    highestDateSeen: LocalDate | null;
   };
   hints: {
     /** Purchased + rewarded hints. Cloud merge = max(local, cloud). */
@@ -125,7 +127,7 @@ export function defaultRoot(now: number): Root {
       defaultDifficulty: 'medium',
     },
     progress: { levelIndex: 0, seenQuoteIds: [], solved: {}, reportedQuoteIds: [] },
-    daily: { streak: 0, best: 0, freezeUsedWeek: null, solvedDates: [] },
+    daily: { streak: 0, best: 0, freezeUsedWeek: null, solvedDates: [], highestDateSeen: null },
     hints: { balance: 0, freeUsedDate: null, freeUsedCount: 0, rewardedDate: null, rewardedCount: 0 },
     inProgress: {},
     unlocks: { removeAds: false, packs: [] },

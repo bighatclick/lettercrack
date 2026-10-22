@@ -9,7 +9,7 @@ module.exports = defineConfig([
   },
   {
     // The engine stays pure: no React, no React Native, no storage.
-    files: ['src/engine/**/*.ts'],
+    files: ['src/engine/**/*.ts', 'src/ads/policy.ts'],
     rules: {
       'no-restricted-imports': [
         'error',
