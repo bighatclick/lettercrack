@@ -115,6 +115,13 @@ Done when: a quote can be solved end to end from the seed file, kill-and-relaunc
 
 ## 6. Phase 5: monetisation (~45 min + store setup)
 
+**Decision (22 Oct 2026): the first release ships with no ads and no payments.** Both are behind switches in `config/features.json`, which is currently off. The AdMob and IAP SDKs are not installed, so the first build has no ad or billing code. Its privacy labels and Data safety form have no ad data, and there's no ATT or UMP prompt. When this phase is picked up:
+- install the SDKs;
+- add their config plugins only when the matching switch is on, via `app.config.ts`;
+- turn the switch on, and update the guard test.
+
+Without ads or packs, players get only the 2 free hints a day. Revisit that allowance before launch.
+
 - `src/ads/`: AdMob init, UMP consent before any request, ATT soft prompt after the 3rd session (never mid-puzzle), interstitial gated only by `policy.ts`, rewarded ad grants +1 hint on `EARNED_REWARD` only, muted, G-rated content filters. Ad failures never block Next.
 - `src/iap/`: the 5 v1.0 products, StoreKit prices only, Restore, purchase cache in MMKV, hints balance merge = max.
 - `app/shop.tsx`: price, contents, "one-time", Restore, Terms / Privacy links.
