@@ -1,0 +1,452 @@
+{
+  "version": "seed",
+  "note": "DEV SEED ONLY. Replaced by assets/quotes.v1.json from the Phase 2 pipeline.",
+  "authors": {
+    "Benjamin Franklin": {
+      "dates": "1706–1790",
+      "bio": "American printer, writer, scientist and statesman."
+    },
+    "William Shakespeare": {
+      "dates": "1564–1616",
+      "bio": "English playwright and poet."
+    },
+    "Henry David Thoreau": {
+      "dates": "1817–1862",
+      "bio": "American essayist who lived for two years beside Walden Pond."
+    },
+    "Ralph Waldo Emerson": {
+      "dates": "1803–1882",
+      "bio": "American essayist, lecturer and poet."
+    },
+    "Jane Austen": {
+      "dates": "1775–1817",
+      "bio": "English novelist of manners, money and courtship."
+    },
+    "Charles Dickens": {
+      "dates": "1812–1870",
+      "bio": "English novelist of Victorian London."
+    },
+    "John Keats": {
+      "dates": "1795–1821",
+      "bio": "English Romantic poet."
+    },
+    "Alfred, Lord Tennyson": {
+      "dates": "1809–1892",
+      "bio": "Poet Laureate for most of Queen Victoria’s reign."
+    },
+    "Mark Twain": {
+      "dates": "1835–1910",
+      "bio": "American humorist and author of Huckleberry Finn."
+    },
+    "Oscar Wilde": {
+      "dates": "1854–1900",
+      "bio": "Irish playwright, poet and wit."
+    },
+    "Emily Dickinson": {
+      "dates": "1830–1886",
+      "bio": "American poet, published mostly after her death."
+    },
+    "Ella Wheeler Wilcox": {
+      "dates": "1850–1919",
+      "bio": "American poet and newspaper columnist."
+    },
+    "Edward Bulwer-Lytton": {
+      "dates": "1803–1873",
+      "bio": "English novelist and playwright."
+    },
+    "Henry Wadsworth Longfellow": {
+      "dates": "1807–1882",
+      "bio": "American poet of Hiawatha and Paul Revere’s Ride."
+    },
+    "Alexander Pope": {
+      "dates": "1688–1744",
+      "bio": "English poet and satirist."
+    },
+    "Robert Louis Stevenson": {
+      "dates": "1850–1894",
+      "bio": "Scottish author of Treasure Island."
+    },
+    "Lewis Carroll": {
+      "dates": "1832–1898",
+      "bio": "English writer and mathematician, author of the Alice books."
+    },
+    "Jerome K. Jerome": {
+      "dates": "1859–1927",
+      "bio": "English humorist and playwright."
+    }
+  },
+  "dailyOrder": [
+    90010,
+    90009,
+    90008,
+    90007,
+    90006,
+    90005,
+    90004,
+    90003,
+    90002,
+    90001
+  ],
+  "quotes": [
+    {
+      "id": 90001,
+      "text": "Well done is better than well said.",
+      "author": "Benjamin Franklin",
+      "authorDates": "1706–1790",
+      "work": "Poor Richard's Almanack",
+      "workYear": 1737,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1737",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90002,
+      "text": "He that can have patience can have what he will.",
+      "author": "Benjamin Franklin",
+      "authorDates": "1706–1790",
+      "work": "Poor Richard's Almanack",
+      "workYear": 1736,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1736",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90003,
+      "text": "Neither a borrower nor a lender be; for loan oft loses both itself and friend.",
+      "author": "William Shakespeare",
+      "authorDates": "1564–1616",
+      "work": "Hamlet",
+      "workYear": 1603,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1603",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90004,
+      "text": "This above all: to thine own self be true.",
+      "author": "William Shakespeare",
+      "authorDates": "1564–1616",
+      "work": "Hamlet",
+      "workYear": 1603,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1603",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90005,
+      "text": "All the world's a stage, and all the men and women merely players.",
+      "author": "William Shakespeare",
+      "authorDates": "1564–1616",
+      "work": "As You Like It",
+      "workYear": 1623,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1623",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90006,
+      "text": "Some are born great, some achieve greatness, and some have greatness thrust upon 'em.",
+      "author": "William Shakespeare",
+      "authorDates": "1564–1616",
+      "work": "Twelfth Night",
+      "workYear": 1623,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1623",
+      "topics": [],
+      "difficulty": "medium"
+    },
+    {
+      "id": 90007,
+      "text": "Our life is frittered away by detail. Simplify, simplify.",
+      "author": "Henry David Thoreau",
+      "authorDates": "1817–1862",
+      "work": "Walden",
+      "workYear": 1854,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1854",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90008,
+      "text": "I went to the woods because I wished to live deliberately.",
+      "author": "Henry David Thoreau",
+      "authorDates": "1817–1862",
+      "work": "Walden",
+      "workYear": 1854,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1854",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90009,
+      "text": "Rather than love, than money, than fame, give me truth.",
+      "author": "Henry David Thoreau",
+      "authorDates": "1817–1862",
+      "work": "Walden",
+      "workYear": 1854,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1854",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90010,
+      "text": "Trust thyself: every heart vibrates to that iron string.",
+      "author": "Ralph Waldo Emerson",
+      "authorDates": "1803–1882",
+      "work": "Self-Reliance (Essays: First Series)",
+      "workYear": 1841,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1841",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90011,
+      "text": "Self-trust is the first secret of success.",
+      "author": "Ralph Waldo Emerson",
+      "authorDates": "1803–1882",
+      "work": "Society and Solitude",
+      "workYear": 1870,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1870",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90012,
+      "text": "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.",
+      "author": "Jane Austen",
+      "authorDates": "1775–1817",
+      "work": "Pride and Prejudice",
+      "workYear": 1813,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1813",
+      "topics": [],
+      "difficulty": "hard"
+    },
+    {
+      "id": 90013,
+      "text": "It was the best of times, it was the worst of times.",
+      "author": "Charles Dickens",
+      "authorDates": "1812–1870",
+      "work": "A Tale of Two Cities",
+      "workYear": 1859,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1859",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90014,
+      "text": "Annual income twenty pounds, annual expenditure nineteen nineteen and six, result happiness.",
+      "author": "Charles Dickens",
+      "authorDates": "1812–1870",
+      "work": "David Copperfield",
+      "workYear": 1850,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1850",
+      "topics": [],
+      "difficulty": "medium"
+    },
+    {
+      "id": 90015,
+      "text": "A thing of beauty is a joy for ever.",
+      "author": "John Keats",
+      "authorDates": "1795–1821",
+      "work": "Endymion",
+      "workYear": 1818,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1818",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90016,
+      "text": "'Tis better to have loved and lost than never to have loved at all.",
+      "author": "Alfred, Lord Tennyson",
+      "authorDates": "1809–1892",
+      "work": "In Memoriam A.H.H.",
+      "workYear": 1850,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1850",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90017,
+      "text": "Courage is resistance to fear, mastery of fear—not absence of fear.",
+      "author": "Mark Twain",
+      "authorDates": "1835–1910",
+      "work": "Pudd'nhead Wilson",
+      "workYear": 1894,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1894",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90018,
+      "text": "Truth is stranger than Fiction, but it is because Fiction is obliged to stick to possibilities; Truth isn't.",
+      "author": "Mark Twain",
+      "authorDates": "1835–1910",
+      "work": "Following the Equator",
+      "workYear": 1897,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1897",
+      "topics": [],
+      "difficulty": "hard"
+    },
+    {
+      "id": 90019,
+      "text": "We are all in the gutter, but some of us are looking at the stars.",
+      "author": "Oscar Wilde",
+      "authorDates": "1854–1900",
+      "work": "Lady Windermere's Fan",
+      "workYear": 1893,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1893",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90020,
+      "text": "Experience is the name every one gives to their mistakes.",
+      "author": "Oscar Wilde",
+      "authorDates": "1854–1900",
+      "work": "Lady Windermere's Fan",
+      "workYear": 1893,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1893",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90021,
+      "text": "I can resist everything except temptation.",
+      "author": "Oscar Wilde",
+      "authorDates": "1854–1900",
+      "work": "Lady Windermere's Fan",
+      "workYear": 1893,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1893",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90022,
+      "text": "Hope is the thing with feathers that perches in the soul.",
+      "author": "Emily Dickinson",
+      "authorDates": "1830–1886",
+      "work": "Poems, Second Series",
+      "workYear": 1891,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1891",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90023,
+      "text": "Laugh, and the world laughs with you; weep, and you weep alone.",
+      "author": "Ella Wheeler Wilcox",
+      "authorDates": "1850–1919",
+      "work": "Solitude (Poems of Passion)",
+      "workYear": 1883,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1883",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90024,
+      "text": "Beneath the rule of men entirely great, the pen is mightier than the sword.",
+      "author": "Edward Bulwer-Lytton",
+      "authorDates": "1803–1873",
+      "work": "Richelieu",
+      "workYear": 1839,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1839",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90025,
+      "text": "Let us, then, be up and doing, with a heart for any fate.",
+      "author": "Henry Wadsworth Longfellow",
+      "authorDates": "1807–1882",
+      "work": "A Psalm of Life",
+      "workYear": 1838,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1838",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90026,
+      "text": "To err is human, to forgive divine.",
+      "author": "Alexander Pope",
+      "authorDates": "1688–1744",
+      "work": "An Essay on Criticism",
+      "workYear": 1711,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1711",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90027,
+      "text": "A little learning is a dangerous thing.",
+      "author": "Alexander Pope",
+      "authorDates": "1688–1744",
+      "work": "An Essay on Criticism",
+      "workYear": 1711,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1711",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90028,
+      "text": "To travel hopefully is a better thing than to arrive.",
+      "author": "Robert Louis Stevenson",
+      "authorDates": "1850–1894",
+      "work": "Virginibus Puerisque",
+      "workYear": 1881,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1881",
+      "topics": [],
+      "difficulty": "easy"
+    },
+    {
+      "id": 90029,
+      "text": "Now, here, you see, it takes all the running you can do, to keep in the same place.",
+      "author": "Lewis Carroll",
+      "authorDates": "1832–1898",
+      "work": "Through the Looking-Glass",
+      "workYear": 1871,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1871",
+      "topics": [],
+      "difficulty": "medium"
+    },
+    {
+      "id": 90030,
+      "text": "I like work: it fascinates me. I can sit and look at it for hours.",
+      "author": "Jerome K. Jerome",
+      "authorDates": "1859–1927",
+      "work": "Three Men in a Boat",
+      "workYear": 1889,
+      "sourceCollection": "Original text (dev seed, pending editorial review)",
+      "sourceEdition": "First published 1889",
+      "topics": [],
+      "difficulty": "easy"
+    }
+  ]
+}

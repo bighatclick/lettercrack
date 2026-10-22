@@ -4,10 +4,13 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
+import { AppState } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createMMKVStore } from '@/data/mmkv';
 import { useAppStore } from '@/data/store';
+import { onAppOpen } from '@/game/session';
+import { today } from '@/game/today';
 import { i18n, initI18n } from '@/i18n';
 import { fontAssets, ThemeProvider, useTheme } from '@/ui';
 
@@ -35,7 +38,13 @@ export default function RootLayout() {
   const settings = useAppStore((s) => s.root?.settings);
 
   useEffect(() => {
-    if (!useAppStore.getState().ready) useAppStore.getState().hydrate(createMMKVStore());
+    const store = useAppStore.getState();
+    if (!store.ready) store.hydrate(createMMKVStore());
+    // Remember the highest date seen, on launch and whenever the app returns to the foreground.
+    const noteDate = () => useAppStore.getState().update((r) => onAppOpen(r, today()));
+    noteDate();
+    const sub = AppState.addEventListener('change', (s) => s === 'active' && noteDate());
+    return () => sub.remove();
   }, []);
 
   const loaded = (fontsLoaded || !!fontError) && ready && !!settings;

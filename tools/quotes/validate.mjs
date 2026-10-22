@@ -57,7 +57,7 @@ for (const file of walk(join(root, 'store', 'en')).filter((f) => textExt.test(f)
 const REQUIRED = ['id', 'text', 'author', 'authorDates', 'work', 'workYear', 'sourceCollection', 'sourceEdition', 'difficulty'];
 const normalise = (s) => s.toLowerCase().replace(/[^a-z]/g, '');
 const dbFiles = existsSync(join(root, 'assets'))
-  ? readdirSync(join(root, 'assets')).filter((f) => /^quotes\.v\d+\.json$/.test(f))
+  ? readdirSync(join(root, 'assets')).filter((f) => /^quotes\.(v\d+|seed)\.json$/.test(f))
   : [];
 
 for (const f of dbFiles) {
@@ -80,6 +80,14 @@ for (const f of dbFiles) {
     const n = normalise(q.text ?? '');
     if (texts.has(n)) fail(`${where}: duplicate text of id=${texts.get(n)}`);
     texts.set(n, q.id);
+    // The author card needs dates and a one-line bio written by us.
+    if (!Array.isArray(db) && db.authors) {
+      const a = db.authors[q.author];
+      if (!a?.bio || !a?.dates) fail(`${where}: author "${q.author}" has no dates/bio entry`);
+    }
+  }
+  if (!Array.isArray(db) && Array.isArray(db.dailyOrder)) {
+    for (const id of db.dailyOrder) if (!ids.has(id)) fail(`${f}: dailyOrder references unknown id ${id}`);
   }
 }
 
