@@ -49,9 +49,10 @@ describe('daily (F5)', () => {
 
   it('device path agrees with the zone-explicit path in the process timezone', () => {
     // CI reruns this file with TZ set to each of ZONES (env must be set before Node starts).
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // If CI asked for a zone, make sure Node actually applied it (it does on Linux, not on Windows).
-    if (process.env.TZ) expect(tz).toBe(process.env.TZ);
+    // CI sets TZ (applied by Node) and EXPECT_TZ (never stripped by shells). If TZ was not applied,
+    // the device dates disagree with EXPECT_TZ and this fails. Names are not compared: Node may
+    // report an alias (Asia/Kolkata → Asia/Calcutta).
+    const tz = process.env.EXPECT_TZ || Intl.DateTimeFormat().resolvedOptions().timeZone;
     for (let h = 0; h < 24 * 400; h += 7) {
       const d = new Date(Date.UTC(2027, 0, 1) + h * 3_600_000);
       if (toLocalDate(d) !== toLocalDate(d, tz)) throw new Error(`${tz}: ${d.toISOString()}`);
