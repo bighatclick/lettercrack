@@ -1,16 +1,24 @@
 #!/usr/bin/env node
 /**
- * `npm run quotes:validate` (runs in CI). Phase 0 version; Phase 2 adds the banned-word list
- * and the "IDs never removed vs the previous quotes.vN.json" check.
+ * `npm run quotes:validate` (runs in CI).
  *
  * 1. Trademarks (rule 7): no "Cryptoquip"/"Cryptoquote" in anything we ship.
  * 2. Store words (rule 8): no "free", "no ads", "#1", "best" or emoji in store/en/.
  * 3. Quote DB (rule 4): every record has full provenance, author died < 1956, work published < 1929,
  *    IDs unique, texts unique (normalised).
+ * 4. Content (rule 5): no tools/quotes/banned.txt word in any live quote text (retired quotes are
+ *    exempt: they stay in the file only so their id never disappears).
+ * 5. Permanent IDs: for quotes.vN.json, every id in tools/quotes/ids.json "shipped" is still
+ *    present, each quote's id matches ids.json for its text, and (when git history is available)
+ *    no id of the committed version has been removed.
+ * 6. quotes.vN.json (not the dev seed) has a dailyOrder of at least 365 distinct ids.
  */
+import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { DAILY_COUNT, bannedHits, loadBanned } from './lib.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const errors = [];
@@ -60,8 +68,28 @@ const dbFiles = existsSync(join(root, 'assets'))
   ? readdirSync(join(root, 'assets')).filter((f) => /^quotes\.(v\d+|seed)\.json$/.test(f))
   : [];
 
+const banned = loadBanned();
+const idsPath = join(root, 'tools', 'quotes', 'ids.json');
+const idRegistry = existsSync(idsPath) ? JSON.parse(readFileSync(idsPath, 'utf8')) : undefined;
+
+/** The committed (HEAD) version of a JSON file, or undefined (no git, new file, shallow checkout). */
+function committedJson(relPath) {
+  try {
+    const out = execFileSync('git', ['show', `HEAD:${relPath}`], {
+      cwd: root,
+      stdio: ['ignore', 'pipe', 'ignore'],
+      maxBuffer: 64 * 1024 * 1024,
+    });
+    return JSON.parse(out.toString('utf8'));
+  } catch {
+    return undefined;
+  }
+}
+
 for (const f of dbFiles) {
   const db = JSON.parse(readFileSync(join(root, 'assets', f), 'utf8'));
+  const isRelease = /^quotes\.v\d+\.json$/.test(f);
+  if (isRelease && !idRegistry) fail(`${f}: tools/quotes/ids.json (the permanent id registry) is missing`);
   const quotes = Array.isArray(db) ? db : db.quotes;
   if (!Array.isArray(quotes)) {
     fail(`${f}: expected an array of quotes`);
@@ -78,6 +106,13 @@ for (const f of dbFiles) {
     if (!(died < 1956)) fail(`${where}: author death year must be < 1956 (got "${q.authorDates}")`);
     if (!(Number(q.workYear) < 1929)) fail(`${where}: work must be published before 1929 (got ${q.workYear})`);
     const n = normalise(q.text ?? '');
+    if (!q.retired) {
+      const hits = bannedHits(q.text ?? '', banned);
+      if (hits.length) fail(`${where}: banned word(s) ${hits.join(', ')} (tools/quotes/banned.txt)`);
+    }
+    if (isRelease && idRegistry && idRegistry.byText?.[n] !== q.id) {
+      fail(`${where}: ids.json maps this text to ${idRegistry.byText?.[n] ?? 'nothing'}; ids are permanent`);
+    }
     if (texts.has(n)) fail(`${where}: duplicate text of id=${texts.get(n)}`);
     texts.set(n, q.id);
     // The author card needs dates and a one-line bio written by us.
@@ -88,6 +123,18 @@ for (const f of dbFiles) {
   }
   if (!Array.isArray(db) && Array.isArray(db.dailyOrder)) {
     for (const id of db.dailyOrder) if (!ids.has(id)) fail(`${f}: dailyOrder references unknown id ${id}`);
+  }
+  if (isRelease) {
+    const daily = Array.isArray(db) ? [] : (db.dailyOrder ?? []);
+    if (daily.length < DAILY_COUNT) fail(`${f}: dailyOrder has ${daily.length} ids; a release DB needs at least ${DAILY_COUNT}`);
+    if (new Set(daily).size !== daily.length) fail(`${f}: dailyOrder has duplicate ids`);
+    for (const id of idRegistry?.shipped ?? []) if (!ids.has(id)) fail(`${f}: shipped id ${id} was removed (retire it instead)`);
+    if (idRegistry && ids.size && Math.max(...ids) >= Number(idRegistry.next ?? 0)) {
+      fail(`${f}: ids.json "next" (${idRegistry.next}) must be greater than every id`);
+    }
+    const committed = committedJson(`assets/${f}`);
+    const committedQuotes = Array.isArray(committed) ? committed : committed?.quotes;
+    for (const q of committedQuotes ?? []) if (!ids.has(q.id)) fail(`${f}: id ${q.id} is in the committed version but was removed`);
   }
 }
 

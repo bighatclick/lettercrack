@@ -44,3 +44,5 @@ example
 
 # quote pipeline downloads (never committed)
 tools/quotes/raw/
+tools/quotes/out/
+tools/quotes/review.new.csv

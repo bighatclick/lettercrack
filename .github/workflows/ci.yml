@@ -30,3 +30,4 @@ jobs:
             TZ=$tz EXPECT_TZ=$tz npx jest --ci src/engine/__tests__/daily.test.ts -t "device path"
           done
       - run: npm run quotes:validate
+      - run: node --test "tools/quotes/__tests__/*.test.mjs"
