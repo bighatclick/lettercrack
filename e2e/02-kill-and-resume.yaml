@@ -1,0 +1,23 @@
+# F4: state is saved after every key; kill and relaunch restores exactly.
+# A new puzzle starts with the first open letter cell selected, so typing needs no tap.
+appId: app.lettercrack
+---
+- clearState
+- launchApp
+- tapOn:
+    id: onboarding-skip
+- tapOn:
+    id: onboarding-start
+- tapOn:
+    id: home-level
+- assertVisible:
+    id: board
+- tapOn:
+    id: key-Q
+# Cells read "cipher K, guess Q" to VoiceOver / TalkBack; Maestro matches that text.
+- assertVisible: ".*guess Q.*"
+- stopApp
+- launchApp
+- tapOn:
+    id: home-level
+- assertVisible: ".*guess Q.*"

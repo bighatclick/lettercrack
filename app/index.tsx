@@ -1,14 +1,17 @@
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import { displayStreak } from '@/engine/streak';
+import { needsOnboarding } from '@/game/onboarding';
 import { dailyKey, nextLevelRef } from '@/game/session';
 import { today } from '@/game/today';
-import { Button, Card, Screen, Text } from '@/ui';
+import { StyleSheet, View } from 'react-native';
 
-/** Home (S1), first cut: today's quote and the level path. Archive, stats and settings land in Phase 4. */
+import { Button, Card, Screen, space, Text } from '@/ui';
+
+/** Home (S1): today's quote, the level path, archive, stats and settings. No ads. */
 export default function Home() {
   const { t } = useTranslation();
   const root = useAppStore((s) => s.root!);
@@ -19,6 +22,8 @@ export default function Home() {
   const inProgress = !!root.inProgress[key];
   const streak = displayStreak(root.daily, date);
   const levelRef = nextLevelRef(root, content, root.settings.defaultDifficulty);
+
+  if (needsOnboarding(root)) return <Redirect href="/onboarding" />;
 
   return (
     <Screen>
@@ -65,6 +70,17 @@ export default function Home() {
           <Text color="inkMuted">{t('home.noLevels')}</Text>
         )}
       </Card>
+
+      <View style={styles.links}>
+        <Button label={t('home.archive')} variant="secondary" onPress={() => router.push('/archive')} style={styles.link} testID="home-archive" />
+        <Button label={t('home.stats')} variant="secondary" onPress={() => router.push('/stats')} style={styles.link} testID="home-stats" />
+        <Button label={t('home.settings')} variant="secondary" onPress={() => router.push('/settings')} style={styles.link} testID="home-settings" />
+      </View>
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  links: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
+  link: { flexGrow: 1 },
+});

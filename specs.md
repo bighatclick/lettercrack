@@ -61,7 +61,7 @@ R21 events or story meta (likely never) · never: lives, energy, timers by defau
 ### 4.1 Sources (public domain only)
 | Source | Use |
 |---|---|
-| Bartlett's *Familiar Quotations*, 10th ed. (1919): Project Gutenberg #27889 / #16732 | Primary candidate pool (strip the Gutenberg header/licence from anything we keep) |
+| Bartlett's *Familiar Quotations*, 9th ed. (1891; Project Gutenberg #27889 is its 1905 printing. Corrected 5 Nov 2026: #27889 is not the 10th ed., and #16732 is a small early edition) | Primary candidate pool (strip the Gutenberg header/licence from anything we keep) |
 | Hoyt's *New Cyclopedia of Practical Quotations*, **1922 edition** (not the 1927 revision) | Primary pool + topic tags |
 | Original public-domain texts (Gutenberg / Wikisource transcriptions) | Check every quote's wording |
 | Wikiquote (CC BY-SA) | Reference for checking attributions only. **Never bulk-copy** |

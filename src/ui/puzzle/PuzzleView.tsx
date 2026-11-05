@@ -23,6 +23,8 @@ export type PuzzleViewProps = {
   onDelete: () => void;
   onReveal: () => void;
   onCheck: () => void;
+  /** Hide Reveal / Check (onboarding). */
+  hideHints?: boolean;
 };
 
 /** Presentational puzzle screen body: board, status line, hints and keyboard. No storage, no routing. */
@@ -44,7 +46,7 @@ export function PuzzleView(p: PuzzleViewProps) {
         ) : null}
         {p.state.solved ? null : (
           <>
-            <HintBar hintsLeft={p.hintsLeft} canCheck={canCheck} onReveal={p.onReveal} onCheck={p.onCheck} />
+            {p.hideHints ? null : <HintBar hintsLeft={p.hintsLeft} canCheck={canCheck} onReveal={p.onReveal} onCheck={p.onCheck} />}
             <Keyboard onLetter={p.onLetter} onDelete={p.onDelete} used={p.used} />
           </>
         )}

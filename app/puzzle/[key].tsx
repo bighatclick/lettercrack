@@ -1,12 +1,16 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AccessibilityInfo, Animated, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, Alert, Animated, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { HardwareKeys } from '@modules/hardware-keys';
+
+import { E2E } from '@/config/e2e';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
-import { type PuzzleRef, refFromKey } from '@/game/session';
+import { reportQuote } from '@/game/report';
+import { nextLevelRef, type PuzzleRef, refFromKey } from '@/game/session';
 import { today } from '@/game/today';
 import { type Completion, usePuzzleGame } from '@/game/usePuzzleGame';
 import { Button, Chip, Screen, space, Text, useTheme } from '@/ui';
@@ -71,7 +75,36 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
   );
   const game = usePuzzleGame(puzzleRef, content, onSolved);
 
-  const title = puzzleRef.mode === 'daily' ? t('puzzle.dailyTitle') : t('puzzle.levelTitle', { level: levelNumber });
+  const isArchive = puzzleRef.mode === 'daily' && puzzleRef.dailyDate !== today();
+  const title =
+    puzzleRef.mode === 'level'
+      ? t('puzzle.levelTitle', { level: levelNumber })
+      : isArchive
+        ? t('puzzle.archiveTitle', { date: puzzleRef.dailyDate })
+        : t('puzzle.dailyTitle');
+
+  // Report quote (§4.3): hidden locally, listed in the next feedback email. Nothing is sent now.
+  const report = () => {
+    Alert.alert(t('puzzle.reportTitle'), t('puzzle.reportBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('puzzle.reportConfirm'),
+        style: 'destructive',
+        onPress: () => {
+          const store = useAppStore.getState();
+          store.update((r) => reportQuote(r, puzzleRef.quoteId));
+          AccessibilityInfo.announceForAccessibility(t('puzzle.reported'));
+          if (puzzleRef.mode === 'level') {
+            const root = useAppStore.getState().root!;
+            const next = nextLevelRef(root, content, root.settings.defaultDifficulty);
+            router.replace(next ? `/puzzle/${encodeURIComponent(next.key)}` : '/');
+          } else {
+            Alert.alert(t('puzzle.reported'));
+          }
+        },
+      },
+    ]);
+  };
 
   const header = (
     <View style={styles.header}>
@@ -90,6 +123,7 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
         onPress={() => setSheet(true)}
         disabled={game.state.solved}
       />
+      <Button label="⋯" variant="ghost" accessibilityLabel={t('puzzle.report')} onPress={report} testID="puzzle-menu" />
     </View>
   );
 
@@ -110,6 +144,8 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
         onReveal={game.onReveal}
         onCheck={game.onCheck}
       />
+      {game.state.solved || sheet ? null : <HardwareKeys onKey={game.onHardwareKey} />}
+      {E2E && !game.state.solved ? <Button label="e2e solve" variant="ghost" onPress={game.e2eSolve} testID="e2e-solve" /> : null}
       <DifficultySheet
         key={game.difficulty}
         visible={sheet}

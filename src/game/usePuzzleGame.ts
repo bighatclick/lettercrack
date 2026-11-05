@@ -14,6 +14,7 @@ import {
   usedLetters,
 } from '@/engine/puzzle';
 import type { SolveResult } from '@/engine/streak';
+import { playSound } from '@/lib/sound';
 
 import { cellFlags } from './flags';
 import { completePuzzle, consumeHint, hintsLeft, openPuzzle, type PuzzleRef, saveProgress } from './session';
@@ -69,9 +70,10 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
         return c.root;
       });
       if (settings.haptics) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      playSound('rustle', settings.sound);
       l.onSolved(completion);
     },
-    [ref, update, settings.haptics],
+    [ref, update, settings.haptics, settings.sound],
   );
 
   const apply = useCallback(
@@ -106,16 +108,28 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
   const onLetter = useCallback(
     (letter: string) => {
       tap(settings.haptics);
+      playSound('tick', settings.sound);
       setNote(null);
       apply({ type: 'input', letter, keyId: ++keyId.current });
     },
-    [apply, settings.haptics],
+    [apply, settings.haptics, settings.sound],
   );
   const onDelete = useCallback(() => {
     tap(settings.haptics);
+    playSound('tick', settings.sound);
     setNote(null);
     apply({ type: 'erase', keyId: ++keyId.current });
-  }, [apply, settings.haptics]);
+  }, [apply, settings.haptics, settings.sound]);
+  /** Hardware keyboard (iPad / Android / web): letters type, Delete erases, arrows move the selection. */
+  const onHardwareKey = useCallback(
+    (k: string) => {
+      if (k === 'Backspace') onDelete();
+      else if (k === 'ArrowLeft') apply({ type: 'move', delta: -1 });
+      else if (k === 'ArrowRight') apply({ type: 'move', delta: 1 });
+      else if (/^[A-Z]$/.test(k)) onLetter(k);
+    },
+    [apply, onDelete, onLetter],
+  );
 
   const spend = (action: PuzzleAction) => {
     const prev = live.current.state;
@@ -136,6 +150,18 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
       return;
     }
     spend({ type: 'check' });
+  };
+
+  /** E2E builds only (EXPO_PUBLIC_E2E=1): types the answer so Maestro flows can finish a puzzle. */
+  const e2eSolve = () => {
+    let s = live.current.state;
+    for (let i = 0; i < s.plain.length; i++) {
+      const c = s.plain[i]!;
+      if (c >= 'A' && c <= 'Z' && s.entries[i] !== c) {
+        s = puzzleReducer(puzzleReducer(s, { type: 'select', index: i }), { type: 'input', letter: c, keyId: ++keyId.current });
+      }
+    }
+    commit(s);
   };
 
   /** Player changed difficulty: restart this puzzle with new givens. */
@@ -164,8 +190,10 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
     onSelect,
     onLetter,
     onDelete,
+    onHardwareKey,
     onReveal,
     onCheck,
     restartWith,
+    e2eSolve,
   };
 }

@@ -14,7 +14,11 @@
     "continueLevel": "Continue level {{level}}",
     "noLevels": "You've decoded every quote. New ones arrive with updates.",
     "streak_one": "{{count}}-day streak",
-    "streak_other": "{{count}}-day streak"
+    "streak_other": "{{count}}-day streak",
+    "archive": "Archive",
+    "stats": "Stats",
+    "settings": "Settings",
+    "menu": "More"
   },
   "puzzle": {
     "back": "Back",
@@ -45,7 +49,14 @@
     "goHome": "Go home",
     "fullButWrong": "Almost! The highlighted letters aren't right yet.",
     "solvedAnnouncement": "Solved!",
-    "timer": "Time {{time}}"
+    "timer": "Time {{time}}",
+    "menu": "Menu",
+    "report": "Report this quote",
+    "reportTitle": "Report this quote?",
+    "reportBody": "It will be hidden on this device and listed in your next feedback email. Nothing is sent now.",
+    "reportConfirm": "Report and hide",
+    "reported": "Thanks. This quote is hidden and noted for your next feedback email.",
+    "archiveTitle": "Daily quote · {{date}}"
   },
   "difficulty": {
     "easy": "Easy",
@@ -64,10 +75,102 @@
     "source": "{{work}}, {{year}}",
     "next": "Next puzzle",
     "toLevels": "Play a level",
-    "home": "Home"
+    "home": "Home",
+    "share": "Share",
+    "shareTitle": "Share this quote",
+    "shareFooter": "Solved on LetterCrack · lettercrack.app",
+    "shareFailed": "Sharing isn’t available right now.",
+    "reminderTitle": "Want a nudge tomorrow?",
+    "reminderBody": "We can remind you each morning when a new quote is ready. You can turn it off any time in Settings.",
+    "reminderYes": "Remind me",
+    "reminderNo": "No thanks",
+    "reminderDenied": "Notifications are off for LetterCrack. You can turn them on in your device settings.",
+    "toArchive": "Back to archive"
   },
   "common": {
     "loading": "Loading…",
-    "dataRecovered": "We restored your saved progress from a backup."
+    "dataRecovered": "We restored your saved progress from a backup.",
+    "close": "Close",
+    "cancel": "Cancel",
+    "back": "Back"
+  },
+  "archive": {
+    "title": "Archive",
+    "intro": "Every past daily quote, ready whenever you are.",
+    "empty": "Past daily quotes will appear here from tomorrow.",
+    "solved": "solved",
+    "inProgress": "in progress",
+    "open": "not solved yet",
+    "dayLabel": "{{date}}, {{status}}",
+    "legendSolved": "Solved",
+    "legendInProgress": "Started"
+  },
+  "stats": {
+    "title": "Stats",
+    "solved": "Puzzles solved",
+    "clean": "Clean solves",
+    "streak": "Current streak",
+    "best": "Best streak",
+    "dailies": "Daily quotes solved",
+    "average": "Average solve time",
+    "authors": "Favorite authors",
+    "authorCount_one": "{{count}} quote",
+    "authorCount_other": "{{count}} quotes",
+    "noAuthors": "Solve a few quotes to see your favorite authors.",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days"
+  },
+  "settings": {
+    "title": "Settings",
+    "play": "Play",
+    "autoFill": "Fill every matching letter",
+    "autoFillHint": "Typing a letter fills it everywhere that cipher letter appears.",
+    "conflicts": "Highlight conflicts",
+    "conflictsHint": "Marks a letter you’ve used for two different cipher letters.",
+    "timer": "Show solve time",
+    "timerHint": "A stat only. There is never a countdown.",
+    "difficulty": "Default difficulty",
+    "look": "Look and feel",
+    "textSize": "Text size",
+    "textSizeStep": "Size {{n}}",
+    "appearance": "Appearance",
+    "appearanceSystem": "Device",
+    "appearanceLight": "Light",
+    "appearanceDark": "Dark",
+    "highContrast": "High contrast",
+    "sound": "Sound effects",
+    "haptics": "Haptics",
+    "reminder": "Daily reminder",
+    "reminderHint": "A notification at 9am when the day’s quote is ready.",
+    "about": "About",
+    "aboutQuotes": "About our quotes",
+    "feedback": "Send feedback",
+    "feedbackSubject": "LetterCrack feedback",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use",
+    "restore": "Restore purchases",
+    "version": "Version {{version}}"
+  },
+  "aboutQuotes": {
+    "title": "About our quotes",
+    "p1": "Every quote in LetterCrack is in the public domain. Each author died before 1956, and each quote comes from a work first published before 1929.",
+    "p2": "Our main source is John Bartlett’s Familiar Quotations (9th edition, 1891). We check wording against the original texts.",
+    "p3": "An editor reviews every quote before it ships. If one seems wrong or unsuitable, use Report on the puzzle menu and it will be hidden on your device.",
+    "p4": "The short author notes are written by us."
+  },
+  "onboarding": {
+    "title": "Welcome to LetterCrack",
+    "intro": "Each puzzle is a famous quote with every letter swapped for another. Work out the swaps to read it.",
+    "tryIt": "Try this tiny one. Tap a box, then type a letter.",
+    "hint": "Hint: it’s an animal that purrs.",
+    "solved": "You’ve got it.",
+    "pick": "How tricky should puzzles be?",
+    "pickHint": "You can change this on any puzzle.",
+    "start": "Start playing",
+    "skip": "Skip"
+  },
+  "notifications": {
+    "title": "LetterCrack",
+    "body": "Today’s quote is ready."
   }
 }
