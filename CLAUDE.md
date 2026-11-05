@@ -16,6 +16,7 @@ npm run quotes:validate          # provenance, death year, duplicates, banned wo
 npm run quotes:test              # pipeline unit tests (node --test)
 eas build --profile e2e -p android && maestro test e2e/
 eas build --local -p ios
+npm run android:local            # Android: ALWAYS built locally on this laptop, never EAS cloud
 ```
 Push to GitHub at the end of every session.
 
