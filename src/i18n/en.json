@@ -7,7 +7,7 @@
     "dailyLocked": "A new quote is waiting to be decoded.",
     "dailyInProgress": "You're partway through today's quote.",
     "dailySolved": "Solved. A new quote arrives tomorrow.",
-    "play": "Start puzzle",
+    "play": "Crack it",
     "resume": "Continue",
     "viewSolved": "See today's quote",
     "levels": "Levels",
@@ -18,7 +18,22 @@
     "archive": "Archive",
     "stats": "Stats",
     "settings": "Settings",
-    "menu": "More"
+    "menu": "More",
+    "greetMorning": "Good morning, codebreaker!",
+    "greetAfternoon": "Good afternoon, codebreaker!",
+    "greetEvening": "Good evening, codebreaker!",
+    "inkyReady": "Today’s quote is ready. Let’s crack it!",
+    "inkyResume": "Your quote is waiting right where you left it.",
+    "inkySolved": "Nice work today! A new quote arrives tomorrow.",
+    "letters_one": "{{count}} letter",
+    "letters_other": "{{count}} letters",
+    "previewLabel": "The start of today’s quote, in code",
+    "levelNow": "Level {{level}}",
+    "archiveToPlay_one": "{{count}} to play",
+    "archiveToPlay_other": "{{count}} to play",
+    "archiveSub": "Every past daily quote",
+    "statsSub_one": "{{count}} quote solved",
+    "statsSub_other": "{{count}} quotes solved"
   },
   "puzzle": {
     "back": "Back",
@@ -56,7 +71,14 @@
     "reportBody": "It will be hidden on this device and listed in your next feedback email. Nothing is sent now.",
     "reportConfirm": "Report and hide",
     "reported": "Thanks. This quote is hidden and noted for your next feedback email.",
-    "archiveTitle": "Daily quote · {{date}}"
+    "archiveTitle": "Daily quote · {{date}}",
+    "progress": "{{filled}} of {{total}} letters filled",
+    "tip0": "Psst… one-letter words are almost always A or I.",
+    "tip1": "Short words like THE and AND turn up a lot. Look for repeated three-letter groups.",
+    "tip2": "A single letter after an apostrophe is often S, T or D.",
+    "tip3": "Double letters? Try LL, EE, SS or OO first.",
+    "tip4": "E, T, A and O are the most common letters in English.",
+    "tip5": "Stuck? Fill in the letters you’re sure of and the rest gets easier."
   },
   "difficulty": {
     "easy": "Easy",
@@ -85,7 +107,8 @@
     "reminderYes": "Remind me",
     "reminderNo": "No thanks",
     "reminderDenied": "Notifications are off for LetterCrack. You can turn them on in your device settings.",
-    "toArchive": "Back to archive"
+    "toArchive": "Back to archive",
+    "celebrate": "Cracked it!"
   },
   "common": {
     "loading": "Loading…",
@@ -103,7 +126,13 @@
     "open": "not solved yet",
     "dayLabel": "{{date}}, {{status}}",
     "legendSolved": "Solved",
-    "legendInProgress": "Started"
+    "legendInProgress": "Started",
+    "countSolved_one": "{{count}} solved",
+    "countSolved_other": "{{count}} solved",
+    "countStarted_one": "{{count}} started",
+    "countStarted_other": "{{count}} started",
+    "countOpen_one": "{{count}} to play",
+    "countOpen_other": "{{count}} to play"
   },
   "stats": {
     "title": "Stats",
@@ -118,7 +147,16 @@
     "authorCount_other": "{{count}} quotes",
     "noAuthors": "Solve a few quotes to see your favorite authors.",
     "days_one": "{{count}} day",
-    "days_other": "{{count}} days"
+    "days_other": "{{count}} days",
+    "streakLabel_one": "day streak",
+    "streakLabel_other": "day streak",
+    "bestShort": "best {{count}}",
+    "cleanSub_one": "{{count}} solved with no hints",
+    "cleanSub_other": "{{count}} solved with no hints",
+    "weekly": "Each week",
+    "weeklyLabel": "Puzzles solved per week, oldest first: {{counts}}",
+    "weeklyHint_one": "Puzzles solved in each of the last {{count}} week.",
+    "weeklyHint_other": "Puzzles solved in each of the last {{count}} weeks."
   },
   "settings": {
     "title": "Settings",
@@ -149,7 +187,8 @@
     "privacy": "Privacy policy",
     "terms": "Terms of use",
     "restore": "Restore purchases",
-    "version": "Version {{version}}"
+    "version": "Version {{version}}",
+    "subtitle": "Make LetterCrack yours."
   },
   "aboutQuotes": {
     "title": "About our quotes",

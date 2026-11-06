@@ -1,7 +1,7 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Linking } from 'react-native';
+import { Linking, View } from 'react-native';
 
 import { content } from '@/content/quotes';
 import { PRIVACY_URL, TERMS_URL } from '@/config/links';
@@ -11,7 +11,7 @@ import { feedbackMailto } from '@/game/report';
 import { syncReminders } from '@/lib/reminderSync';
 import { restorePurchasesAvailable } from '@/iap/availability';
 import { requestReminderPermission } from '@/lib/notifications';
-import { Button, Card, Chip, Screen, Text } from '@/ui';
+import { Card, Chip, Enter, Hero, Inky, radius, Screen, space, Text, useTheme } from '@/ui';
 import { ChoiceRow, LinkRow, ToggleRow } from '@/ui/primitives/SettingRow';
 
 const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard', 'expert'];
@@ -22,6 +22,20 @@ const APPEARANCES: { value: Appearance; key: string }[] = [
 ];
 
 
+
+function Section({ label, hueIndex }: { label: string; hueIndex: number }) {
+  const { hue } = useTheme();
+  const h = hue(hueIndex);
+  return (
+    <View style={{ flexDirection: 'row', marginBottom: space.xs }}>
+      <View style={{ backgroundColor: h.tint, paddingHorizontal: space.md, paddingVertical: 4, borderRadius: radius.pill }}>
+        <Text variant="overline" color={h.deep} accessibilityRole="header" style={{ letterSpacing: 1.2 }}>
+          {label.toUpperCase()}
+        </Text>
+      </View>
+    </View>
+  );
+}
 
 /** Settings (S7). Restore Purchases appears only when payments are switched on. */
 export default function SettingsScreen() {
@@ -39,17 +53,22 @@ export default function SettingsScreen() {
     syncReminders(t);
   };
 
-  return (
-    <Screen>
-      <Button label={t('common.back')} variant="ghost" onPress={() => router.back()} style={{ alignSelf: 'flex-start' }} />
-      <Text variant="display" accessibilityRole="header">
-        {t('settings.title')}
-      </Text>
+  const hero = (
+    <Hero
+      gradient="candy"
+      back={{ label: t('common.back'), onPress: () => router.back() }}
+      title={t('settings.title')}
+      subtitle={t('settings.subtitle')}
+      side={<Inky pose="idle" size={96} />}
+    />
+  );
 
+  return (
+    <Screen hero={hero}>
+
+      <Enter index={1}>
       <Card>
-        <Text variant="caption" color="inkMuted" accessibilityRole="header">
-          {t('settings.play')}
-        </Text>
+        <Section label={t('settings.play')} hueIndex={4} />
         <ToggleRow label={t('settings.autoFill')} hint={t('settings.autoFillHint')} value={settings.autoFill} onChange={(v) => set('autoFill', v)} testID="setting-autofill" />
         <ToggleRow label={t('settings.conflicts')} hint={t('settings.conflictsHint')} value={settings.highlightConflicts} onChange={(v) => set('highlightConflicts', v)} />
         <ToggleRow label={t('settings.timer')} hint={t('settings.timerHint')} value={settings.showTimer} onChange={(v) => set('showTimer', v)} />
@@ -60,11 +79,11 @@ export default function SettingsScreen() {
         </ChoiceRow>
         <ToggleRow label={t('settings.reminder')} hint={t('settings.reminderHint')} value={settings.dailyReminder} onChange={toggleReminder} />
       </Card>
+      </Enter>
 
+      <Enter index={2}>
       <Card>
-        <Text variant="caption" color="inkMuted" accessibilityRole="header">
-          {t('settings.look')}
-        </Text>
+        <Section label={t('settings.look')} hueIndex={2} />
         <ChoiceRow label={t('settings.textSize')}>
           {([0, 1, 2, 3] as const).map((n) => (
             <Chip key={n} label={t('settings.textSizeStep', { n: n + 1 })} selected={settings.textSize === n} onPress={() => set('textSize', n)} testID={`setting-textsize-${n}`} />
@@ -79,11 +98,11 @@ export default function SettingsScreen() {
         <ToggleRow label={t('settings.sound')} value={settings.sound} onChange={(v) => set('sound', v)} />
         <ToggleRow label={t('settings.haptics')} value={settings.haptics} onChange={(v) => set('haptics', v)} />
       </Card>
+      </Enter>
 
+      <Enter index={3}>
       <Card>
-        <Text variant="caption" color="inkMuted" accessibilityRole="header">
-          {t('settings.about')}
-        </Text>
+        <Section label={t('settings.about')} hueIndex={0} />
         <LinkRow label={t('settings.aboutQuotes')} onPress={() => router.push('/about')} testID="settings-about" />
         <LinkRow
           label={t('settings.feedback')}
@@ -96,6 +115,7 @@ export default function SettingsScreen() {
           {t('settings.version', { version })}
         </Text>
       </Card>
+      </Enter>
     </Screen>
   );
 }

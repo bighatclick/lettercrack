@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Switch, View } from 'react-native';
 
+import { Icon } from '../fx/Icon';
 import { useTheme } from '../theme';
 import { minTouch, space } from '../tokens';
 import { Text } from './Text';
@@ -42,7 +43,7 @@ export function ToggleRow({
         value={value}
         onValueChange={onChange}
         trackColor={{ true: colors.primary, false: colors.border }}
-        thumbColor={colors.surfaceRaised}
+        thumbColor={value ? '#FFFFFF' : colors.surface}
         importantForAccessibility="no-hide-descendants"
         accessibilityElementsHidden
       />
@@ -62,12 +63,13 @@ export function ChoiceRow({ label, children }: { label: string; children: ReactN
 
 /** A tappable row that navigates or opens something. */
 export function LinkRow({ label, onPress, testID }: { label: string; onPress: () => void; testID?: string }) {
+  const { colors } = useTheme();
   return (
     <Pressable accessibilityRole="link" accessibilityLabel={label} onPress={onPress} style={styles.row} testID={testID}>
       <Text variant="label" color="primary">
         {label}
       </Text>
-      <Text color="inkMuted">›</Text>
+      <Icon name="chevron" color={colors.inkMuted} size={18} />
     </Pressable>
   );
 }

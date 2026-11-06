@@ -5,4 +5,5 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/', '/tools/quotes/raw/', '/.claude/'],
   modulePathIgnorePatterns: ['<rootDir>/.claude/'],
   moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1', '^@modules/(.*)$': '<rootDir>/modules/$1' },
+  setupFiles: ['<rootDir>/jest.setup.js'],
 };

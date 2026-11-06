@@ -1,16 +1,19 @@
-import { Pressable, type PressableProps, StyleSheet } from 'react-native';
+import { type PressableProps, StyleSheet } from 'react-native';
 
+import { PressScale } from '../fx/motion';
 import { useTheme } from '../theme';
-import { minTouch, radius, space } from '../tokens';
+import { type Hue, minTouch, radius, space } from '../tokens';
 import { Text } from './Text';
 
-export type ChipProps = Omit<PressableProps, 'children'> & { label: string; selected?: boolean };
+export type ChipProps = Omit<PressableProps, 'children' | 'style'> & { label: string; selected?: boolean; hue?: Hue };
 
 /** Small pill (e.g. the difficulty chip). Visual height is compact; hitSlop keeps the target ≥ 44 pt. */
-export function Chip({ label, selected = false, ...rest }: ChipProps) {
-  const { colors } = useTheme();
+export function Chip({ label, selected = false, hue, ...rest }: ChipProps) {
+  const { colors, highContrast } = useTheme();
+  const bg = selected ? colors.primary : hue ? hue.tint : colors.surfaceRaised;
+  const fg = selected ? colors.onPrimary : hue ? hue.deep : colors.ink;
   return (
-    <Pressable
+    <PressScale
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected }}
@@ -18,26 +21,26 @@ export function Chip({ label, selected = false, ...rest }: ChipProps) {
       style={[
         styles.chip,
         {
-          backgroundColor: selected ? colors.primary : colors.surface,
-          borderColor: selected ? colors.primary : colors.border,
+          backgroundColor: bg,
+          borderColor: selected ? colors.primary : highContrast ? colors.border : 'transparent',
         },
       ]}
       {...rest}
     >
-      <Text variant="caption" color={selected ? 'onPrimary' : 'ink'}>
+      <Text variant="caption" color={fg}>
         {label}
       </Text>
-    </Pressable>
+    </PressScale>
   );
 }
 
 const styles = StyleSheet.create({
   chip: {
-    minHeight: minTouch - 12,
+    minHeight: minTouch - 10,
     minWidth: minTouch,
-    paddingHorizontal: space.md,
+    paddingHorizontal: space.md + 2,
     borderRadius: radius.pill,
-    borderWidth: 1,
+    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },

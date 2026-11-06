@@ -162,17 +162,20 @@ Same pattern as all our apps, implemented fresh here (no shared package):
 
 ---
 
-## 10. Design system: "Ink & Parchment" (unique to this app)
+## 10. Design system: "Inky Pop" (unique to this app)
 
 | Token | Value |
 |---|---|
-| Mood | A quiet reading room: parchment, ink, a brass desk lamp |
-| Light | bg `#F4EEDF` · surface `#FFFBF2` · ink `#1E2A44` (navy ink) · primary `#8C2F39` (oxblood) · accent `#D4A017` (brass) · conflict `#C0392B` at 15% fill · given letters `#5B6B8C` |
-| Dark | bg `#12161F` · surface `#1B2130` · ink `#ECE6D6` · primary `#E07A82` · accent `#E9C35A` |
-| Type | Quotes and author: **Libre Baskerville**; cipher cells and keyboard: **IBM Plex Mono** 600 (equal-width letters keep columns aligned); UI: **IBM Plex Sans** |
-| Cells | Guess letter 24 pt (scales with the text slider), cipher letter 12 pt above; selected cipher letter = brass underline on every occurrence |
-| Keyboard | 3 rows QWERTY + Delete, key height 52 pt; used letters dimmed (not disabled) |
-| Motion | Solve: letters flip from cipher to plain left to right (600 ms); Reduce Motion: fade |
+| Mood | Bright, playful and soft-3D: a colourful puzzle box with a friendly mascot |
+| Mascot | **Inky**, a glossy blue ink drop with amber eyes and a brass monocle, drawn in SVG in a soft 3D animated-film style. Poses: idle, wave, think, cheer. Bobs, blinks, waves and jumps. Tips from Inky are general solving advice, never spoilers |
+| Light | bg `#FFF8EC` (cream) · surface `#FFFFFF` · raised `#F3EEFF` · ink `#1E1B3A` · primary `#6D3FE0` (violet) · accent `#FFC93C` (sunny) · conflict `#C81D3A` at ~14% fill · given letters `#3F4C80` |
+| Dark | bg `#14112B` · surface `#1F1B3D` · ink `#F4F1FF` · primary `#A98BFF` · accent `#FFC93C` |
+| Hues | Six colour families cycle across words, weekdays and charts: coral `#FF6B6B`, sunny `#FFC93C`, teal `#20C3AF`, sky `#4DA3FF`, violet `#6D3FE0`, pink `#FF7EB6`. Each has a deep shade (text, 3D edges) and a pale tint; contrast is unit-tested in every palette |
+| Gradients | night (violet), sunset (coral → yellow), lagoon (teal), sunshine, sky, candy; used for hero headers, tiles and the solved screen |
+| Type | UI: **Nunito** 600–900; quotes: **Libre Baskerville**; cipher cells and keyboard: **IBM Plex Mono** 600 (equal-width letters keep columns aligned) |
+| Cells | Each word is its own hue: empty tiles are tinted, filled tiles solid with a 3D bottom edge; the selected tile is sunny yellow with a violet outline and lifts; other tiles with the same cipher letter glow pale yellow. Guess letter 24 pt (scales with the text slider), cipher letter 12 pt above |
+| Keyboard | 3 rows QWERTY + Delete, key height 52 pt; each row has its own coloured edge (sky, teal, pink); used letters dimmed (not disabled); keys squish on press |
+| Motion | Screens stagger in; buttons squish and shine; floating cipher letters in headers; solve: letters flip left to right (600 ms), then confetti, turning rays and a stamped seal. Reduce Motion: every loop stops and the solve is a fade |
 | Sound | Typewriter key tick (soft), paper rustle on solve; off by default except haptics |
 | Icon | A brass key over a parchment letter "Q" with an oxblood cipher mark; no text |
 

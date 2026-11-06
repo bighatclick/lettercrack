@@ -10,4 +10,4 @@ Five screenshots, same order on iPhone 6.9", iPad 13" and Play phone. Only publi
 | 4 | Big, clear letters, easy on the eyes | Puzzle at text size 4 in dark mode | Same quote as 1 |
 | 5 | Your streak and progress, safely backed up | Stats screen | Streak 12, longest 30, three favorite authors |
 
-Capture: run an E2E build on a simulator, use `e2e-solve` to set up solved states, and take shots with Maestro `takeScreenshot` or the simulator. Frame them in brand colours (parchment #F4EEDF, ink #1E2A44, oxblood #8C2F39).
+Capture: run an E2E build on a simulator, use `e2e-solve` to set up solved states, and take shots with Maestro `takeScreenshot` or the simulator. Frame them in brand colours (cream #FFF8EC, violet #6D3FE0, sunny #FFC93C, ink #1E1B3A).

@@ -17,10 +17,14 @@ export type AuthorCardProps = {
 /** Shown after every solve (CG-R06): who said it, when they lived, and where the line comes from. */
 export function AuthorCard({ author, dates, bio, work, year }: AuthorCardProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { hues } = useTheme();
   return (
     <Card style={styles.card} accessible accessibilityLabel={`${t('solved.about')}. ${author}, ${dates}. ${bio ?? ''} ${t('solved.source', { work, year })}`}>
-      <View style={[styles.rule, { backgroundColor: colors.accent }]} />
+      <View style={styles.rules}>
+        {hues.slice(0, 4).map((h) => (
+          <View key={h.name} style={[styles.rule, { backgroundColor: h.solid }]} />
+        ))}
+      </View>
       <Text variant="caption" color="inkMuted">
         {t('solved.about')}
       </Text>
@@ -38,6 +42,7 @@ export function AuthorCard({ author, dates, bio, work, year }: AuthorCardProps) 
 
 const styles = StyleSheet.create({
   card: { gap: space.xs },
-  rule: { width: 32, height: 3, borderRadius: 2, marginBottom: space.sm },
+  rules: { flexDirection: 'row', gap: 4, marginBottom: space.sm },
+  rule: { width: 18, height: 5, borderRadius: 3 },
   source: { fontStyle: 'italic', marginTop: space.sm },
 });

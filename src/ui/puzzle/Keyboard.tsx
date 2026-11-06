@@ -1,11 +1,15 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { Icon } from '../fx/Icon';
+import { PressScale } from '../fx/motion';
 import { useTheme } from '../theme';
 import { fontFamily, keyHeight, radius, space } from '../tokens';
 
 const ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+/** Each row has its own coloured 3D edge: sky, teal, pink. */
+const ROW_EDGES = ['#7FB8FF', '#3FDCC6', '#FF9EC4'];
 
 export type KeyboardProps = {
   onLetter: (letter: string) => void;
@@ -17,47 +21,57 @@ export type KeyboardProps = {
 
 function KeyboardImpl({ onLetter, onDelete, used, disabled }: KeyboardProps) {
   const { t } = useTranslation();
-  const { colors, textScale } = useTheme();
+  const { colors, isDark, highContrast } = useTheme();
+  const { textScale } = useTheme();
   // Keys keep a fixed 52 pt height; the label grows a little with the text-size setting.
   const fontSize = 20 * Math.min(textScale, 1.3);
-
-  const key = (label: string, onPress: () => void, opts: { a11y: string; hint?: string; dim?: boolean; wide?: boolean; testID: string }) => (
-    <Pressable
-      key={opts.testID}
-      testID={opts.testID}
-      onPress={onPress}
-      disabled={disabled}
-      accessibilityRole="keyboardkey"
-      accessibilityLabel={opts.a11y}
-      accessibilityHint={opts.hint}
-      style={({ pressed }) => [
-        styles.key,
-        opts.wide ? styles.wide : null,
-        {
-          backgroundColor: pressed ? colors.border : colors.surfaceRaised,
-          opacity: disabled ? 0.4 : opts.dim ? 0.5 : 1,
-        },
-      ]}
-    >
-      <Text allowFontScaling={false} style={{ fontFamily: fontFamily.mono, fontSize, color: colors.ink }}>
-        {label}
-      </Text>
-    </Pressable>
-  );
+  const keyBg = isDark ? colors.surfaceRaised : colors.surface;
 
   return (
     <View style={styles.keyboard} testID="keyboard">
       {ROWS.map((row, r) => (
         <View key={row} style={styles.row}>
-          {row.split('').map((l) =>
-            key(l, () => onLetter(l), {
-              a11y: t('puzzle.keyLetter', { letter: l }),
-              hint: used.has(l) ? t('puzzle.keyUsed') : undefined,
-              dim: used.has(l),
-              testID: `key-${l}`,
-            }),
-          )}
-          {r === 2 ? key('⌫', onDelete, { a11y: t('puzzle.delete'), wide: true, testID: 'key-delete' }) : null}
+          {row.split('').map((l) => {
+            const dim = used.has(l);
+            return (
+              <PressScale
+                key={l}
+                testID={`key-${l}`}
+                onPress={() => onLetter(l)}
+                disabled={disabled}
+                accessibilityRole="keyboardkey"
+                accessibilityLabel={t('puzzle.keyLetter', { letter: l })}
+                accessibilityHint={dim ? t('puzzle.keyUsed') : undefined}
+                style={[
+                  styles.key,
+                  {
+                    backgroundColor: dim ? colors.surfaceRaised : keyBg,
+                    borderBottomColor: dim ? colors.border : (ROW_EDGES[r] as string),
+                    borderColor: highContrast ? colors.border : 'transparent',
+                    borderWidth: highContrast ? 1.5 : 0,
+                    borderBottomWidth: 4,
+                    opacity: disabled ? 0.4 : dim ? 0.55 : 1,
+                  },
+                ]}
+              >
+                <Text allowFontScaling={false} style={{ fontFamily: fontFamily.mono, fontSize, color: colors.ink }}>
+                  {l}
+                </Text>
+              </PressScale>
+            );
+          })}
+          {r === 2 ? (
+            <PressScale
+              testID="key-delete"
+              onPress={onDelete}
+              disabled={disabled}
+              accessibilityRole="keyboardkey"
+              accessibilityLabel={t('puzzle.delete')}
+              style={[styles.key, styles.wide, { backgroundColor: colors.primary, borderBottomColor: '#3E1E9E', borderBottomWidth: 4 }]}
+            >
+              <Icon name="delete" color={colors.onPrimary} size={24} />
+            </PressScale>
+          ) : null}
         </View>
       ))}
     </View>
@@ -73,9 +87,14 @@ const styles = StyleSheet.create({
     flex: 1,
     maxWidth: 56,
     height: keyHeight,
-    borderRadius: radius.sm,
+    borderRadius: radius.sm + 2,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#3B2A80',
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   wide: { flex: 1.6, maxWidth: 90 },
 });

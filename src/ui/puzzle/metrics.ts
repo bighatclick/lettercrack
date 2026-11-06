@@ -25,9 +25,10 @@ export function useCellMetrics(): CellMetrics {
     const scale = textScale * fontScale;
     const guessSize = typeScale.cellGuess.fontSize * scale;
     const cipherSize = typeScale.cellCipher.fontSize * scale;
-    const cellWidth = Math.ceil(guessSize * MONO_ADVANCE) + 6;
-    // cipher line + guess line + underline; never below the 44 pt touch height.
-    const cellHeight = Math.max(44, Math.ceil(cipherSize * 1.4 + guessSize * 1.3 + 6));
+    // Letter width plus room for the tile's padding and the gap between tiles.
+    const cellWidth = Math.ceil(guessSize * MONO_ADVANCE) + 9;
+    // cipher line + tile (guess line + padding + 3D edge) + bottom gap; never below the 44 pt touch height.
+    const cellHeight = Math.max(44, Math.ceil(cipherSize * 1.35 + guessSize * 1.25 + 6 + 4 + 6));
     return { guessSize, cipherSize, cellWidth, cellHeight };
   }, [textScale, fontScale]);
 }
