@@ -50,7 +50,7 @@ writeFileSync(localProps, [...kept, `sdk.dir=${esc(sdk)}`, `cmake.dir=${esc(cmak
 // One ABI for local test builds keeps the native compile short (emulators on x86_64 laptops).
 const abi = process.env.LC_ABI ?? 'x86_64';
 const task = variant === 'release' ? 'assembleRelease' : 'assembleDebug';
-const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
+const gradlew = `"${join(root, 'android', process.platform === 'win32' ? 'gradlew.bat' : 'gradlew')}"`;
 run(`${gradlew} ${task} -PreactNativeArchitectures=${abi} --no-daemon`, join(root, 'android'));
 
 const apk = join(root, 'android', 'app', 'build', 'outputs', 'apk', variant, `app-${variant}.apk`);
