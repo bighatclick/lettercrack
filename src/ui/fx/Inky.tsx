@@ -218,7 +218,7 @@ function InkyImpl({ pose = 'idle', size = 140, label }: { pose?: InkyPose; size?
             <Path d="M150 92 Q172 128 160 172" fill="none" stroke="#C9B8FF" strokeWidth={4} strokeLinecap="round" opacity={0.55} />
             <Ellipse cx="100" cy="168" rx="50" ry="36" fill={url('belly')} />
             <Ellipse cx="68" cy="80" rx="14" ry="28" rotation={28} origin="68, 80" fill={url('shine')} opacity={0.75} />
-            <Circle cx="60" cy="66" r="4.5" fill="#FFFFFF" />
+            <Circle cx="72" cy="74" r="4.5" fill="#FFFFFF" />
             <Ellipse cx="98" cy="30" rx="3" ry="7" rotation={20} origin="98, 30" fill="#FFFFFF" opacity={0.6} />
             {/* Cheeks */}
             <Ellipse cx="56" cy="152" rx="16" ry="10" fill={url('blush')} />

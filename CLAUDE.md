@@ -17,6 +17,7 @@ npm run quotes:test              # pipeline unit tests (node --test)
 eas build --profile e2e -p android && maestro test e2e/
 eas build --local -p ios
 npm run android:local            # Android: ALWAYS built locally on this laptop, never EAS cloud
+npm run icon:build               # app icon, adaptive icon, splash, favicon from tools/icon/make_icon.py (needs Chrome or Edge)
 ```
 Push to GitHub at the end of every session.
 

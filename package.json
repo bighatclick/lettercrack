@@ -65,7 +65,8 @@
     "quotes:filter": "node tools/quotes/filter.mjs",
     "quotes:test": "node --test \"tools/quotes/__tests__/*.test.mjs\"",
     "sounds:make": "node tools/sounds/make.mjs",
-    "android:local": "node tools/android/build-local.mjs"
+    "android:local": "node tools/android/build-local.mjs",
+    "icon:build": "python tools/icon/make_icon.py"
   },
   "private": true
 }

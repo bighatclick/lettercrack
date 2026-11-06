@@ -49,3 +49,4 @@ tools/quotes/review.new.csv
 
 # local Expo module native build output
 modules/*/android/build/
+tools/icon/out/
