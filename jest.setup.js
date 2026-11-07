@@ -14,6 +14,7 @@ jest.mock('react-native-reanimated', () => {
     return b;
   };
   const value = (v) => (typeof v === 'object' && v !== null && 'toValue' in v ? v.toValue : v);
+  let reducedMotion = false;
   const anim = (toValue) => toValue;
 
   const Animated = {
@@ -53,5 +54,9 @@ jest.mock('react-native-reanimated', () => {
     FadeIn: builder(),
     ZoomIn: builder(),
     ReduceMotion: { System: 'system', Always: 'always', Never: 'never' },
+    useReducedMotion: () => reducedMotion,
+    __setReducedMotion: (v) => {
+      reducedMotion = v;
+    },
   };
 });
