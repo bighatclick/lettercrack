@@ -50,14 +50,15 @@ export function dailyRef(date: LocalDate, content: Content, today: LocalDate): P
 
 /** Resumes the most recent unfinished level, or picks the next unseen quote (rule 6). */
 export function nextLevelRef(root: Root, content: Content, difficulty: Difficulty): PuzzleRef | null {
+  const reported = new Set(root.progress.reportedQuoteIds);
   const open = Object.entries(root.inProgress)
-    .filter(([, s]) => s.mode === 'level' && content.quote(s.quoteId))
+    .filter(([, s]) => s.mode === 'level' && content.quote(s.quoteId) && !reported.has(s.quoteId))
     .sort((a, b) => b[1].updatedAt - a[1].updatedAt)[0];
   if (open) return { key: open[0], mode: 'level', quoteId: open[1].quoteId, dailyDate: null };
   const id = pickNextQuote({
     pool: content.levelPool,
     seen: root.progress.seenQuoteIds,
-    exclude: new Set(root.progress.reportedQuoteIds),
+    exclude: reported,
     difficulty,
   });
   return id === null ? null : { key: levelKey(id), mode: 'level', quoteId: id, dailyDate: null };
@@ -90,9 +91,13 @@ export function openPuzzle(root: Root, ref: PuzzleRef, content: Content, difficu
   return { root: { ...root, inProgress, progress: { ...root.progress, seenQuoteIds: seen } }, state, difficulty };
 }
 
-/** Autosave after every key (F4). */
+/**
+ * Autosave after every key (F4). A reported level is never saved again: the puzzle screen stays
+ * mounted briefly after "Report and hide" and its timer tick would otherwise bring the save back.
+ */
 export function saveProgress(root: Root, ref: PuzzleRef, difficulty: Difficulty, state: PuzzleState, now: number): Root {
   if (state.solved) return root;
+  if (ref.mode === 'level' && root.progress.reportedQuoteIds.includes(ref.quoteId)) return root;
   const save: PuzzleSave = {
     ...snapshot(state),
     quoteId: ref.quoteId,

@@ -8,7 +8,7 @@ Run on 7 Nov 2026 against the branch with `origin/main` merged in (latest code, 
 |---|---|---|
 | J1 Install, onboarding, Home | Pass | 1.1–1.8 all as expected. |
 | J2 Daily puzzle | Pass | 2.1–2.18 all as expected, share sheet shows the image card. |
-| J3 Levels | **Fail at 3.14** | Report quote: the reported quote comes back as the next level. All other steps pass. |
+| J3 Levels | Pass after fix | 3.14 failed (D1), now fixed and rechecked on the emulator. All other steps pass. |
 | J4 Hints | Pass | 4.1–4.5 all as expected; refill at the next day works. |
 | J5 Streak and dates | Pass, one crash to triage | Streak 2, freeze, reset, rewound clock all correct. One crash on relaunch after the 30-day jump (see below). |
 | J6 Archive | Pass | Grid, started ring, archive solve with no streak change, "Back to archive". |
@@ -21,7 +21,7 @@ Run on 7 Nov 2026 against the branch with `origin/main` merged in (latest code, 
 
 | # | Severity | What happens | Steps | Likely cause |
 |---|---|---|---|---|
-| D1 | High | A reported quote reappears in the level path. Reproduced twice. | Level 6 → ⋯ → "Report and hide" (Oscar Wilde, #90019). The app moves to another quote. Solve it, tap Next: Level 7 is #90019 again. Reporting it again on Level 7 and reopening still shows #90019. | `reportQuote` deletes the level save, but the puzzle screen is still mounted and its 1-second elapsed-time tick calls `saveProgress`, which writes the save back. `nextLevelRef` resumes any open level save without checking `reportedQuoteIds`. |
+| D1 | High, **fixed** | A reported quote reappeared in the level path. Reproduced twice. Fixed in `src/game/session.ts` with two unit tests; rechecked on the emulator, including after a force-stop. | Level 6 → ⋯ → "Report and hide" (Oscar Wilde, #90019). The app moves to another quote. Solve it, tap Next: Level 7 is #90019 again. Reporting it again on Level 7 and reopening still shows #90019. | `reportQuote` deletes the level save, but the puzzle screen is still mounted and its 1-second elapsed-time tick calls `saveProgress`, which writes the save back. `nextLevelRef` resumes any open level save without checking `reportedQuoteIds`. |
 | D2 | Medium | Home's Archive and Stats tiles are sometimes blank (empty space below the Levels card). | Seen twice with system animations off (Reduce Motion). Not seen with animations on. Intermittent. | The tiles sit inside `Enter`, a Reanimated `entering` animation; with reduced motion the entering animation can leave the view at its start state. |
 | D3 | Medium, unconfirmed | Every button on Home stopped responding (gear, Continue level, tiles), even after a force-stop and relaunch. | Happened after changing settings with system animations off. Worked again once animations were turned back on. | Possibly the same root cause as D2. Needs a repro outside the test driver. |
 | D4 | To triage | Crash on relaunch: `IllegalArgumentException: App react context shouldn't be created before`. | Clock jumped forward 30 days, app relaunched through the dev-client deep link while the previous instance was still alive. | Probably the dev-client launcher, not app code. Recheck on a release build. |
@@ -33,7 +33,7 @@ Run on 7 Nov 2026 against the branch with `origin/main` merged in (latest code, 
 
 ## Device state at pause
 
-Saved at 10:02 on the emulator clock, **Saturday 16 Jan 2027** (IST), automatic time off. In-app settings left as: auto-fill **off**, show solve time **on**, daily reminder **on**, default difficulty Hard. Progress: Level 8 open, 1-day streak (best 3), 13 quotes solved, quote #90019 reported.
+Saved at 10:02 on the emulator clock, **Saturday 16 Jan 2027** (IST), automatic time off. In-app settings left as: auto-fill **off**, show solve time **on**, daily reminder **on**, default difficulty Hard. Progress: Level 8 open, 1-day streak (best 3), 13 quotes solved, quotes #90019 and #90024 reported. The snapshot was taken before the D1 fix was checked, so it still has only #90019 reported.
 
 Saved copies:
 

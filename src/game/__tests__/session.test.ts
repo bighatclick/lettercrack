@@ -3,6 +3,8 @@ import { content as seedContent, createContent, type QuoteDb } from '@/content/q
 import { defaultRoot, type Root } from '@/data/schema';
 import { isLetterCell, isLockedCell, puzzleReducer, type PuzzleState } from '@/engine/puzzle';
 
+import { reportQuote } from '../report';
+
 import {
   completePuzzle,
   consumeHint,
@@ -82,6 +84,32 @@ describe('session glue', () => {
     // And the next level is the same unfinished puzzle.
     expect(nextLevelRef(persisted, content, 'easy')?.key).toBe(ref.key);
     s = resumed.state;
+  });
+
+  it('never brings a reported quote back, even if the open puzzle autosaves after the report', () => {
+    const ref = nextLevelRef(root, content, 'medium')!;
+    const opened = openPuzzle(root, ref, content);
+    const s = puzzleReducer(opened.state, { type: 'input', letter: 'Q', keyId: ++k });
+    let r = saveProgress(opened.root, ref, opened.difficulty, s, NOW + 1);
+
+    r = reportQuote(r, ref.quoteId);
+    expect(r.inProgress[ref.key]).toBeUndefined();
+    // The puzzle screen is still mounted for a moment: its elapsed-time tick autosaves again.
+    const tick = puzzleReducer(s, { type: 'elapsed', ms: 1000 });
+    r = saveProgress(r, ref, opened.difficulty, tick, NOW + 2);
+    expect(r.inProgress[ref.key]).toBeUndefined();
+
+    const next = nextLevelRef(r, content, 'medium');
+    expect(next?.quoteId).not.toBe(ref.quoteId);
+  });
+
+  it('skips a reported quote save left by older builds', () => {
+    const ref = nextLevelRef(root, content, 'medium')!;
+    const opened = openPuzzle(root, ref, content);
+    const s = puzzleReducer(opened.state, { type: 'input', letter: 'Q', keyId: ++k });
+    const saved = saveProgress(opened.root, ref, opened.difficulty, s, NOW + 1);
+    const stale: Root = { ...saved, progress: { ...saved.progress, reportedQuoteIds: [ref.quoteId] } };
+    expect(nextLevelRef(stale, content, 'medium')?.quoteId).not.toBe(ref.quoteId);
   });
 
   it('completes a level: records the solve, advances the level, clears the save, counts for ads', () => {
