@@ -18,7 +18,7 @@ import { Button, Chip, Icon, type IconName, PressScale, ProgressRing, radius, Sc
 import { formatDuration } from '@/ui/format';
 import { DifficultySheet } from '@/ui/puzzle/DifficultySheet';
 import { PuzzleView } from '@/ui/puzzle/PuzzleView';
-import { motion } from '@/ui/tokens';
+import { motion, typeScale } from '@/ui/tokens';
 
 export default function PuzzleScreen() {
   const { t } = useTranslation();
@@ -138,7 +138,8 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
         <ProgressRing progress={progress} size={46} stroke={5} color={hue(0).solid} track={colors.border} />
         <View style={StyleSheet.absoluteFill}>
           <View style={styles.ringText}>
-            <Text variant="overline" color="ink" allowFontScaling={false}>
+            {/* Fixed size: the ring does not grow with text size, and its spoken label carries the value. */}
+            <Text variant="overline" color="ink" allowFontScaling={false} style={styles.ringLabel}>
               {Math.round(progress * 100)}%
             </Text>
           </View>
@@ -208,5 +209,6 @@ const styles = StyleSheet.create({
   subRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   ring: { width: 46, height: 46 },
   ringText: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  ringLabel: { fontSize: typeScale.overline.fontSize, lineHeight: typeScale.overline.lineHeight },
   circle: { width: 44, height: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
 });

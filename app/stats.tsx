@@ -9,7 +9,7 @@ import { useAppStore } from '@/data/store';
 import { addDays } from '@/engine/daily';
 import { computeStats } from '@/game/stats';
 import { today } from '@/game/today';
-import { Card, Enter, Float, Gradient, Hero, Icon, Inky, ProgressRing, Pulse, radius, Screen, space, Text, useTheme } from '@/ui';
+import { Card, Enter, Float, Gradient, Hero, Icon, Inky, ProgressRing, Pulse, radius, Screen, space, Text, useNoEntrance, useTheme } from '@/ui';
 import { shade } from '@/ui/color';
 import { formatDuration } from '@/ui/format';
 import { type GradientName, gradients, motion } from '@/ui/tokens';
@@ -20,6 +20,7 @@ const WEEKS = 6;
 export default function StatsScreen() {
   const { t, i18n } = useTranslation();
   const { hue } = useTheme();
+  const still = useNoEntrance();
   const root = useAppStore((s) => s.root!);
   const date = today();
   const s = useMemo(() => computeStats(root, content, date), [root, date]);
@@ -115,7 +116,7 @@ export default function StatsScreen() {
                   {n}
                 </Text>
                 <Animated.View
-                  entering={FadeInUp.delay(300 + i * motion.staggerMs * 2).springify()}
+                  entering={still ? undefined : FadeInUp.delay(300 + i * motion.staggerMs * 2).springify()}
                   style={[
                     styles.bar,
                     {
@@ -221,6 +222,7 @@ const PODIUM = [
 function Podium({ authors }: { authors: { author: string; count: number }[] }) {
   const { t } = useTranslation();
   const { hue } = useTheme();
+  const still = useNoEntrance();
   return (
     <View style={styles.podium}>
       {PODIUM.map(({ place, height, hue: hi }, col) => {
@@ -246,7 +248,7 @@ function Podium({ authors }: { authors: { author: string; count: number }[] }) {
               {t('stats.authorCount', { count: a.count })}
             </Text>
             <Animated.View
-              entering={FadeInUp.delay(400 + (place === 0 ? 3 : col) * 150).springify()}
+              entering={still ? undefined : FadeInUp.delay(400 + (place === 0 ? 3 : col) * 150).springify()}
               style={[styles.step, { height, backgroundColor: h.solid, borderBottomColor: shade(h.solid) }]}
             >
               <Text variant="title" color={h.on}>

@@ -1,13 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { type ReactNode, useState } from 'react';
+import { PixelRatio, StyleSheet, type TextLayoutEvent, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FloatingLetters } from '../fx/Decor';
 import { Gradient } from '../fx/Gradient';
 import { Icon, type IconName } from '../fx/Icon';
 import { PressScale } from '../fx/motion';
-import { type GradientName, gradients, minTouch, radius, space } from '../tokens';
+import { fitTitleSize, MIN_TITLE_SHRINK, splitsAWord, TITLE_SHRINK_STEP } from '../fitTitle';
+import { useTheme } from '../theme';
+import { type GradientName, gradients, minTouch, radius, space, typeScale } from '../tokens';
 import { Text } from './Text';
 
 const LETTER_COLORS: Record<GradientName, readonly string[]> = {
@@ -47,6 +49,22 @@ export function Hero({
 }) {
   const insets = useSafeAreaInsets();
   const g = gradients[gradient];
+  const { textScale } = useTheme();
+  const [titleWidth, setTitleWidth] = useState(0);
+  // Scaled like any text (OS size × in-app size), but never so large that one word splits:
+  // first an estimate from the longest word, then, if a laid-out line still breaks inside a word,
+  // a few small shrink steps. The correction resets whenever the title, width or size changes.
+  const wanted = typeScale.hero.fontSize * textScale * PixelRatio.getFontScale();
+  const fitKey = `${title}|${titleWidth}|${wanted}`;
+  const [fix, setFix] = useState({ key: '', shrink: 1 });
+  const shrink = fix.key === fitKey ? fix.shrink : 1;
+  const titleSize = fitTitleSize(title ?? '', titleWidth, wanted) * shrink;
+  const titleStyle = { fontSize: titleSize, lineHeight: titleSize * (typeScale.hero.lineHeight / typeScale.hero.fontSize) };
+  const onTitleLayout = (e: TextLayoutEvent) => {
+    if (titleWidth > 0 && shrink > MIN_TITLE_SHRINK && splitsAWord(e.nativeEvent.lines.map((l) => l.text))) {
+      setFix({ key: fitKey, shrink: shrink * TITLE_SHRINK_STEP });
+    }
+  };
   return (
     <View style={[styles.hero, { paddingTop: insets.top + space.sm }]} testID={testID}>
       <StatusBar style={g.text === '#FFFFFF' ? 'light' : 'dark'} />
@@ -70,14 +88,14 @@ export function Hero({
           </View>
         ) : null}
         <View style={styles.titleRow}>
-          <View style={styles.titles}>
+          <View style={styles.titles} onLayout={(e) => setTitleWidth(e.nativeEvent.layout.width)}>
             {overline ? (
               <Text variant="overline" color={g.textMuted} style={styles.overline}>
                 {overline.toUpperCase()}
               </Text>
             ) : null}
             {title ? (
-              <Text variant="hero" color={g.text} accessibilityRole="header">
+              <Text variant="hero" color={g.text} accessibilityRole="header" allowFontScaling={false} style={titleStyle} onTextLayout={onTitleLayout}>
                 {title}
               </Text>
             ) : null}

@@ -5,6 +5,7 @@ import Animated, {
   Easing,
   FadeInDown,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
@@ -18,14 +19,30 @@ import { useTheme } from '../theme';
 import { motion } from '../tokens';
 
 /**
- * Slides and fades children in, `index` steps after the screen appears.
- * Reanimated skips layout animations when the OS Reduce Motion setting is on.
+ * True when entrance animations must not run. Reanimated's hook knows the OS setting synchronously
+ * at startup (so the first render is right); the theme's flag follows later changes.
  */
+export function useNoEntrance(): boolean {
+  const atStartup = useReducedMotion();
+  const { reduceMotion } = useTheme();
+  return atStartup || reduceMotion;
+}
+
+/**
+ * The entering animation for `Enter`, or none under Reduce Motion. Relying on Reanimated to skip
+ * a delayed entrance under Reduce Motion left views at their start state (invisible): Home's
+ * Archive and Stats tiles never appeared. So with Reduce Motion there is no entering animation.
+ */
+export function entranceFor(kind: 'up' | 'pop', index: number, reduced: boolean) {
+  if (reduced) return undefined;
+  return kind === 'pop'
+    ? ZoomIn.delay(index * motion.staggerMs).springify().damping(12)
+    : FadeInDown.delay(index * motion.staggerMs).springify().damping(16);
+}
+
+/** Slides and fades children in, `index` steps after the screen appears. Still with Reduce Motion. */
 export function Enter({ index = 0, children, style, kind = 'up' }: { index?: number; children: ReactNode; style?: StyleProp<ViewStyle>; kind?: 'up' | 'pop' }) {
-  const entering =
-    kind === 'pop'
-      ? ZoomIn.delay(index * motion.staggerMs).springify().damping(12)
-      : FadeInDown.delay(index * motion.staggerMs).springify().damping(16);
+  const entering = entranceFor(kind, index, useNoEntrance());
   return (
     <Animated.View entering={entering} style={style}>
       {children}

@@ -12,4 +12,4 @@ export { Confetti, FloatingLetters, ProgressRing, Shine } from './fx/Decor';
 export { Gradient } from './fx/Gradient';
 export { Icon, type IconName } from './fx/Icon';
 export { Inky, type InkyPose } from './fx/Inky';
-export { Enter, Float, PressScale, Pulse, useLoop, Wiggle } from './fx/motion';
+export { Enter, Float, PressScale, Pulse, useLoop, useNoEntrance, Wiggle } from './fx/motion';
