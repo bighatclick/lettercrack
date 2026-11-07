@@ -6,10 +6,12 @@
  *   import { v1_to_v2 } from './v1_to_v2';
  *   export const migrations: MigrationRegistry = { 1: v1_to_v2 };
  */
+import { v1_to_v2 } from './v1_to_v2';
+
 export type Migration = (old: Record<string, unknown>) => Record<string, unknown>;
 export type MigrationRegistry = Record<number, Migration>;
 
-export const migrations: MigrationRegistry = {};
+export const migrations: MigrationRegistry = { 1: v1_to_v2 };
 
 export class MigrationError extends Error {
   constructor(

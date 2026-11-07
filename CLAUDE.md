@@ -10,9 +10,14 @@ npx expo start
 npx expo run:ios                 # native build (MMKV, ads, IAP need it)
 npm test && npm run typecheck && npm run lint
 maestro test e2e/
-npm run quotes:build             # tools/quotes → assets/quotes.vN.json
-npm run quotes:validate          # provenance, death year, duplicates, banned words
+npm run quotes:fetch && npm run quotes:extract && npm run quotes:filter   # → tools/quotes/review.csv
+npm run quotes:build             # reviewed CSV → assets/quotes.v1.json (IDs append-only via ids.json)
+npm run quotes:validate          # provenance, death year, duplicates, banned words, IDs never removed
+npm run quotes:test              # pipeline unit tests (node --test)
+eas build --profile e2e -p android && maestro test e2e/
 eas build --local -p ios
+npm run android:local            # Android: ALWAYS built locally on this laptop, never EAS cloud
+npm run icon:build               # app icon, adaptive icon, splash, favicon from tools/icon/make_icon.py (needs Chrome or Edge)
 ```
 Push to GitHub at the end of every session.
 
@@ -22,8 +27,9 @@ Push to GitHub at the end of every session.
 - `src/data/`: MMKV repo, `schema.ts`, `migrations/` + fixtures.
 - `src/ads/policy.ts`: all ad timing logic (unit-tested). `src/iap/`: products and restore.
 - `config/features.json`: the **ads** and **payments** switches. **Both are off for the first release.** Every ad or payment entry point checks `src/config/features.ts` first; with a switch off, no SDK call, prompt (UMP/ATT) or shop/restore UI appears. Turning one on needs a new native build, and the guard test in `src/config/__tests__/features.test.ts` must be updated at the same time. **Note:** while both are off, players get 5 free hints a day. Turning either switch on drops that to the spec's 2 a day automatically, so decide whether that's wanted and tell players.
-- `src/ui/`: the **Ink & Parchment** design system. Only this app uses it.
-- `modules/icloud-kv/`: local Expo module (NSUbiquitousKeyValueStore).
+- `src/ui/`: the **Inky Pop** design system (multicolour hues, gradients, Inky the mascot in `src/ui/fx/Inky.tsx`, motion helpers in `src/ui/fx/`). Only this app uses it. Animations use Reanimated; tests use the stand-in mock in `jest.setup.js`.
+- `modules/icloud-kv/`: local Expo module (NSUbiquitousKeyValueStore); merge rules in `src/sync/merge.ts`.
+- `modules/hardware-keys/`: local Expo module for hardware keyboard input on the puzzle screen.
 - `tools/quotes/`: offline content pipeline (extract → filter → human review CSV → build). Never runs in the app.
 - `assets/quotes.vN.json`: the shipped quote DB. **Quote IDs are permanent; never renumber or reuse an ID.**
 

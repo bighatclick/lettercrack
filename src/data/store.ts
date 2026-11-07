@@ -40,6 +40,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ root: next });
   },
   setSetting(key, value) {
-    get().update((r) => ({ ...r, settings: { ...r.settings, [key]: value } }));
+    get().update((r) => ({
+      ...r,
+      settings: { ...r.settings, [key]: value },
+      meta: { ...r.meta, settingsUpdatedAt: Date.now() },
+    }));
   },
 }));

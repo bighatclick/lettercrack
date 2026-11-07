@@ -44,3 +44,9 @@ example
 
 # quote pipeline downloads (never committed)
 tools/quotes/raw/
+tools/quotes/out/
+tools/quotes/review.new.csv
+
+# local Expo module native build output
+modules/*/android/build/
+tools/icon/out/

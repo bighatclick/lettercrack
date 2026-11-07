@@ -1,0 +1,289 @@
+{
+  "_comment": "Hand-maintained first-publication years, by author (authors.json display name) then work title. A key matches a Bartlett work that equals it or starts with it followed by '.', ',', ';' or ':' (longest key wins). '*' is the author default when every listed work was published by that year. Translations: year of the original work; Bartlett 1891 is the pre-1929 translation source. Leave a work out rather than guess: filter.mjs then notes 'needs year'.",
+  "William Shakespeare": {
+    "Hamlet": 1603, "Macbeth": 1623, "The Merchant of Venice": 1600, "As You Like It": 1623, "Julius Caesar": 1623,
+    "Othello": 1622, "Romeo and Juliet": 1597, "King Henry IV": 1598, "King Henry IV. Part I": 1598, "King Henry IV. Part II": 1600,
+    "King Lear": 1608, "Much Ado about Nothing": 1600, "Love's Labour's Lost": 1598, "Twelfth Night": 1623, "King Henry VIII": 1623,
+    "Measure for Measure": 1623, "King John": 1623, "The Merry Wives of Windsor": 1602, "King Henry V": 1600, "Antony and Cleopatra": 1623,
+    "The Tempest": 1623, "A Midsummer Night's Dream": 1600, "All's Well that Ends Well": 1623, "King Richard II": 1597, "King Richard III": 1597,
+    "Cymbeline": 1623, "The Two Gentlemen of Verona": 1623, "Troilus and Cressida": 1609, "Coriolanus": 1623, "The Comedy of Errors": 1623,
+    "The Taming of the Shrew": 1623, "King Henry VI": 1623, "King Henry VI. Part I": 1623, "King Henry VI. Part II": 1594, "King Henry VI. Part III": 1595,
+    "The Winter's Tale": 1623, "Timon of Athens": 1623, "The Passionate Pilgrim": 1599, "Pericles": 1609, "Venus and Adonis": 1593,
+    "Lucrece": 1594, "The Rape of Lucrece": 1594, "Sonnet": 1609, "Sonnets": 1609, "Titus Andronicus": 1594
+  },
+  "John Milton": {
+    "Paradise Lost": 1667, "Comus": 1637, "Lycidas": 1638, "Paradise Regained": 1671, "Samson Agonistes": 1671, "Il Penseroso": 1645,
+    "L'Allegro": 1645, "Hymn on Christ's Nativity": 1645, "Arcades": 1645, "Areopagitica": 1644, "Tractate of Education": 1644,
+    "Apology for Smectymnuus": 1642, "The Reason of Church Government": 1642, "On his Blindness": 1673, "Doctrine and Discipline of Divorce": 1643,
+    "Tetrachordon": 1645, "At a Vacation Exercise": 1673, "Sonnet to the Nightingale": 1645
+  },
+  "Alexander Pope": {
+    "The Odyssey of Homer": 1726, "The Iliad of Homer": 1720, "Essay on Criticism": 1711, "Essay on Man": 1734, "Moral Essays": 1735,
+    "Epistle to Dr. Arbuthnot": 1735, "Satires, Epistles, and Odes of Horace": 1738, "The Dunciad": 1728, "The Rape of the Lock": 1712,
+    "Eloisa to Abelard": 1717, "The Universal Prayer": 1738, "Ode on Solitude": 1717, "To the Memory of an Unfortunate Lady": 1717,
+    "Prologue to Mr. Addison's Tragedy of Cato": 1713, "Windsor Forest": 1713, "Pastorals": 1709
+  },
+  "Lord Byron": {
+    "Childe Harold's Pilgrimage": 1812, "Don Juan": 1819, "The Giaour": 1813, "The Corsair": 1814, "Beppo": 1818, "The Dream": 1816,
+    "English Bards and Scotch Reviewers": 1809, "Monody on the Death of Sheridan": 1816, "The Bride of Abydos": 1813, "Manfred": 1817,
+    "Hours of Idleness": 1807, "Lara": 1814, "Mazeppa": 1819, "The Prisoner of Chillon": 1816, "Hebrew Melodies": 1815, "Sardanapalus": 1821,
+    "Cain": 1821, "The Siege of Corinth": 1816, "Parisina": 1816, "Marino Faliero": 1821, "The Two Foscari": 1821, "Werner": 1822,
+    "The Deformed Transformed": 1824, "The Island": 1823, "The Age of Bronze": 1823, "Ode to Napoleon": 1814, "The Prophecy of Dante": 1821,
+    "Fare thee well": 1816, "She walks in Beauty": 1815, "The Vision of Judgment": 1822, "Childish Recollections": 1807
+  },
+  "Marcus Aurelius": { "*": 180 },
+  "Plutarch": { "*": 100 },
+  "Epictetus": { "*": 108 },
+  "Tacitus": { "Agricola": 98, "Historiae": 105, "Annales": 116 },
+  "Quintilian": { "Institutiones Oratoriae": 95 },
+  "Miguel de Cervantes": { "Don Quixote": 1605, "The Little Gypsy": 1613 },
+  "François de La Rochefoucauld": { "*": 1665 },
+  "Blaise Pascal": { "*": 1670 },
+  "Michel de Montaigne": { "*": 1588, "Of Books": 1580, "Apology for Raimond Sebond": 1580 },
+  "Samuel Butler": { "Hudibras": 1663, "Fragments": 1759 },
+  "Robert Burton": { "Anatomy of Melancholy": 1621 },
+  "Samuel Johnson": {
+    "Life of Johnson": 1791, "Vanity of Human Wishes": 1749, "Rasselas": 1759, "London": 1738, "The Idler": 1758, "The Rambler": 1750,
+    "Verses on the Death of Mr. Robert Levet": 1783, "Prologue on the Opening of Drury Lane Theatre": 1747, "Tour to the Hebrides": 1785,
+    "Johnsoniana. Piozzi": 1786
+  },
+  "William Cowper": {
+    "The Task": 1785, "Conversation": 1782, "Table Talk": 1782, "Retirement": 1782, "The Progress of Error": 1782, "Hope": 1782, "Charity": 1782,
+    "Truth": 1782, "Expostulation": 1782, "Verses supposed to be written by Alexander Selkirk": 1782, "History of John Gilpin": 1782,
+    "On the Receipt of my Mother's Picture": 1798, "Tirocinium": 1785, "Olney Hymns": 1779, "Light shining out of Darkness": 1779
+  },
+  "Alfred, Lord Tennyson": {
+    "In Memoriam": 1850, "Locksley Hall": 1842, "Locksley Hall Sixty Years After": 1886, "The Princess": 1847, "Maud": 1855,
+    "Ode on the Death of the Duke of Wellington": 1852, "OEnone": 1832, "Lady Clara Vere de Vere": 1842, "Love and Duty": 1842, "Ulysses": 1842,
+    "Break, break, break": 1842, "The Charge of the Light Brigade": 1854, "The Daisy": 1855, "Idylls of the King": 1859, "The Brook": 1855,
+    "Morte d'Arthur": 1842, "The Miller's Daughter": 1832, "Enoch Arden": 1864, "The Lotos-Eaters": 1832, "The Two Voices": 1842
+  },
+  "Jonathan Swift": {
+    "Polite Conversation": 1738, "Tale of a Tub": 1704, "Thoughts on Various Subjects": 1711, "Battle of the Books": 1704,
+    "Cadenus and Vanessa": 1726, "Poetry, a Rhapsody": 1733, "Gulliver's Travels": 1726
+  },
+  "Sydney Smith": { "Lady Holland's Memoir": 1855 },
+  "Edmund Spenser": { "Faerie Queene": 1590, "Amoretti": 1595, "Daphnaida": 1591, "An Hymne in Honour of Beautie": 1596 },
+  "Oliver Goldsmith": {
+    "The Traveller": 1764, "The Deserted Village": 1770, "Retaliation": 1774, "The Hermit": 1766, "The Captivity": 1820,
+    "Elegy on the Death of a Mad Dog": 1766, "She Stoops to Conquer": 1773, "Elegy on Mrs. Mary Blaize": 1759, "The Good-Natured Man": 1768,
+    "Vicar of Wakefield": 1766, "The Bee": 1759, "Citizen of the World": 1762
+  },
+  "William Wordsworth": {
+    "The Excursion": 1814, "Intimations of Immortality": 1807, "Lines composed a few miles above Tintern Abbey": 1798, "Peter Bell": 1819,
+    "Resolution and Independence": 1807, "A Poet's Epitaph": 1800, "The Prelude": 1850, "Ecclesiastical Sonnets": 1822, "The Tables Turned": 1798,
+    "She dwelt among the untrodden ways": 1800, "The Fountain": 1800, "The Solitary Reaper": 1807, "Character of the Happy Warrior": 1807,
+    "Laodamia": 1815, "The Borderers": 1842, "Simon Lee": 1798, "Lines written in Early Spring": 1798, "The Old Cumberland Beggar": 1800,
+    "Hart-leap Well": 1800, "Rob Roy's Grave": 1807, "She was a Phantom of Delight": 1807, "Ode to Duty": 1807, "Personal Talk": 1807,
+    "Scorn not the Sonnet": 1827, "To the Cuckoo": 1807, "My heart leaps up": 1807, "Yarrow Unvisited": 1807
+  },
+  "Richard Brinsley Sheridan": { "The Rivals": 1775, "The Critic": 1779, "The Duenna": 1775, "Pizarro": 1799, "School for Scandal": 1777 },
+  "Samuel Taylor Coleridge": {
+    "The Ancient Mariner": 1798, "Christabel": 1816, "Hymn in the Vale of Chamouni": 1802, "Kubla Khan": 1816, "The Death of Wallenstein": 1800, "Love": 1800
+  },
+  "Thomas Campbell": { "Pleasures of Hope": 1799, "Ye Mariners of England": 1801, "Hohenlinden": 1802, "Gertrude of Wyoming": 1809, "Lochiel's Warning": 1802 },
+  "John Dryden": {
+    "Absalom and Achitophel": 1681, "Alexander's Feast": 1697, "Cymon and Iphigenia": 1700, "The Hind and the Panther": 1687,
+    "The Conquest of Granada": 1672, "All for Love": 1678, "Aurengzebe": 1676, "The Spanish Friar": 1681, "Don Sebastian": 1690,
+    "Amphitryon": 1690, "Annus Mirabilis": 1667, "The Maiden Queen": 1668, "OEdipus": 1679, "Tyrannic Love": 1670, "The Secular Masque": 1700,
+    "Virgil": 1697, "Epistle to Congreve": 1694, "To the Memory of Mr. Oldham": 1684, "Eleonora": 1692, "The Cock and the Fox": 1700
+  },
+  "Edward Young": { "Night Thoughts": 1742, "Love of Fame": 1728, "Universal Passion": 1728, "The Revenge": 1721 },
+  "Izaak Walton": { "The Complete Angler": 1653, "Life of Herbert": 1670 },
+  "Joseph Addison": { "Cato": 1713, "The Campaign": 1705, "Spectator": 1711 },
+  "John Gay": { "Fables": 1727, "The Beggar's Opera": 1728, "The What d' ye call it": 1715 },
+  "Benjamin Franklin": { "Maxims prefixed to Poor Richard's Almanac": 1757 },
+  "Robert Burns": {
+    "Tam o' Shanter": 1791, "The Cotter's Saturday Night": 1786, "Man was made to Mourn": 1786, "The Vision": 1786,
+    "Address to the Unco Guid": 1787, "Auld Lang Syne": 1796, "Highland Mary": 1799, "Ae Fond Kiss": 1792, "For a' that and a' that": 1795,
+    "To a Mouse": 1786, "To a Louse": 1786, "Epistle to a Young Friend": 1786, "Green grow the Rashes": 1787, "John Anderson": 1790
+  },
+  "Sir Walter Scott": {
+    "Lady of the Lake": 1810, "Marmion": 1808, "Lay of the Last Minstrel": 1805, "Lord of the Isles": 1815, "Rokeby": 1813,
+    "The Monastery": 1820, "The Betrothed": 1825, "Life of Napoleon": 1827, "Ivanhoe": 1820, "Old Mortality": 1816, "The Antiquary": 1816,
+    "Rob Roy": 1817, "Waverley": 1814, "Guy Mannering": 1815
+  },
+  "Benjamin Disraeli": {
+    "Sybil": 1845, "Vivian Grey": 1826, "Endymion": 1880, "Lothair": 1870, "Coningsby": 1844, "Tancred": 1847, "Contarini Fleming": 1832,
+    "Henrietta Temple": 1837, "Venetia": 1837
+  },
+  "Geoffrey Chaucer": { "Canterbury Tales": 1476, "Troilus and Creseide": 1483, "Prologue of the Legend of Good Women": 1532 },
+  "Thomas Gray": {
+    "Elegy in a Country Churchyard": 1751, "The Bard": 1757, "The Progress of Poesy": 1757, "Ode on the Pleasure arising from Vicissitude": 1775,
+    "On a Distant Prospect of Eton College": 1747
+  },
+  "Edmund Burke": {
+    "Reflections on the Revolution in France": 1790, "Speech on the Conciliation of America": 1775,
+    "Thoughts on the Cause of the Present Discontents": 1770, "On a Regicide Peace": 1796, "On the Sublime and Beautiful": 1757
+  },
+  "Colley Cibber": { "Richard III": 1700, "Love's Last Shift": 1696 },
+  "Isaac Watts": { "Hymns and Spiritual Songs": 1707, "Divine Songs": 1715, "The Sluggard": 1715, "Horae Lyricae": 1706 },
+  "Robert Blair": { "The Grave": 1743 },
+  "James Thomson": { "The Seasons": 1730, "The Castle of Indolence": 1748, "Hymn": 1730 },
+  "Edward Gibbon": { "Decline and Fall of the Roman Empire": 1776, "Memoirs": 1796 },
+  "Oliver Wendell Holmes Sr.": {
+    "The Autocrat of the Breakfast-Table": 1858, "The Voiceless": 1858, "The Professor at the Breakfast-Table": 1860,
+    "The Poet at the Breakfast-Table": 1872, "The Chambered Nautilus": 1858, "The Deacon's Masterpiece": 1858
+  },
+  "James Russell Lowell": {
+    "The Biglow Papers": 1848, "The Biglow Papers. First Series": 1848, "The Biglow Papers. Second Series": 1867, "Among my Books": 1870,
+    "Among my Books. Second Series": 1876, "The Vision of Sir Launfal": 1848, "A Fable for Critics": 1848, "Ode at the Harvard Commemoration": 1865,
+    "The Cathedral": 1870, "My Study Windows": 1871, "Democracy and Addresses": 1887, "The Present Crisis": 1845
+  },
+  "Thomas Percy": { "The Friar of Orders Gray": 1765, "King Cophetua and the Beggar-maid": 1765, "Winifreda": 1765 },
+  "John Keats": {
+    "The Eve of St. Agnes": 1820, "Endymion": 1818, "Ode on a Grecian Urn": 1820, "Ode to a Nightingale": 1820, "Lamia": 1820, "Hyperion": 1820
+  },
+  "Thomas Hood": { "The Song of the Shirt": 1843, "Ode to Melancholy": 1827, "The Bridge of Sighs": 1844, "Miss Kilmansegg": 1840 },
+  "Henry Wadsworth Longfellow": {
+    "A Psalm of Life": 1838, "Resignation": 1850, "The Day is done": 1845, "Evangeline": 1847, "The Ladder of Saint Augustine": 1858,
+    "The Song of Hiawatha": 1855, "Hiawatha": 1855, "The Building of the Ship": 1849, "Excelsior": 1841, "The Village Blacksmith": 1841,
+    "Hyperion": 1839, "Kavanagh": 1849, "The Golden Legend": 1851, "Tales of a Wayside Inn": 1863, "Morituri Salutamus": 1875
+  },
+  "George Chapman": {
+    "Bussy D'Ambois": 1607, "All Fools": 1605, "Eastward Ho": 1605, "Monsieur D'Olive": 1606, "The Blind Beggar of Alexandria": 1598,
+    "The Gentleman Usher": 1606, "Conspiracy of Charles, Duke of Byron": 1608, "Tragedy of Charles, Duke of Byron": 1608, "Revenge for Honour": 1654
+  },
+  "Francis Bacon": {
+    "Apothegms": 1625, "Advancement of Learning": 1605, "Of Adversity": 1625, "Of Studies": 1597, "Of Truth": 1625, "Of Death": 1612,
+    "Of Revenge": 1625, "Of Marriage and Single Life": 1612, "Of Great Place": 1612, "Of Goodness": 1612, "Of Atheism": 1612, "Of Empire": 1612,
+    "Of Cunning": 1612, "Of Discourse": 1597, "Of Custom and Education": 1612, "Of Youth and Age": 1612, "Of Beauty": 1612,
+    "Of Vicissitude of Things": 1625, "Of Fortune": 1612
+  },
+  "George Herbert": { "*": 1633, "Jacula Prudentum": 1651, "Country Parson": 1652 },
+  "Sir Thomas Browne": { "Religio Medici": 1642, "Dedication to Urn-Burial": 1658, "Urn-Burial": 1658, "Vulgar Errors": 1646, "Christian Morals": 1716 },
+  "Henry Carey": { "Chrononhotonthologos": 1734 },
+  "Nicholas Rowe": { "The Fair Penitent": 1703 },
+  "Thomas Tickell": { "On the Death of Mr. Addison": 1721 },
+  "James Beattie": { "The Minstrel": 1771 },
+  "Daniel Webster": { "Address on laying the Corner-Stone of the Bunker Hill Monument": 1825, "Second Speech on Foot's Resolution": 1830 },
+  "Thomas Moore": {
+    "Lalla Rookh": 1817, "Paradise and the Peri": 1817, "The Fire-Worshippers": 1817, "The Last Rose of Summer": 1813,
+    "Oh breathe not his Name": 1808, "A Canadian Boat-Song": 1806, "On the Death of Sheridan": 1816
+  },
+  "Thomas Carlyle": {
+    "Sir Walter Scott": 1838, "Heroes and Hero-Worship": 1841, "Burns": 1828, "Sartor Resartus": 1836, "Past and Present": 1843,
+    "Characteristics": 1831, "The French Revolution": 1837
+  },
+  "Ralph Waldo Emerson": {
+    "Letters and Social Aims": 1876, "Essays": 1841, "Essays. First Series": 1841, "Essays. Second Series": 1844, "The Conduct of Life": 1860,
+    "English Traits": 1856, "The Problem": 1840, "Society and Solitude": 1870, "Representative Men": 1850, "May-Day": 1867
+  },
+  "Edgar Allan Poe": { "The Raven": 1845, "To Helen": 1831 },
+  "Robert Browning": {
+    "The Ring and the Book": 1868, "Cleon": 1855, "By the Fireside": 1855, "Paracelsus": 1835, "Pippa Passes": 1841,
+    "Old Pictures in Florence": 1855, "Saul": 1845, "Luria": 1846, "A Death in the Desert": 1864, "Rabbi Ben Ezra": 1864,
+    "Andrea del Sarto": 1855, "Sordello": 1840, "Bishop Blougram's Apology": 1855, "Asolando": 1889
+  },
+  "Sir Philip Sidney": { "Defence of Poesy": 1595, "Arcadia": 1590, "Astrophel and Stella": 1591 },
+  "Samuel Daniel": { "Musophilus": 1599, "History of the Civil War": 1595 },
+  "Christopher Marlowe": { "The Passionate Shepherd to his Love": 1599, "The Jew of Malta": 1633, "Hero and Leander": 1598, "Faustus": 1604, "Tamburlaine": 1590 },
+  "John Webster": { "The White Devil": 1612, "Duchess of Malfi": 1623, "Westward Hoe": 1607 },
+  "Thomas Dekker": { "The Honest Whore": 1604, "Old Fortunatus": 1600, "Patient Grissell": 1603 },
+  "Henry Vaughan": { "They are all gone": 1655, "The Retreat": 1650 },
+  "Matthew Prior": { "Solomon on the Vanity of the World": 1718, "Alma": 1718, "Henry and Emma": 1709 },
+  "William Shenstone": { "The Schoolmistress": 1742 },
+  "John Home": { "Douglas": 1757 },
+  "George Crabbe": { "Tales of the Hall": 1819, "The Borough": 1810, "Tales": 1812, "The Village": 1783 },
+  "Samuel Rogers": { "Human Life": 1819, "Jacqueline": 1814, "Pleasures of Memory": 1792, "Italy": 1822 },
+  "Robert Southey": {
+    "The Cataract of Lodore": 1823, "The Doctor": 1834, "Madoc": 1805, "The Curse of Kehama": 1810, "Roderick": 1814, "Thalaba": 1801
+  },
+  "Leigh Hunt": { "Abou Ben Adhem": 1838 },
+  "Samuel Woodworth": { "The Old Oaken Bucket": 1818 },
+  "William Cullen Bryant": { "Thanatopsis": 1817, "The Battle-Field": 1839, "To a Waterfowl": 1818 },
+  "Thomas Babington Macaulay": {
+    "History of England": 1848, "On Mitford's History of Greece": 1824, "On Moore's Life of Lord Byron": 1831, "Lays of Ancient Rome": 1842,
+    "Horatius": 1842, "On Milton": 1825, "On Lord Bacon": 1837, "On Ranke": 1840
+  },
+  "Edward Bulwer-Lytton": { "Richelieu": 1839, "The New Timon": 1846, "The Lady of Lyons": 1838 },
+  "Elizabeth Barrett Browning": {
+    "A Vision of Poets": 1844, "Aurora Leigh": 1857, "Sonnets from the Portuguese": 1850, "Lady Geraldine's Courtship": 1844
+  },
+  "Charles Darwin": { "The Origin of Species": 1859, "The Descent of Man": 1871 },
+  "Robert Herrick": { "*": 1648 },
+  "Edmund Waller": { "Go, Lovely Rose": 1645 },
+  "Thomas Fuller": { "Holy and Profane State": 1642, "Life of the Duke of Alva": 1642, "Church History": 1655, "Worthies of England": 1662, "Andronicus": 1646 },
+  "Philip Massinger": { "A New Way to pay Old Debts": 1633, "A Very Woman": 1655 },
+  "John Selden": { "Table Talk": 1689 },
+  "Ben Jonson": {
+    "Every Man in his Humour": 1601, "Epicoene": 1616, "Sejanus": 1605, "To the Memory of Shakespeare": 1623, "Underwoods": 1640,
+    "Volpone": 1607, "The Alchemist": 1612, "Cynthia's Revels": 1601, "Discoveries": 1641, "The Forest": 1616, "Epigrams": 1616
+  },
+  "John Fletcher": { "The Nice Valour": 1647, "The Bloody Brother": 1639, "Love's Cure": 1647, "The Queen of Corinth": 1647, "Wit without Money": 1639 },
+  "Thomas Middleton": {
+    "The Family of Love": 1608, "The Roaring Girl": 1611, "The Witch": 1778, "The Phoenix": 1607, "Michaelmas Term": 1607,
+    "A Trick to catch the Old One": 1608, "A Mad World, my Masters": 1608, "A Game at Chess": 1625, "More Dissemblers besides Women": 1657,
+    "No Wit, no Help, like a Woman's": 1657, "Women beware Women": 1657
+  },
+  "Sir Henry Wotton": { "*": 1651 },
+  "Sir John Suckling": { "*": 1646, "Aglaura": 1638 },
+  "Richard Lovelace": { "To Althea from Prison": 1649, "To Lucasta, on going to the Wars": 1649, "Orpheus to Beasts": 1659 },
+  "Abraham Cowley": { "Davideis": 1656, "The Mistress": 1647, "From Anacreon": 1656 },
+  "Andrew Marvell": { "*": 1681, "The Character of Holland": 1665 },
+  "John Bunyan": { "Pilgrim's Progress": 1678 },
+  "Thomas Otway": { "Venice Preserved": 1682, "The Orphan": 1680 },
+  "William Congreve": { "Love for Love": 1695, "The Old Bachelor": 1693, "The Mourning Bride": 1697, "The Way of the World": 1700 },
+  "George Farquhar": { "The Beaux' Stratagem": 1707, "The Recruiting Officer": 1706 },
+  "Sir Richard Steele": { "Tatler": 1709, "Spectator": 1711 },
+  "Matthew Green": { "The Spleen": 1737 },
+  "John Dyer": { "Grongar Hill": 1726, "The Ruins of Rome": 1740, "The Fleece": 1757 },
+  "Edward Moore": { "*": 1744, "The Gamester": 1753 },
+  "Laurence Sterne": { "Tristram Shandy": 1759, "Sentimental Journey": 1768 },
+  "William Collins": { "The Passions": 1747 },
+  "Sir William Blackstone": { "Commentaries": 1765 },
+  "Charles Churchill": { "The Rosciad": 1761, "Night": 1761, "The Ghost": 1762, "The Prophecy of Famine": 1763, "Gotham": 1764 },
+  "Thomas Jefferson": { "Declaration of Independence": 1776, "First Inaugural Address": 1801 },
+  "Charles Dibdin": { "Tom Bowling": 1790 },
+  "Hannah More": { "Sensibility": 1782, "Florio": 1786 },
+  "John Logan": { "To the Cuckoo": 1781 },
+  "John Trumbull": { "M^cFingal": 1782, "McFingal": 1782 },
+  "Charles Wolfe": { "The Burial of Sir John Moore": 1817 },
+  "Percy Bysshe Shelley": {
+    "Adonais": 1821, "Hellas": 1822, "Julian and Maddalo": 1824, "Prometheus Unbound": 1820, "To a Skylark": 1820, "Ode to the West Wind": 1820,
+    "The Cloud": 1820, "Queen Mab": 1813, "Epipsychidion": 1821, "The Sensitive Plant": 1820, "Ozymandias": 1818, "Alastor": 1816,
+    "The Revolt of Islam": 1818, "The Cenci": 1819
+  },
+  "Charles Dickens": {
+    "Little Dorrit": 1857, "Dombey and Son": 1848, "David Copperfield": 1850, "Pickwick Papers": 1837, "Oliver Twist": 1838,
+    "Nicholas Nickleby": 1839, "Old Curiosity Shop": 1841, "Martin Chuzzlewit": 1844, "A Christmas Carol": 1843, "Bleak House": 1853,
+    "Hard Times": 1854, "A Tale of Two Cities": 1859, "Great Expectations": 1861, "Our Mutual Friend": 1865
+  },
+  "Alexander Smith": { "A Life Drama": 1853 },
+  "Molière": {
+    "L'Avare": 1669, "Le Bourgeois Gentilhomme": 1671, "Le Misanthrope": 1667, "Tartuffe": 1669, "Les Femmes Savantes": 1672, "Sganarelle": 1660
+  },
+  "Nicolas Boileau": { "The Art of Poetry": 1674 },
+  "Alain-René Lesage": { "Gil Blas": 1715 },
+  "Johann Wolfgang von Goethe": { "Wilhelm Meister": 1795, "Faust": 1808 },
+  "Jean de La Fontaine": { "The Wolf and the Lamb": 1668, "The Cock and the Fox": 1668 },
+  "Thomas Tusser": { "Five Hundred Points of Good Husbandry": 1573 },
+  "Sir Walter Raleigh": { "The Nymph's Reply to the Passionate Shepherd": 1600, "Historie of the World": 1614 },
+  "John Lyly": { "Euphues": 1579, "Euphues and his England": 1580, "Cupid and Campaspe": 1584 },
+  "Michael Drayton": { "To Henry Reynolds, of Poets and Poesy": 1627 },
+  "Thomas Heywood": { "Hierarchie of the Blessed Angells": 1635 },
+  "George Wither": { "The Shepherd's Hunting": 1615 },
+  "Francis Quarles": { "Emblems": 1635 },
+  "James Shirley": { "Contention of Ajax and Ulysses": 1659, "Cupid and Death": 1653 },
+  "Sir William Davenant": { "Gondibert": 1651, "The Just Italian": 1630 },
+  "Thomas Hobbes": { "The Leviathan": 1651, "Leviathan": 1651 },
+  "Lord Chesterfield": { "Letters to his Son": 1774 },
+  "Mark Akenside": { "Pleasures of the Imagination": 1744 },
+  "George Canning": { "The Loves of the Triangles": 1798, "New Morality": 1798 },
+  "Fitz-Greene Halleck": { "Marco Bozzaris": 1825 },
+  "Charles Kingsley": { "The Sands of Dee": 1850 },
+  "Matthew Arnold": {
+    "Requiescat": 1853, "Shakespeare": 1849, "Thyrsis": 1866, "The Scholar-Gipsy": 1853, "Dover Beach": 1867, "Culture and Anarchy": 1869,
+    "Essays in Criticism": 1865, "Rugby Chapel": 1867, "Self-Dependence": 1852, "Literature and Dogma": 1873
+  },
+  "Mary Howitt": { "The Spider and the Fly": 1829 },
+  "John Greenleaf Whittier": { "Ichabod": 1850, "Maud Muller": 1854, "Snow-Bound": 1866, "Barbara Frietchie": 1863, "The Barefoot Boy": 1855 },
+  "Washington Irving": { "Sketch Book": 1820, "The Sketch Book": 1820, "Knickerbocker's History of New York": 1809, "Bracebridge Hall": 1822, "Tales of a Traveller": 1824 },
+  "George Washington": { "Farewell Address": 1796 },
+  "Charles Lamb": { "Oxford in the Vacation": 1823, "Mrs. Battle's Opinions on Whist": 1823 },
+  "Douglas Jerrold": { "Douglas Jerrold's Wit": 1858 },
+  "Edward Everett Hale": { "The Man Without a Country": 1863 },
+  "Walter Savage Landor": { "Rose Aylmer": 1806 },
+  "Horace Smith": { "Rejected Addresses": 1812 },
+  "Allan Cunningham": { "A Wet Sheet and a Flowing Sea": 1825 }
+}

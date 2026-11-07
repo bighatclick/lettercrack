@@ -7,8 +7,9 @@
 export type LocalDate = string;
 
 /**
- * Day 1 of the daily sequence. FREEZE THIS before the first external (TestFlight / Play) build:
- * every player's daily, streak and archive are derived from it forever.
+ * Day 1 of the daily sequence. FROZEN (5 Nov 2026): every player's daily, streak and archive are
+ * derived from it forever. Never change it after the first external build. Public release should
+ * be on or after this date: before it, every day shows day 1's quote (dailyIndex clamps to 0).
  */
 export const LAUNCH_DATE: LocalDate = '2027-01-01';
 

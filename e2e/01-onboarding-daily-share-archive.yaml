@@ -1,0 +1,36 @@
+# Spec §14: onboarding → solve the daily → share → archive.
+# Needs an E2E build (EXPO_PUBLIC_E2E=1, eas build --profile e2e) so the "e2e-solve" hook exists.
+appId: app.lettercrack
+---
+- clearState
+- launchApp
+# Onboarding: "A CAT". Skip the mini puzzle and pick a difficulty.
+- tapOn:
+    id: onboarding-skip
+- tapOn:
+    id: onboarding-medium
+- tapOn:
+    id: onboarding-start
+# Home → today's daily.
+- assertVisible:
+    id: home-daily
+- tapOn:
+    id: home-daily
+- assertVisible:
+    id: board
+- tapOn:
+    id: e2e-solve
+# Solved screen: quote, author card, share.
+- extendedWaitUntil:
+    visible:
+      id: solved-quote
+    timeout: 5000
+- tapOn:
+    id: solved-share
+# Dismiss the system share sheet.
+- back
+- tapOn: Home
+# Archive opens (empty on launch day, so only check the screen).
+- tapOn:
+    id: home-archive
+- assertVisible: Archive

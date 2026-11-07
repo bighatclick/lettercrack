@@ -23,7 +23,7 @@ export type BoardProps = {
 
 export function Board({ state, flags, onSelect, reveal }: BoardProps) {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, hue, isDark, reduceMotion } = useTheme();
   const metrics = useCellMetrics();
   const [width, setWidth] = useState(0);
   const onLayout = useCallback((e: LayoutChangeEvent) => setWidth(Math.floor(e.nativeEvent.layout.width)), []);
@@ -39,11 +39,16 @@ export function Board({ state, flags, onSelect, reveal }: BoardProps) {
     return { order, total: n };
   }, [state]);
 
+  // Each word gets its own colour family, cycling through the set.
+  let wordNo = -1;
   return (
     <View onLayout={onLayout} style={styles.board} testID="board">
       {layout?.lines.map((line, li) => (
         <View key={li} style={styles.line}>
-          {line.map((tok) => (
+          {line.map((tok) => {
+            wordNo += 1;
+            const wordHue = hue(wordNo);
+            return (
             <View key={tok.start} style={[styles.word, { marginRight: metrics.cellWidth }]} role="group">
               {Array.from({ length: tok.end - tok.start }, (_, k) => {
                 const i = tok.start + k;
@@ -82,6 +87,9 @@ export function Board({ state, flags, onSelect, reveal }: BoardProps) {
                     flagged={isFlagged}
                     label={label}
                     colors={colors}
+                    hue={wordHue}
+                    isDark={isDark}
+                    reduceMotion={reduceMotion}
                     metrics={metrics}
                     onSelect={onSelect}
                     reveal={cellReveal}
@@ -89,7 +97,8 @@ export function Board({ state, flags, onSelect, reveal }: BoardProps) {
                 );
               })}
             </View>
-          ))}
+            );
+          })}
         </View>
       ))}
     </View>

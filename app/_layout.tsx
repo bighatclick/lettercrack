@@ -1,4 +1,6 @@
+import { IcloudKv } from '@modules/icloud-kv';
 import { useFonts } from 'expo-font';
+import * as Notifications from 'expo-notifications';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -12,10 +14,17 @@ import { useAppStore } from '@/data/store';
 import { onAppOpen } from '@/game/session';
 import { today } from '@/game/today';
 import { i18n, initI18n } from '@/i18n';
+import { syncReminders } from '@/lib/reminderSync';
+import { initCrashReporting } from '@/lib/sentry';
+import { startCloudSync } from '@/sync/cloud';
 import { fontAssets, ThemeProvider, useTheme } from '@/ui';
 
+initCrashReporting();
 SplashScreen.preventAutoHideAsync();
 initI18n();
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: false, shouldSetBadge: false }),
+});
 
 function ThemedStack() {
   const { colors, isDark } = useTheme();
@@ -41,10 +50,22 @@ export default function RootLayout() {
     const store = useAppStore.getState();
     if (!store.ready) store.hydrate(createMMKVStore());
     // Remember the highest date seen, on launch and whenever the app returns to the foreground.
-    const noteDate = () => useAppStore.getState().update((r) => onAppOpen(r, today()));
-    noteDate();
-    const sub = AppState.addEventListener('change', (s) => s === 'active' && noteDate());
-    return () => sub.remove();
+    const onActive = () => {
+      useAppStore.getState().update((r) => onAppOpen(r, today()));
+      syncReminders(i18n.t.bind(i18n));
+    };
+    onActive();
+    const sub = AppState.addEventListener('change', (s) => s === 'active' && onActive());
+    // iCloud KV sync (iOS only; a no-op elsewhere). Merge never removes local progress.
+    const stopSync = startCloudSync(IcloudKv, {
+      getRoot: () => useAppStore.getState().root,
+      update: (fn) => useAppStore.getState().update(fn),
+      subscribe: (cb) => useAppStore.subscribe((s) => cb(s.root)),
+    });
+    return () => {
+      sub.remove();
+      stopSync();
+    };
   }, []);
 
   const loaded = (fontsLoaded || !!fontError) && ready && !!settings;

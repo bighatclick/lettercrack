@@ -8,7 +8,7 @@
  * The migration tests fail until all three exist.
  */
 
-export const CURRENT_SCHEMA_VERSION = 1;
+export const CURRENT_SCHEMA_VERSION = 2;
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 export type Appearance = 'system' | 'light' | 'dark';
@@ -107,8 +107,22 @@ export type RootV1 = {
   };
 };
 
+/**
+ * v2 (Phase 6/7): onboarding and cloud sync.
+ * - meta.onboardedAt: when the "A CAT" onboarding finished (null = show it). v1 saves with any
+ *   play history migrate to installedAt, so existing players never see onboarding again.
+ * - meta.settingsUpdatedAt: last local settings change; settings merge last-write-wins with iCloud.
+ */
+export type RootV2 = Omit<RootV1, 'schemaVersion' | 'meta'> & {
+  schemaVersion: 2;
+  meta: RootV1['meta'] & {
+    onboardedAt: number | null;
+    settingsUpdatedAt: number;
+  };
+};
+
 /** The current root type. Point this at the newest RootVn when the schema changes. */
-export type Root = RootV1;
+export type Root = RootV2;
 
 export function defaultRoot(now: number): Root {
   return {
@@ -139,6 +153,8 @@ export function defaultRoot(now: number): Root {
       reviewPromptAt: [],
       attPrompted: false,
       reminderOffered: false,
+      onboardedAt: null,
+      settingsUpdatedAt: 0,
     },
   };
 }

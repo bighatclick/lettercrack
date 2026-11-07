@@ -5,19 +5,21 @@ import { type Palette, type TextVariant, typeScale } from '../tokens';
 
 export type TextProps = RNTextProps & {
   variant?: TextVariant;
-  color?: keyof Palette;
+  /** A palette key, or a raw colour (for text on gradients and hue tiles). */
+  color?: keyof Palette | (string & {});
 };
 
 /** Themed text. Scales with the in-app text-size slider and the OS text size. */
 export function Text({ variant = 'body', color = 'ink', style, ...rest }: TextProps) {
   const { colors, textScale } = useTheme();
   const base = typeScale[variant];
+  const resolved = (colors as Record<string, string>)[color] ?? color;
   return (
     <RNText
       {...rest}
       style={[
         base,
-        { color: colors[color], fontSize: base.fontSize * textScale, lineHeight: base.lineHeight * textScale },
+        { color: resolved, fontSize: base.fontSize * textScale, lineHeight: base.lineHeight * textScale },
         style,
       ]}
     />

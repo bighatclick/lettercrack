@@ -1,6 +1,6 @@
 /**
- * Quote content access. Today this reads the dev seed; Phase 2 swaps in assets/quotes.v1.json
- * (same shape) and nothing else changes.
+ * Quote content access. Today this reads the dev seed. Once `npm run quotes:build` has produced
+ * assets/quotes.v1.json from the reviewed CSV, change the import below to it (same shape).
  */
 import seed from '../../assets/quotes.seed.json';
 
@@ -18,6 +18,8 @@ export type QuoteRecord = {
   sourceEdition: string;
   topics: string[];
   difficulty: Difficulty;
+  /** Removed after review. Kept so its ID is never reused; never offered again. */
+  retired?: boolean;
 };
 
 export type AuthorInfo = { dates: string; bio: string };
@@ -29,13 +31,31 @@ export type QuoteDb = {
   quotes: QuoteRecord[];
 };
 
+/**
+ * A retired daily is replaced by the next live ID in the order (wrapping), so only its own date
+ * changes; every other date keeps its quote and the order's length never changes.
+ */
+export function liveDailyOrder(order: readonly number[], isLive: (id: number) => boolean): number[] {
+  return order.map((id, i) => {
+    if (isLive(id)) return id;
+    for (let k = 1; k < order.length; k++) {
+      const alt = order[(i + k) % order.length]!;
+      if (isLive(alt)) return alt;
+    }
+    throw new Error('daily order has no live quotes');
+  });
+}
+
 export function createContent(db: QuoteDb) {
   const byId = new Map(db.quotes.map((q) => [q.id, q]));
+  const isLive = (id: number) => !!byId.get(id) && !byId.get(id)!.retired;
   const dailySet = new Set(db.dailyOrder);
-  const levelPool: PoolQuote[] = db.quotes.filter((q) => !dailySet.has(q.id)).map((q) => ({ id: q.id, length: q.text.length }));
+  const levelPool: PoolQuote[] = db.quotes
+    .filter((q) => !dailySet.has(q.id) && !q.retired)
+    .map((q) => ({ id: q.id, length: q.text.length }));
   return {
     version: db.version,
-    dailyOrder: db.dailyOrder,
+    dailyOrder: liveDailyOrder(db.dailyOrder, isLive),
     /** Daily-reserved IDs; never offered as levels. */
     dailySet,
     levelPool,
