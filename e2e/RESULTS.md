@@ -33,4 +33,28 @@ Run on 7 Nov 2026 against the branch with `origin/main` merged in (latest code, 
 
 ## Device state at pause
 
-Emulator still booted with the clock on 16 Jan 2027 and automatic time off. In-app settings left as: auto-fill **off**, show solve time **on**, daily reminder **on**, default difficulty Hard. Turn auto-fill back on before resuming at 8.3.
+Saved at 10:02 on the emulator clock, **Saturday 16 Jan 2027** (IST), automatic time off. In-app settings left as: auto-fill **off**, show solve time **on**, daily reminder **on**, default difficulty Hard. Progress: Level 8 open, 1-day streak (best 3), 13 quotes solved, quote #90019 reported.
+
+Saved copies:
+
+| What | Where |
+|---|---|
+| Full emulator snapshot (app data, settings, clock) | AVD `SalesTrackerApi35`, snapshot `lettercrack-e2e-paused-J8` |
+| App data only (MMKV folder) | `e2e/state/lc-mmkv.tar` in this worktree, not committed |
+| Device date at pause | `e2e/state/device-date.txt`, not committed |
+
+To resume, boot the snapshot, start Metro, then turn auto-fill back on and continue at 8.3:
+
+```bash
+emulator -avd SalesTrackerApi35 -snapshot lettercrack-e2e-paused-J8
+```
+
+```bash
+npx expo start --dev-client --port 8081
+```
+
+If the snapshot is lost, restore the app data instead (needs `adb root`), then set the clock back to 16 Jan 2027:
+
+```bash
+adb push e2e/state/lc-mmkv.tar /sdcard/ && adb shell "am force-stop app.lettercrack && cd /data/data/app.lettercrack/files && rm -rf mmkv && tar xf /sdcard/lc-mmkv.tar"
+```
