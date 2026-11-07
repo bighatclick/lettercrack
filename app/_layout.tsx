@@ -14,12 +14,14 @@ import { useAppStore } from '@/data/store';
 import { onAppOpen } from '@/game/session';
 import { today } from '@/game/today';
 import { i18n, initI18n } from '@/i18n';
+import { applyOrientationPolicy } from '@/lib/orientation';
 import { syncReminders } from '@/lib/reminderSync';
 import { initCrashReporting } from '@/lib/sentry';
 import { startCloudSync } from '@/sync/cloud';
 import { fontAssets, ThemeProvider, useTheme } from '@/ui';
 
 initCrashReporting();
+applyOrientationPolicy();
 SplashScreen.preventAutoHideAsync();
 initI18n();
 Notifications.setNotificationHandler({

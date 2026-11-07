@@ -9,13 +9,19 @@ export type TextProps = RNTextProps & {
   color?: keyof Palette | (string & {});
 };
 
-/** Themed text. Scales with the in-app text-size slider and the OS text size. */
+/**
+ * Themed text. Scales with the in-app text-size slider and the OS text size.
+ * Android uses the "simple" line breaker: with the default "highQuality" one, text with a fixed
+ * line height was sometimes measured as one line but drawn as two, so the second line was cut off
+ * (seen on tablets: "TODAY'S QUOTE" showed as "TODAY'S").
+ */
 export function Text({ variant = 'body', color = 'ink', style, ...rest }: TextProps) {
   const { colors, textScale } = useTheme();
   const base = typeScale[variant];
   const resolved = (colors as Record<string, string>)[color] ?? color;
   return (
     <RNText
+      textBreakStrategy="simple"
       {...rest}
       style={[
         base,
