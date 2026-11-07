@@ -8,6 +8,7 @@ import type { PuzzleSave, Root } from '@/data/schema';
 import { afterSolve } from '@/ads/policy';
 import { dailySeed, levelSeed } from '@/engine/cipher';
 import { dailyQuoteId, isPlayableDaily, type LocalDate, noteSeenDate } from '@/engine/daily';
+import { GOALS_REWARD_HINTS, type GoalsResult, recordGoalSolve } from '@/engine/goals';
 import { hintsAvailable, spendHint } from '@/engine/hints';
 import { markSeen, pickNextQuote } from '@/engine/picker';
 import {
@@ -104,7 +105,7 @@ export function saveProgress(root: Root, ref: PuzzleRef, difficulty: Difficulty,
   return { ...root, inProgress: { ...root.inProgress, [ref.key]: save } };
 }
 
-export type Completion = { root: Root; streak: SolveResult | null; clean: boolean };
+export type Completion = { root: Root; streak: SolveResult | null; clean: boolean; goals: GoalsResult };
 
 export function completePuzzle(
   root: Root,
@@ -132,11 +133,29 @@ export function completePuzzle(
     streak = recordDailySolve(root.daily, ref.dailyDate, today);
     daily = streak.state;
   }
+  const goals = recordGoalSolve(root.goals, today, {
+    mode: ref.mode,
+    dailyToday: streak?.credited ?? false,
+    clean,
+    difficulty,
+    letters: state.plain.replace(/[^A-Z]/g, '').length,
+  });
+  // Finishing all of today's goals earns a hint (kept in the balance, so it never expires).
+  const hints = goals.rewardNow ? { ...root.hints, balance: root.hints.balance + GOALS_REWARD_HINTS } : root.hints;
   const ad = afterSolve(root.meta);
   return {
-    root: { ...root, progress, daily, inProgress, meta: { ...root.meta, solvesSinceInterstitial: ad.solvesSinceInterstitial } },
+    root: {
+      ...root,
+      progress,
+      daily,
+      inProgress,
+      hints,
+      goals: goals.state,
+      meta: { ...root.meta, solvesSinceInterstitial: ad.solvesSinceInterstitial },
+    },
     streak,
     clean,
+    goals,
   };
 }
 

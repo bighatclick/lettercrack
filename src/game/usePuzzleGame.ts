@@ -13,6 +13,7 @@ import {
   type PuzzleState,
   usedLetters,
 } from '@/engine/puzzle';
+import type { GoalsResult } from '@/engine/goals';
 import type { SolveResult } from '@/engine/streak';
 import { playSound } from '@/lib/sound';
 
@@ -20,7 +21,7 @@ import { cellFlags } from './flags';
 import { completePuzzle, consumeHint, hintsLeft, openPuzzle, type PuzzleRef, saveProgress } from './session';
 import { today } from './today';
 
-export type Completion = { clean: boolean; streak: SolveResult | null };
+export type Completion = { clean: boolean; streak: SolveResult | null; goals: GoalsResult | null };
 
 const tap = (on: boolean) => {
   if (on) Haptics.selectionAsync().catch(() => {});
@@ -63,10 +64,10 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
       }
       if (l.completed) return;
       l.completed = true;
-      let completion: Completion = { clean: false, streak: null };
+      let completion: Completion = { clean: false, streak: null, goals: null };
       update((r) => {
         const c = completePuzzle(r, ref, l.difficulty, next, today());
-        completion = { clean: c.clean, streak: c.streak };
+        completion = { clean: c.clean, streak: c.streak, goals: c.goals };
         return c.root;
       });
       if (settings.haptics) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});

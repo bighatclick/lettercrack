@@ -119,6 +119,26 @@ describe('session glue', () => {
     expect(done.root.progress.levelIndex).toBe(0);
   });
 
+  it("counts the solve toward today's goals and grants the hint once they are all done", () => {
+    const ref = dailyRef(TODAY, content, TODAY)!;
+    const r0 = onAppOpen(root, TODAY);
+    const done = completePuzzle(r0, ref, 'medium', solve(openPuzzle(r0, ref, content).state), TODAY);
+    expect(done.goals.completed).toContain('daily');
+    expect(done.root.goals.date).toBe(TODAY);
+    // Every other goal already done: the next solve finishes the set and pays out, once.
+    const nearly: Root = {
+      ...done.root,
+      goals: { date: TODAY, progress: { daily: 1, levels2: 2, levels3: 2, clean: 1, hard: 1, letters150: 149, long: 1 }, rewarded: false },
+    };
+    const lref = nextLevelRef(nearly, content, 'easy')!;
+    const again = completePuzzle(nearly, lref, 'easy', solve(openPuzzle(nearly, lref, content).state), TODAY);
+    expect(again.goals.rewardNow).toBe(true);
+    expect(again.root.hints.balance).toBe(nearly.hints.balance + 1);
+    const third = completePuzzle(again.root, lref, 'easy', solve(openPuzzle(again.root, lref, content).state), TODAY);
+    expect(third.goals.rewardNow).toBe(false);
+    expect(third.root.hints.balance).toBe(again.root.hints.balance);
+  });
+
   it('refuses to complete an unsolved puzzle', () => {
     const ref = nextLevelRef(root, content, 'easy')!;
     expect(() => completePuzzle(root, ref, 'easy', openPuzzle(root, ref, content).state, TODAY)).toThrow();

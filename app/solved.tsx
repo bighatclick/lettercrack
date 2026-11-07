@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as StoreReview from 'expo-store-review';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, type HostInstance, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Alert, type HostInstance, ScrollView, Share, StyleSheet, useWindowDimensions, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Polygon } from 'react-native-svg';
@@ -11,15 +11,18 @@ import Svg, { Circle, Path, Polygon } from 'react-native-svg';
 import { maybeShowInterstitial } from '@/ads/interstitial';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
+import { type GoalId, goalProgress } from '@/engine/goals';
 import { noteReminderOffered, shouldOfferReminder } from '@/game/reminder';
 import { noteReviewAsked, shouldAskForReview } from '@/game/review';
 import { nextLevelRef, refFromKey } from '@/game/session';
+import { dailyNumber, tomorrowFacts } from '@/game/teaser';
 import { today } from '@/game/today';
 import { requestReminderPermission } from '@/lib/notifications';
 import { syncReminders } from '@/lib/reminderSync';
 import { shareCard } from '@/lib/share';
 import { Button, Card, Confetti, Enter, Gradient, Icon, Inky, radius, Screen, space, Tag, Text, useLoop, useTheme } from '@/ui';
 import { formatDuration } from '@/ui/format';
+import { GoalsCard } from '@/ui/game/GoalsCard';
 import { AuthorCard } from '@/ui/puzzle/AuthorCard';
 import { ShareCard } from '@/ui/share/ShareCard';
 
@@ -30,9 +33,21 @@ export default function SolvedScreen() {
   const { colors, hue } = useTheme();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const params = useLocalSearchParams<{ key: string; clean?: string; streak?: string; freeze?: string; from?: string }>();
+  const params = useLocalSearchParams<{
+    key: string;
+    clean?: string;
+    streak?: string;
+    freeze?: string;
+    from?: string;
+    milestone?: string;
+    freezeEarned?: string;
+    goalsDone?: string;
+    goalsReward?: string;
+  }>();
   const ref = useMemo(() => (params.key ? refFromKey(params.key, content, today()) : null), [params.key]);
   const record = useAppStore((s) => (ref ? s.root!.progress.solved[ref.quoteId] : undefined));
+  const goalsState = useAppStore((s) => s.root!.goals);
+  const liveStreak = useAppStore((s) => s.root!.daily.streak);
   const [busy, setBusy] = useState(false);
   const [offerReminder, setOfferReminder] = useState(() => {
     const root = useAppStore.getState().root!;
@@ -76,6 +91,12 @@ export default function SolvedScreen() {
 
   const author = content.author(quote.author);
   const streak = params.streak ? Number(params.streak) : null;
+  const milestone = params.milestone ? Number(params.milestone) : null;
+  const date = today();
+  const isTodaysDaily = ref.mode === 'daily' && ref.dailyDate === date;
+  const goals = goalProgress(goalsState, date);
+  const justDone = (params.goalsDone ?? '').split(',').filter(Boolean) as GoalId[];
+  const teaser = isTodaysDaily ? tomorrowFacts(content, date) : null;
 
   // The interstitial (if one is due) happens only here, after tapping Next (hard rule 2).
   const next = async () => {
@@ -94,6 +115,21 @@ export default function SolvedScreen() {
 
   const share = async () => {
     if (!(await shareCard(cardRef, t('solved.shareTitle')))) Alert.alert(t('solved.shareFailed'));
+  };
+
+  // Spoiler-free result line for messages (the image card shows the quote itself).
+  const shareResult = async () => {
+    const parts = [
+      t('solved.shareLine', { number: dailyNumber(date), difficulty: t(`difficulty.${record?.difficulty ?? 'medium'}`) }),
+      record?.clean ? t('solved.shareClean') : null,
+      liveStreak > 1 ? t('solved.shareStreak', { count: liveStreak }) : null,
+    ].filter(Boolean);
+    try {
+      await Share.share({ message: `${parts.join(' · ')}
+${t('solved.shareInvite')}` });
+    } catch {
+      Alert.alert(t('solved.shareFailed'));
+    }
   };
 
   const answerReminder = async (yes: boolean) => {
@@ -152,6 +188,30 @@ export default function SolvedScreen() {
             {params.freeze === '1' ? <Tag label={t('solved.freezeUsed')} bg="rgba(255,255,255,0.2)" fg="#FFFFFF" /> : null}
           </View>
 
+          {milestone ? (
+            <Enter kind="pop" index={7}>
+              <Card style={styles.milestone} testID="solved-milestone">
+                <View style={[styles.flameBadge, { backgroundColor: colors.accent }]}>
+                  <Icon name="flame" color={colors.onAccent} size={34} />
+                </View>
+                <Text variant="display" style={styles.center}>
+                  {t('solved.milestoneTitle', { count: milestone })}
+                </Text>
+                <Text color="inkMuted" style={styles.center}>
+                  {t('solved.milestoneBody')}
+                </Text>
+                {params.freezeEarned === '1' ? (
+                  <View style={[styles.note, { backgroundColor: hue(3).tint }]}>
+                    <Icon name="star" color={hue(3).deep} size={18} />
+                    <Text variant="caption" color={hue(3).deep} style={styles.flex}>
+                      {t('solved.milestoneFreeze')}
+                    </Text>
+                  </View>
+                ) : null}
+              </Card>
+            </Enter>
+          ) : null}
+
           <Enter index={8} style={styles.stack}>
             <View style={[styles.paper, styles.paperBack, { backgroundColor: '#4DA3FF' }]} />
             <View style={[styles.paper, styles.paperMid, { backgroundColor: '#FFC93C' }]} />
@@ -185,6 +245,29 @@ export default function SolvedScreen() {
             <AuthorCard author={quote.author} dates={quote.authorDates} bio={author?.bio} work={quote.work} year={quote.workYear} />
           </Enter>
 
+          {justSolved ? (
+            <Enter index={11}>
+              <GoalsCard goals={goals} rewarded={goalsState.date === date && goalsState.rewarded} justDone={justDone} testID="solved-goals" />
+            </Enter>
+          ) : null}
+
+          {teaser ? (
+            <Enter index={11}>
+              <Card style={styles.teaser} testID="solved-teaser">
+                <View style={styles.reminderHead}>
+                  <View style={[styles.bell, { backgroundColor: hue(4).tint }]}>
+                    <Icon name="calendar" color={hue(4).deep} size={20} />
+                  </View>
+                  <Text variant="label" style={styles.flex}>
+                    {t('solved.teaserTitle')}
+                  </Text>
+                  <Tag label={t('solved.teaserReady')} bg={hue(4).tint} fg={hue(4).deep} />
+                </View>
+                <Text color="inkMuted">{t('solved.teaser', { words: teaser.words, century: teaser.century, initial: teaser.initial })}</Text>
+              </Card>
+            </Enter>
+          ) : null}
+
           {offerReminder ? (
             <Card style={styles.reminder} testID="reminder-offer">
               <View style={styles.reminderHead}>
@@ -216,6 +299,9 @@ export default function SolvedScreen() {
                 testID="solved-next"
               />
             )}
+            {isTodaysDaily ? (
+              <Button label={t('solved.shareResult')} variant="glass" icon="star" onPress={shareResult} testID="solved-share-result" />
+            ) : null}
             <View style={styles.row}>
               <Button label={t('solved.share')} variant="glass" icon="share" onPress={share} style={styles.flex} testID="solved-share" />
               <Button label={t('solved.home')} variant="glass" icon="home" onPress={() => router.replace('/')} style={styles.flex} />
@@ -289,6 +375,11 @@ const styles = StyleSheet.create({
   medal: { width: 44, height: 44, borderRadius: 22, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   authorText: { flex: 1 },
   reminder: { gap: space.sm },
+  teaser: { gap: space.sm },
+  milestone: { gap: space.sm, alignItems: 'center' },
+  flameBadge: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
+  note: { flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.md, borderRadius: radius.md, alignSelf: 'stretch' },
+  center: { textAlign: 'center' },
   reminderHead: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   bell: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   actions: { gap: space.md },

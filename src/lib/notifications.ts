@@ -32,7 +32,8 @@ export async function scheduleReminders(opts: {
   today: LocalDate;
   solvedToday: boolean;
   title: string;
-  body: string;
+  /** Text for the reminder on `date` (varies by day; never a spoiler). */
+  body: (date: LocalDate) => string;
 }): Promise<void> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
@@ -51,7 +52,7 @@ export async function scheduleReminders(opts: {
       const when = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), REMINDER_HOUR, 0, 0);
       if (when.getTime() <= now.getTime()) continue;
       await Notifications.scheduleNotificationAsync({
-        content: { title: opts.title, body: opts.body },
+        content: { title: opts.title, body: opts.body(date) },
         trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: when, channelId: CHANNEL },
       });
     }

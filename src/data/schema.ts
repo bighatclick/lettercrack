@@ -8,7 +8,7 @@
  * The migration tests fail until all three exist.
  */
 
-export const CURRENT_SCHEMA_VERSION = 2;
+export const CURRENT_SCHEMA_VERSION = 3;
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 export type Appearance = 'system' | 'light' | 'dark';
@@ -121,8 +121,37 @@ export type RootV2 = Omit<RootV1, 'schemaVersion' | 'meta'> & {
   };
 };
 
+/**
+ * v3 (engagement, Phase A): daily goals and saved streak freezes.
+ * - goals: today's goal progress; resets each local day. Not synced (it is a one-day thing).
+ * - daily.bonusFreezes: freezes earned at streak milestones, used after the weekly one.
+ * - daily.milestonesAwarded: freeze milestones already paid out. v2 saves are credited for
+ *   the milestones their current streak has already passed.
+ */
+export type GoalsSave = {
+  date: LocalDate | null;
+  progress: Record<string, number>;
+  rewarded: boolean;
+};
+
+export type RootV3 = Omit<RootV2, 'schemaVersion' | 'daily'> & {
+  schemaVersion: 3;
+  daily: {
+    streak: number;
+    best: number;
+    freezeUsedWeek: string | null;
+    solvedDates: LocalDate[];
+    highestDateSeen: LocalDate | null;
+    /** Freezes earned at streak milestones; used after the weekly free one. Merge = max. */
+    bonusFreezes: number;
+    /** Freeze milestones already paid out (each pays once, ever). */
+    milestonesAwarded: number[];
+  };
+  goals: GoalsSave;
+};
+
 /** The current root type. Point this at the newest RootVn when the schema changes. */
-export type Root = RootV2;
+export type Root = RootV3;
 
 export function defaultRoot(now: number): Root {
   return {
@@ -141,7 +170,8 @@ export function defaultRoot(now: number): Root {
       defaultDifficulty: 'medium',
     },
     progress: { levelIndex: 0, seenQuoteIds: [], solved: {}, reportedQuoteIds: [] },
-    daily: { streak: 0, best: 0, freezeUsedWeek: null, solvedDates: [], highestDateSeen: null },
+    daily: { streak: 0, best: 0, freezeUsedWeek: null, solvedDates: [], highestDateSeen: null, bonusFreezes: 0, milestonesAwarded: [] },
+    goals: { date: null, progress: {}, rewarded: false },
     hints: { balance: 0, freeUsedDate: null, freeUsedCount: 0, rewardedDate: null, rewardedCount: 0 },
     inProgress: {},
     unlocks: { removeAds: false, packs: [] },

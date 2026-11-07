@@ -66,3 +66,48 @@ describe('streak', () => {
     expect(s.best).toBe(4);
   });
 });
+
+describe('streak milestones and saved freezes', () => {
+  const run = (n: number, start: StreakState = emptyStreak()) => play(Array.from({ length: n }, (_, i) => day(i)), start);
+
+  it('celebrates milestones and earns a freeze at 7 days, once', () => {
+    const r7 = recordDailySolve(run(6), day(6), day(6));
+    expect(r7.milestone).toBe(7);
+    expect(r7.freezeEarned).toBe(true);
+    expect(r7.state.bonusFreezes).toBe(1);
+    expect(r7.state.milestonesAwarded).toEqual([7]);
+    const r8 = recordDailySolve(r7.state, day(7), day(7));
+    expect(r8.milestone).toBeNull();
+    expect(r8.freezeEarned).toBe(false);
+    expect(recordDailySolve(run(2), day(2), day(2)).milestone).toBe(3);
+  });
+
+  it('never pays the same milestone twice after a broken streak', () => {
+    const s = run(7);
+    expect(s.bonusFreezes).toBe(1);
+    // Break it (a long gap), then rebuild to 7.
+    const rebuilt = play(Array.from({ length: 7 }, (_, i) => day(30 + i)), { ...s, bonusFreezes: 0 });
+    expect(rebuilt.streak).toBe(7);
+    expect(rebuilt.bonusFreezes).toBe(0);
+  });
+
+  it('uses a saved freeze when the weekly one is already used', () => {
+    // Missed Tue and Thu of the same week: the weekly freeze covers one, a saved one the other.
+    const s = play([day(0), day(2), day(4)], { ...emptyStreak(), bonusFreezes: 1 });
+    expect(s.streak).toBe(3);
+    expect(s.bonusFreezes).toBe(0);
+  });
+
+  it('keeps the streak alive on Home while a saved freeze could still cover the gap', () => {
+    const s = play([day(0), day(2)], { ...emptyStreak(), bonusFreezes: 1 }); // weekly freeze used on Tue
+    expect(displayStreak(s, day(4))).toBe(2); // Thu missed too: the saved freeze covers it
+    expect(displayStreak({ ...s, bonusFreezes: 0 }, day(4))).toBe(0);
+  });
+
+  it('caps saved freezes', () => {
+    const r = recordDailySolve({ ...run(6), bonusFreezes: 3 }, day(6), day(6));
+    expect(r.state.bonusFreezes).toBe(3);
+    expect(r.freezeEarned).toBe(false);
+    expect(r.state.milestonesAwarded).toEqual([7]);
+  });
+});

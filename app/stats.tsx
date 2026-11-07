@@ -57,7 +57,7 @@ export default function StatsScreen() {
   return (
     <Screen hero={hero}>
       <Enter index={1}>
-        <View style={styles.streakCard} accessible accessibilityLabel={`${t('stats.streak')}: ${t('stats.days', { count: s.streak })}. ${t('stats.best')}: ${t('stats.days', { count: s.best })}`}>
+        <View style={styles.streakCard} accessible accessibilityLabel={`${t('stats.streak')}: ${t('stats.days', { count: s.streak })}. ${t('stats.best')}: ${t('stats.days', { count: s.best })}${root.daily.bonusFreezes > 0 ? `. ${t('stats.freezes', { count: root.daily.bonusFreezes })}` : ''}`}>
           <View style={[StyleSheet.absoluteFill, styles.clip]}>
             <Gradient name="candy" glows={[{ x: 90, y: 10, r: 50, color: '#FFC93C', opacity: 0.45 }, { x: 0, y: 100, r: 50, color: '#FF6B6B', opacity: 0.35 }]} />
           </View>
@@ -72,6 +72,11 @@ export default function StatsScreen() {
               <Text variant="label" color="#FFE6F3">
                 {t('stats.streakLabel', { count: s.streak })} · {t('stats.bestShort', { count: s.best })}
               </Text>
+              {root.daily.bonusFreezes > 0 ? (
+                <Text variant="caption" color="#FFE6F3" testID="stats-freezes">
+                  {t('stats.freezes', { count: root.daily.bonusFreezes })}
+                </Text>
+              ) : null}
             </View>
             <Inky pose="cheer" size={92} />
           </View>

@@ -3,7 +3,8 @@ import { addDays, daysBetween, isoWeek, type LocalDate } from './daily';
 /**
  * Daily streak with one free freeze per ISO week (specs.md §5, CG-R15).
  * A streak counts dailies solved on their own date. A missed day is bridged automatically by
- * that week's freeze, if it is unused. Restoring a streak is never charged for.
+ * that week's freeze, if it is unused, and otherwise by a saved bonus freeze.
+ * Bonus freezes are earned at streak milestones (never bought). Restoring a streak is never charged for.
  */
 export type StreakState = {
   streak: number;
@@ -14,7 +15,17 @@ export type StreakState = {
   solvedDates: LocalDate[];
   /** Highest local date seen; guards against rewinding the clock. */
   highestDateSeen: LocalDate | null;
+  /** Saved freezes earned at milestones; used only after the weekly one. */
+  bonusFreezes: number;
+  /** Freeze milestones already paid out, so a rebuilt streak can't earn the same one twice. */
+  milestonesAwarded: number[];
 };
+
+/** Streak lengths Inky celebrates. */
+export const STREAK_MILESTONES = [3, 7, 14, 30, 50, 100, 200, 365] as const;
+/** Milestones that also earn a saved freeze (once each, ever). */
+export const FREEZE_MILESTONES = [7, 30, 100] as const;
+export const MAX_BONUS_FREEZES = 3;
 
 export const emptyStreak = (): StreakState => ({
   streak: 0,
@@ -22,6 +33,8 @@ export const emptyStreak = (): StreakState => ({
   freezeUsedWeek: null,
   solvedDates: [],
   highestDateSeen: null,
+  bonusFreezes: 0,
+  milestonesAwarded: [],
 });
 
 const lastSolved = (s: StreakState): LocalDate | null =>
@@ -29,20 +42,43 @@ const lastSolved = (s: StreakState): LocalDate | null =>
 
 /**
  * Can the days strictly between `from` and `to` be bridged with freezes?
- * Each ISO week bridges at most one missed day, and not a week whose freeze is already used.
- * Returns the last week used, or `false`.
+ * Each ISO week's free freeze bridges one missed day (not a week whose freeze is already used);
+ * any other missed day uses a saved bonus freeze. Returns the last week used and the bonus
+ * freezes spent, or `false`.
  */
-function bridge(from: LocalDate, to: LocalDate, freezeUsedWeek: string | null): { week: string | null } | false {
+function bridge(
+  from: LocalDate,
+  to: LocalDate,
+  freezeUsedWeek: string | null,
+  bonus: number,
+): { week: string | null; bonusUsed: number } | false {
   const missed = daysBetween(from, to) - 1;
-  if (missed <= 0) return { week: freezeUsedWeek };
-  const weeks: string[] = [];
-  for (let i = 1; i <= missed; i++) weeks.push(isoWeek(addDays(from, i)));
-  if (new Set(weeks).size !== weeks.length) return false; // two missed days in one week
-  if (freezeUsedWeek !== null && weeks.includes(freezeUsedWeek)) return false;
-  return { week: weeks.at(-1) ?? freezeUsedWeek };
+  const used = new Set<string>(freezeUsedWeek ? [freezeUsedWeek] : []);
+  let week = freezeUsedWeek;
+  let bonusUsed = 0;
+  for (let i = 1; i <= missed; i++) {
+    const w = isoWeek(addDays(from, i));
+    if (!used.has(w)) {
+      used.add(w);
+      week = w;
+    } else if (bonusUsed < bonus) {
+      bonusUsed += 1;
+    } else {
+      return false;
+    }
+  }
+  return { week, bonusUsed };
 }
 
-export type SolveResult = { state: StreakState; credited: boolean; freezeUsed: boolean };
+export type SolveResult = {
+  state: StreakState;
+  credited: boolean;
+  freezeUsed: boolean;
+  /** The streak length just reached, when it is one of STREAK_MILESTONES. */
+  milestone: number | null;
+  /** A bonus freeze was earned by this solve. */
+  freezeEarned: boolean;
+};
 
 /**
  * Records a daily solve. Credit only when the daily's date is today, it was not already
@@ -50,20 +86,33 @@ export type SolveResult = { state: StreakState; credited: boolean; freezeUsed: b
  * Archive solves (any other date) never change the streak.
  */
 export function recordDailySolve(s: StreakState, dailyDate: LocalDate, today: LocalDate): SolveResult {
-  const none = { state: s, credited: false, freezeUsed: false };
+  const none = { state: s, credited: false, freezeUsed: false, milestone: null, freezeEarned: false };
   if (dailyDate !== today || s.solvedDates.includes(today)) return none;
   if (s.highestDateSeen !== null && today < s.highestDateSeen) return none;
 
   const last = lastSolved(s);
   let streak = 1;
   let freezeUsedWeek = s.freezeUsedWeek;
+  let bonusFreezes = s.bonusFreezes;
   let freezeUsed = false;
   if (last !== null && last < today) {
-    const b = bridge(last, today, s.freezeUsedWeek);
+    const b = bridge(last, today, s.freezeUsedWeek, bonusFreezes);
     if (b) {
       streak = s.streak + 1;
-      freezeUsed = b.week !== s.freezeUsedWeek;
+      freezeUsed = b.week !== s.freezeUsedWeek || b.bonusUsed > 0;
       freezeUsedWeek = b.week;
+      bonusFreezes -= b.bonusUsed;
+    }
+  }
+  const awarded = [...s.milestonesAwarded];
+  let freezeEarned = false;
+  for (const m of FREEZE_MILESTONES) {
+    if (streak >= m && !awarded.includes(m)) {
+      awarded.push(m);
+      if (bonusFreezes < MAX_BONUS_FREEZES) {
+        bonusFreezes += 1;
+        freezeEarned = true;
+      }
     }
   }
   const state: StreakState = {
@@ -72,8 +121,11 @@ export function recordDailySolve(s: StreakState, dailyDate: LocalDate, today: Lo
     freezeUsedWeek,
     solvedDates: [...s.solvedDates, today],
     highestDateSeen: today > (s.highestDateSeen ?? '') ? today : s.highestDateSeen,
+    bonusFreezes,
+    milestonesAwarded: awarded,
   };
-  return { state, credited: true, freezeUsed };
+  const milestone = (STREAK_MILESTONES as readonly number[]).includes(streak) ? streak : null;
+  return { state, credited: true, freezeUsed, milestone, freezeEarned };
 }
 
 /** Streak to show on Home today: alive if today's or yesterday's daily is solved, or the gap is bridgeable. */
@@ -82,5 +134,5 @@ export function displayStreak(s: StreakState, today: LocalDate): number {
   if (last === null) return 0;
   if (last >= today) return s.streak;
   // Today's daily is still open, so only the days before today must be bridged.
-  return bridge(last, today, s.freezeUsedWeek) ? s.streak : 0;
+  return bridge(last, today, s.freezeUsedWeek, s.bonusFreezes) ? s.streak : 0;
 }

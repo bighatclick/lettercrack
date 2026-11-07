@@ -33,7 +33,12 @@
     "archiveToPlay_other": "{{count}} to play",
     "archiveSub": "Every past daily quote",
     "statsSub_one": "{{count}} quote solved",
-    "statsSub_other": "{{count}} quotes solved"
+    "statsSub_other": "{{count}} quotes solved",
+    "goalsTitle": "Today's goals",
+    "goalsReward": "Finish all three for +1 hint",
+    "goalsRewarded": "All done today. You earned +1 hint!",
+    "freezes_one": "{{count}} saved freeze",
+    "freezes_other": "{{count}} saved freezes"
   },
   "puzzle": {
     "back": "Back",
@@ -92,7 +97,7 @@
     "time": "Solved in {{time}}",
     "streakUp_one": "Streak: {{count}} day",
     "streakUp_other": "Streak: {{count}} days",
-    "freezeUsed": "Your weekly streak freeze covered a missed day.",
+    "freezeUsed": "A streak freeze covered a missed day, so your streak is safe.",
     "about": "About the author",
     "source": "{{work}}, {{year}}",
     "next": "Next puzzle",
@@ -108,7 +113,21 @@
     "reminderNo": "No thanks",
     "reminderDenied": "Notifications are off for LetterCrack. You can turn them on in your device settings.",
     "toArchive": "Back to archive",
-    "celebrate": "Cracked it!"
+    "celebrate": "Cracked it!",
+    "goalsAllDone": "All of today's goals done! +1 hint",
+    "milestoneTitle_one": "{{count}}-day streak!",
+    "milestoneTitle_other": "{{count}}-day streak!",
+    "milestoneBody": "Inky is proud of you. Come back tomorrow to keep it going.",
+    "milestoneFreeze": "Inky gave you a streak freeze. It covers a missed day when the weekly one is used up.",
+    "teaserTitle": "Tomorrow's quote",
+    "teaser": "{{words}} words from the {{century}}s, by an author whose name starts with {{initial}}.",
+    "teaserReady": "Ready tomorrow",
+    "shareResult": "Share result",
+    "shareLine": "LetterCrack #{{number}}: I cracked today's quote on {{difficulty}}",
+    "shareClean": "with no hints",
+    "shareStreak_one": "{{count}}-day streak",
+    "shareStreak_other": "{{count}}-day streak",
+    "shareInvite": "Can you crack it?"
   },
   "common": {
     "loading": "Loading…",
@@ -156,7 +175,9 @@
     "weekly": "Each week",
     "weeklyLabel": "Puzzles solved per week, oldest first: {{counts}}",
     "weeklyHint_one": "Puzzles solved in each of the last {{count}} week.",
-    "weeklyHint_other": "Puzzles solved in each of the last {{count}} weeks."
+    "weeklyHint_other": "Puzzles solved in each of the last {{count}} weeks.",
+    "freezes_one": "{{count}} saved streak freeze",
+    "freezes_other": "{{count}} saved streak freezes"
   },
   "settings": {
     "title": "Settings",
@@ -210,6 +231,23 @@
   },
   "notifications": {
     "title": "LetterCrack",
-    "body": "Today’s quote is ready."
+    "body": "Today’s quote is ready.",
+    "body0": "Today's quote is ready: {{words}} words from the {{century}}s.",
+    "body1": "Inky found a {{words}}-word quote for you today.",
+    "body2": "A new quote is waiting. Who said it? Their name starts with {{initial}}.",
+    "body3": "Your daily quote is ready to crack."
+  },
+  "goals": {
+    "daily": "Solve today's quote",
+    "levels2": "Solve 2 levels",
+    "levels3": "Solve 3 levels",
+    "clean": "Solve one with no hints or checks",
+    "hard": "Solve a Hard or Expert quote",
+    "letters150": "Decode 150 letters",
+    "long": "Solve a long quote (60+ letters)",
+    "progress": "{{value}}/{{target}}",
+    "a11y": "{{goal}}: {{value}} of {{target}}",
+    "a11yDone": "{{goal}}: done",
+    "justDone": "Done!"
   }
 }

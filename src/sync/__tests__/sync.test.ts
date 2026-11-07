@@ -35,7 +35,7 @@ function played(): Root {
   r.progress.seenQuoteIds = [1, 2, 3];
   r.progress.solved = { 1: { date: '2027-01-01', clean: true, timeMs: null, difficulty: 'easy' } };
   r.progress.levelIndex = 3;
-  r.daily = { streak: 4, best: 9, freezeUsedWeek: '2027-W01', solvedDates: ['2027-01-03', '2027-01-04'], highestDateSeen: '2027-01-04' };
+  r.daily = { streak: 4, best: 9, freezeUsedWeek: '2027-W01', solvedDates: ['2027-01-03', '2027-01-04'], highestDateSeen: '2027-01-04', bonusFreezes: 1, milestonesAwarded: [7] };
   r.hints.balance = 12;
   return r;
 }
@@ -48,7 +48,7 @@ describe('cloud merge (§9)', () => {
     other.progress.solved = { 5: { date: '2027-01-05', clean: false, timeMs: 1000, difficulty: 'hard' } };
     other.progress.levelIndex = 7;
     other.progress.reportedQuoteIds = [9];
-    other.daily = { streak: 6, best: 6, freezeUsedWeek: '2027-W02', solvedDates: ['2027-01-05'], highestDateSeen: '2027-01-05' };
+    other.daily = { streak: 6, best: 6, freezeUsedWeek: '2027-W02', solvedDates: ['2027-01-05'], highestDateSeen: '2027-01-05', bonusFreezes: 0, milestonesAwarded: [7, 30] };
     other.hints.balance = 50;
     other.unlocks = { removeAds: true, packs: ['bard'] };
 
@@ -61,6 +61,8 @@ describe('cloud merge (§9)', () => {
     expect(m.daily.best).toBe(9);
     expect(m.daily.solvedDates).toEqual(['2027-01-03', '2027-01-04', '2027-01-05']);
     expect(m.daily.freezeUsedWeek).toBe('2027-W02');
+    expect(m.daily.bonusFreezes).toBe(1);
+    expect(m.daily.milestonesAwarded).toEqual([7, 30]);
     expect(m.hints.balance).toBe(50);
     expect(m.unlocks).toEqual({ removeAds: true, packs: ['bard'] });
   });

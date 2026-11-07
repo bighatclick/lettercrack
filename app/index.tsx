@@ -6,6 +6,7 @@ import Svg, { Path } from 'react-native-svg';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import { dailySeed, encrypt, makeCipherKey } from '@/engine/cipher';
+import { goalProgress } from '@/engine/goals';
 import { displayStreak } from '@/engine/streak';
 import { archiveMonths } from '@/game/archive';
 import { needsOnboarding } from '@/game/onboarding';
@@ -31,6 +32,7 @@ import {
   Wiggle,
 } from '@/ui';
 import { shade } from '@/ui/color';
+import { GoalsCard } from '@/ui/game/GoalsCard';
 import { fontFamily, type GradientName, gradients } from '@/ui/tokens';
 
 /** Home (S1): today's quote, the level path, archive, stats and settings. No ads. */
@@ -46,6 +48,8 @@ export default function Home() {
   const streak = displayStreak(root.daily, date);
   const levelRef = nextLevelRef(root, content, root.settings.defaultDifficulty);
   const level = root.progress.levelIndex + 1;
+  const goals = goalProgress(root.goals, date);
+  const goalsRewarded = root.goals.date === date && root.goals.rewarded;
 
   const preview = todayPreview(date);
   const toPlay = archiveMonths(root, content, date).reduce((sum, m) => sum + m.days.filter((d) => d.status !== 'solved').length, 0);
@@ -137,6 +141,10 @@ export default function Home() {
       </Enter>
 
       <Enter index={2}>
+        <GoalsCard goals={goals} rewarded={goalsRewarded} testID="home-goals" />
+      </Enter>
+
+      <Enter index={3}>
         <Card style={styles.levels}>
           <View style={styles.levelHead}>
             <Text variant="title">{t('home.levels')}</Text>
@@ -157,7 +165,7 @@ export default function Home() {
         </Card>
       </Enter>
 
-      <Enter index={3} style={styles.links}>
+      <Enter index={4} style={styles.links}>
         <BigTile
           gradient="lagoon"
           icon="calendar"

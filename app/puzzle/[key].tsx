@@ -58,6 +58,10 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
             clean: c.clean ? '1' : '0',
             streak: c.streak?.credited ? String(c.streak.state.streak) : '',
             freeze: c.streak?.freezeUsed ? '1' : '0',
+            milestone: c.streak?.milestone ? String(c.streak.milestone) : '',
+            freezeEarned: c.streak?.freezeEarned ? '1' : '0',
+            goalsDone: c.goals?.completed.join(',') ?? '',
+            goalsReward: c.goals?.rewardNow ? '1' : '0',
           },
         });
       if (reduceMotion) {

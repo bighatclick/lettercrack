@@ -1,6 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, type LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { Animated, type LayoutChangeEvent, type StyleProp, StyleSheet, View, type ViewStyle } from 'react-native';
+import Reanimated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 
 import { layoutText } from '@/engine/layout';
 import { isLetterCell, isLockedCell, type PuzzleState, selectedCipher } from '@/engine/puzzle';
@@ -48,8 +49,15 @@ export function Board({ state, flags, onSelect, reveal }: BoardProps) {
           {line.map((tok) => {
             wordNo += 1;
             const wordHue = hue(wordNo);
+            let hasLetter = false;
+            let filled = true;
+            for (let i = tok.start; i < tok.end; i++) {
+              if (!isLetterCell(state, i)) continue;
+              hasLetter = true;
+              if (!state.entries[i]) filled = false;
+            }
             return (
-            <View key={tok.start} style={[styles.word, { marginRight: metrics.cellWidth }]} role="group">
+            <Word key={tok.start} filled={hasLetter && filled} reduceMotion={reduceMotion} style={[styles.word, { marginRight: metrics.cellWidth }]}>
               {Array.from({ length: tok.end - tok.start }, (_, k) => {
                 const i = tok.start + k;
                 const letter = isLetterCell(state, i);
@@ -96,12 +104,33 @@ export function Board({ state, flags, onSelect, reveal }: BoardProps) {
                   />
                 );
               })}
-            </View>
+            </Word>
             );
           })}
         </View>
       ))}
     </View>
+  );
+}
+
+/**
+ * One word of the quote. When its last empty cell is filled, the word gives a small hop.
+ * It reacts to filling, never to correctness (letters are only judged by Check or a full board).
+ */
+function Word({ filled, reduceMotion, style, children }: { filled: boolean; reduceMotion: boolean; style: StyleProp<ViewStyle>; children: ReactNode }) {
+  const pop = useSharedValue(0);
+  const was = useRef(filled);
+  useEffect(() => {
+    if (filled && !was.current && !reduceMotion) {
+      pop.set(withSequence(withTiming(1, { duration: 120 }), withSpring(0, { damping: 7, stiffness: 240 })));
+    }
+    was.current = filled;
+  }, [filled, reduceMotion, pop]);
+  const hop = useAnimatedStyle(() => ({ transform: [{ translateY: -pop.value * 6 }, { scale: 1 + pop.value * 0.1 }] }));
+  return (
+    <Reanimated.View style={[style, hop]} role="group">
+      {children}
+    </Reanimated.View>
   );
 }
 

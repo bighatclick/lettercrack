@@ -14,18 +14,24 @@ import Archive from '../archive';
 import Home from '../index';
 import Onboarding from '../onboarding';
 import Settings from '../settings';
+import Solved from '../solved';
 import Stats from '../stats';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
+let mockParams: Record<string, string> = {};
 jest.mock('expo-router', () => ({
   router: { push: (...a: unknown[]) => mockPush(...a), replace: (...a: unknown[]) => mockReplace(...a), back: jest.fn(), canGoBack: () => true },
   Redirect: ({ href }: { href: string }) => {
     const { Text } = jest.requireActual('react-native');
     return <Text testID="redirect">{href}</Text>;
   },
-  useLocalSearchParams: () => ({}),
+  useLocalSearchParams: () => mockParams,
 }));
+jest.mock('expo-store-review', () => ({ isAvailableAsync: jest.fn(async () => false), requestReview: jest.fn() }));
+jest.mock('expo-sharing', () => ({ isAvailableAsync: jest.fn(async () => false), shareAsync: jest.fn() }));
+jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
+jest.mock('@/ads/interstitial', () => ({ maybeShowInterstitial: jest.fn(async () => false) }));
 jest.mock('expo-notifications', () => ({
   getPermissionsAsync: jest.fn(async () => ({ granted: false, canAskAgain: true })),
   requestPermissionsAsync: jest.fn(async () => ({ granted: false })),
@@ -61,6 +67,7 @@ function wrap(node: ReactNode) {
 }
 
 beforeEach(() => {
+  mockParams = {};
   mockPush.mockClear();
   mockReplace.mockClear();
   useAppStore.setState({ ready: false, root: null });
@@ -80,6 +87,45 @@ describe('Home', () => {
     await press('home-stats');
     await press('home-settings');
     expect(mockPush.mock.calls.map((c) => c[0])).toEqual(['/archive', '/stats', '/settings']);
+  });
+
+  it("shows today's three goals with progress", async () => {
+    useAppStore.getState().update((r) => ({ ...r, meta: { ...r.meta, onboardedAt: 1 } }));
+    await render(wrap(<Home />));
+    expect(screen.getByTestId('home-goals')).toBeTruthy();
+    expect(screen.getByText(i18n.t('goals.daily'))).toBeTruthy();
+    expect(screen.getByText(i18n.t('home.goalsReward'))).toBeTruthy();
+  });
+});
+
+describe('Solved', () => {
+  const TODAY = '2027-02-03';
+  it("celebrates a streak milestone, shows goal progress and teases tomorrow's quote", async () => {
+    const id = dailyQuoteId(TODAY, content.dailyOrder);
+    useAppStore.getState().update((r) => ({
+      ...r,
+      meta: { ...r.meta, onboardedAt: 1, reminderOffered: true },
+      progress: { ...r.progress, solved: { [id]: { date: TODAY, clean: true, timeMs: null, difficulty: 'medium' } } },
+      daily: { ...r.daily, streak: 7, best: 7, solvedDates: [TODAY], bonusFreezes: 1, milestonesAwarded: [7] },
+      goals: { date: TODAY, progress: { daily: 1 }, rewarded: false },
+    }));
+    mockParams = { key: `daily:${TODAY}`, clean: '1', streak: '7', milestone: '7', freezeEarned: '1', goalsDone: 'daily', goalsReward: '0' };
+    await render(wrap(<Solved />));
+    expect(screen.getByTestId('solved-milestone')).toBeTruthy();
+    expect(screen.getByText(i18n.t('solved.milestoneFreeze'))).toBeTruthy();
+    expect(screen.getByTestId('solved-goals')).toBeTruthy();
+    expect(screen.getByText(i18n.t('goals.justDone'))).toBeTruthy();
+    expect(screen.getByTestId('solved-teaser')).toBeTruthy();
+    expect(screen.getByTestId('solved-share-result')).toBeTruthy();
+  });
+
+  it('shows no teaser or result line for an archive daily', async () => {
+    const past = '2027-01-20';
+    mockParams = { key: `daily:${past}`, clean: '0', from: 'archive' };
+    await render(wrap(<Solved />));
+    expect(screen.queryByTestId('solved-teaser')).toBeNull();
+    expect(screen.queryByTestId('solved-share-result')).toBeNull();
+    expect(screen.queryByTestId('solved-milestone')).toBeNull();
   });
 });
 
@@ -146,5 +192,12 @@ describe('Stats', () => {
     await render(wrap(<Stats />));
     expect(screen.getByText(content.quote(id)!.author)).toBeTruthy();
     expect(screen.queryByText(i18n.t('stats.average'))).toBeNull();
+    expect(screen.queryByTestId('stats-freezes')).toBeNull();
+  });
+
+  it('shows saved streak freezes', async () => {
+    useAppStore.getState().update((r) => ({ ...r, daily: { ...r.daily, bonusFreezes: 2 } }));
+    await render(wrap(<Stats />));
+    expect(screen.getByTestId('stats-freezes')).toBeTruthy();
   });
 });

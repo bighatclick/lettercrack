@@ -1,7 +1,8 @@
 /**
  * iCloud key-value sync (specs.md §9). Pure: builds the cloud document from a Root and merges a
  * cloud document back in. Rules: union for sets, max for counters and streak, last-write for
- * settings, hints balance = max(local, cloud). A merge never removes anything from local.
+ * settings, hints balance and saved freezes = max(local, cloud). A merge never removes anything
+ * from local. Daily goals stay on the device.
  */
 import type { Root, Settings, SolvedRecord } from '@/data/schema';
 import { mergeHints } from '@/engine/hints';
@@ -81,6 +82,9 @@ export function mergeCloud(local: Root, cloud: CloudDoc): Root {
       freezeUsedWeek: maxStr(local.daily.freezeUsedWeek, cloud.daily.freezeUsedWeek),
       solvedDates,
       highestDateSeen: maxStr(local.daily.highestDateSeen, cloud.daily.highestDateSeen),
+      // Saved freezes: max, like hints, so a freeze is never lost (older cloud docs have none).
+      bonusFreezes: Math.max(local.daily.bonusFreezes, cloud.daily.bonusFreezes ?? 0),
+      milestonesAwarded: union(local.daily.milestonesAwarded, cloud.daily.milestonesAwarded ?? []).sort((a, b) => a - b),
     },
     hints: mergeHints(local.hints, cloud.hints),
     unlocks: {
