@@ -204,3 +204,19 @@ Settings screen per S7; onboarding "A CAT" mini puzzle then difficulty picker, n
 ## 12. Session rhythm
 
 Each session: pick the next phase item, write tests first for engine work, run `npm test && npm run typecheck && npm run lint`, update this plan's milestone table, commit, push to GitHub.
+
+## 13. Engagement phases A–D (Nov 2026)
+
+All built and tested; schema is now v4 (`awards`, `outfit`) with fixtures v1–v4.
+
+| Phase | Contents | Where |
+|---|---|---|
+| A | Daily goals (+1 hint), streak milestones and saved freezes, tomorrow's teaser, varied reminders, spoiler-free share line, word hop | `src/engine/goals.ts`, `streak.ts`, `src/game/teaser.ts` |
+| B | Codebreaker rank (XP = letters decoded), 36 badges kept forever, Inky's wardrobe (21 items, earned only) | `src/engine/rank.ts`, `badges.ts`, `wardrobe.ts`, `src/game/awards.ts`, `app/wardrobe.tsx`, Stats shelf |
+| C | Library (7 author sets, a checked fact per author in `tools/quotes/author-extras.json`), chapters every 10 levels (visual only, tenth level is a long quote), Sunday specials (pipeline puts long quotes on Sundays), monthly stamp book with a medal | `app/library.tsx`, `src/engine/chapters.ts`, `tools/quotes/build.mjs`, Archive |
+| D | Android home-screen widget: today's cipher, streak, solved state; snapshot covers 7 days | `modules/home-widget`, `src/game/widget.ts` |
+
+Decisions taken: chapters are visual only (no storyline, spec "no story meta"); no analytics (no backend, privacy);
+no evening "your streak is waiting" reminder (it leans on loss aversion); goal rewards stay at +1 hint, to revisit if
+the ads switch is turned on. Still open: the iOS widget (WidgetKit) needs the iOS build; facts flagged by the writer
+for a second editorial look are listed in the commit that added them.
