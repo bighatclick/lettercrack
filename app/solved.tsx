@@ -261,9 +261,11 @@ ${t('solved.shareInvite')}` });
                   <Text variant="label" style={styles.flex}>
                     {t('solved.teaserTitle')}
                   </Text>
-                  <Tag label={t('solved.teaserReady')} bg={hue(4).tint} fg={hue(4).deep} />
                 </View>
                 <Text color="inkMuted">{t('solved.teaser', { words: teaser.words, century: teaser.century, initial: teaser.initial })}</Text>
+                <View style={styles.start}>
+                  <Tag label={t('solved.teaserReady')} bg={hue(4).tint} fg={hue(4).deep} />
+                </View>
               </Card>
             </Enter>
           ) : null}
@@ -376,6 +378,7 @@ const styles = StyleSheet.create({
   authorText: { flex: 1 },
   reminder: { gap: space.sm },
   teaser: { gap: space.sm },
+  start: { alignSelf: 'flex-start' },
   milestone: { gap: space.sm, alignItems: 'center' },
   flameBadge: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
   note: { flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.md, borderRadius: radius.md, alignSelf: 'stretch' },
