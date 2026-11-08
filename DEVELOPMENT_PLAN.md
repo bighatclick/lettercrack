@@ -218,5 +218,7 @@ All built and tested; schema is now v4 (`awards`, `outfit`) with fixtures v1–v
 
 Decisions taken: chapters are visual only (no storyline, spec "no story meta"); no analytics (no backend, privacy);
 no evening "your streak is waiting" reminder (it leans on loss aversion); goal rewards stay at +1 hint, to revisit if
-the ads switch is turned on. Still open: the iOS widget (WidgetKit) needs the iOS build; facts flagged by the writer
-for a second editorial look are listed in the commit that added them.
+the ads switch is turned on. Still open: the iOS widget (WidgetKit) needs the iOS build; these facts need a second editorial
+look before release: John Trumbull (Yale exam at seven), Suckling (cribbage), Thomas Browne ("electricity"),
+Bayly and Quarles (popularity), John Logan (lectures around 1780), Disraeli (age at first novel), Izaak Walton
+(number of reprints) and Hood (Comic Annual).
