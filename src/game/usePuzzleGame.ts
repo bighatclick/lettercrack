@@ -17,6 +17,7 @@ import type { GoalsResult } from '@/engine/goals';
 import type { SolveResult } from '@/engine/streak';
 import { playSound } from '@/lib/sound';
 
+import { refreshAwards } from './awards';
 import { cellFlags } from './flags';
 import { completePuzzle, consumeHint, hintsLeft, openPuzzle, type PuzzleRef, saveProgress } from './session';
 import { today } from './today';
@@ -66,15 +67,22 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
       l.completed = true;
       let completion: Completion = { clean: false, streak: null, goals: null };
       update((r) => {
-        const c = completePuzzle(r, ref, l.difficulty, next, today());
+        const day = today();
+        const c = completePuzzle(r, ref, l.difficulty, next, day);
         completion = { clean: c.clean, streak: c.streak, goals: c.goals };
-        return c.root;
+        // Badges (Phase B): lifetime ones plus this solve's moment (time of day, length, goals).
+        return refreshAwards(c.root, content, day, {
+          hour: new Date().getHours(),
+          letters: next.plain.replace(/[^A-Z]/g, '').length,
+          clean: c.clean,
+          goalsDone: c.goals.rewardNow,
+        }).root;
       });
       if (settings.haptics) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       playSound('rustle', settings.sound);
       l.onSolved(completion);
     },
-    [ref, update, settings.haptics, settings.sound],
+    [ref, update, settings.haptics, settings.sound, content],
   );
 
   const apply = useCallback(

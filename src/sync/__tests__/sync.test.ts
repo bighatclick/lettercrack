@@ -67,6 +67,19 @@ describe('cloud merge (§9)', () => {
     expect(m.unlocks).toEqual({ removeAds: true, packs: ['bard'] });
   });
 
+  it('badges: union with the earliest date; older documents without badges are fine', () => {
+    const local = played();
+    local.awards = { earned: { first_solve: '2027-01-04', night_owl: '2027-01-04' }, seen: ['badge:first_solve'] };
+    const other = played();
+    other.awards = { earned: { first_solve: '2027-01-02', streak_3: '2027-01-03' }, seen: ['badge:streak_3'] };
+    const m = mergeCloud(local, parseCloud(JSON.stringify(toCloud(other)))!);
+    expect(m.awards.earned).toEqual({ first_solve: '2027-01-02', night_owl: '2027-01-04', streak_3: '2027-01-03' });
+    expect(m.awards.seen.sort()).toEqual(['badge:first_solve', 'badge:streak_3']);
+    const old: Partial<ReturnType<typeof toCloud>> = { ...toCloud(other) };
+    delete old.awards;
+    expect(mergeCloud(local, parseCloud(JSON.stringify(old))!).awards.earned).toEqual(local.awards.earned);
+  });
+
   it('settings: last write wins', () => {
     const local = played();
     local.settings.textSize = 2;

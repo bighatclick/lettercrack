@@ -2,9 +2,10 @@
  * iCloud key-value sync (specs.md §9). Pure: builds the cloud document from a Root and merges a
  * cloud document back in. Rules: union for sets, max for counters and streak, last-write for
  * settings, hints balance and saved freezes = max(local, cloud). A merge never removes anything
- * from local. Daily goals stay on the device.
+ * from local. Badges merge as a union. Daily goals and Inky's outfit stay on the device.
  */
 import type { Root, Settings, SolvedRecord } from '@/data/schema';
+import { mergeEarned } from '@/engine/badges';
 import { mergeHints } from '@/engine/hints';
 
 import { decodeIdSet, encodeIdSet } from './bitset';
@@ -24,6 +25,8 @@ export type CloudDoc = {
   unlocks: Root['unlocks'];
   settings: Settings;
   settingsUpdatedAt: number;
+  /** Badges (v4). Optional: older documents have none. Merge = union, earliest date. */
+  awards?: Root['awards'];
 };
 
 export function toCloud(root: Root): CloudDoc {
@@ -38,6 +41,7 @@ export function toCloud(root: Root): CloudDoc {
     unlocks: root.unlocks,
     settings: root.settings,
     settingsUpdatedAt: root.meta.settingsUpdatedAt,
+    awards: root.awards,
   };
 }
 
@@ -90,6 +94,10 @@ export function mergeCloud(local: Root, cloud: CloudDoc): Root {
     unlocks: {
       removeAds: local.unlocks.removeAds || cloud.unlocks.removeAds,
       packs: [...new Set([...local.unlocks.packs, ...cloud.unlocks.packs])],
+    },
+    awards: {
+      earned: mergeEarned(local.awards.earned, cloud.awards?.earned ?? {}),
+      seen: [...new Set([...local.awards.seen, ...(cloud.awards?.seen ?? [])])],
     },
     meta: { ...local.meta, settingsUpdatedAt: Math.max(local.meta.settingsUpdatedAt, cloud.settingsUpdatedAt) },
   };

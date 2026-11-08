@@ -42,6 +42,13 @@ import {
 export const DB_VERSION = 'v1';
 export const DAILY_SEED = 'lettercrack:dailyOrder:v1';
 
+/** Must match LAUNCH_DATE in src/engine/daily.ts (day 0 of dailyOrder). */
+export const LAUNCH_DATE = '2027-01-01';
+/** A Sunday special is at least this long (Expert length band starts at 100). */
+export const SUNDAY_MIN_CHARS = 110;
+/** Does dailyOrder slot `i` fall on a Sunday? */
+export const isSundaySlot = (i) => new Date(Date.parse(`${LAUNCH_DATE}T00:00:00Z`) + i * 86_400_000).getUTCDay() === 0;
+
 /** Turns reviewed CSV rows into accepted quote inputs + warnings. Pure. */
 export function acceptRows(rows, { authors, banned }) {
   const idx = authorIndex(authors);
@@ -132,16 +139,22 @@ export function assembleDb(accepted, { authors, ids, previous }) {
     quotes.filter((q) => !q.retired && !inDaily.has(q.id)).map((q) => q.id),
     DAILY_SEED,
   );
-  for (const id of fresh) {
-    if (dailyOrder.length >= DAILY_COUNT) break;
-    dailyOrder.push(id);
+  // Sunday specials: slots that fall on a Sunday take a long quote when one is left.
+  const byId = new Map(quotes.map((q) => [q.id, q]));
+  const isLong = (id) => (byId.get(id)?.text.length ?? 0) >= SUNDAY_MIN_CHARS;
+  const long = fresh.filter(isLong);
+  const rest = fresh.filter((id) => !isLong(id));
+  while (dailyOrder.length < DAILY_COUNT && (long.length || rest.length)) {
+    const sunday = isSundaySlot(dailyOrder.length);
+    const pool = sunday ? (long.length ? long : rest) : rest.length ? rest : long;
+    dailyOrder.push(pool.shift());
   }
 
   const used = [...new Set(quotes.map((q) => q.author))].sort();
   const authorMap = {};
   for (const name of used) {
     const a = authors[name];
-    authorMap[name] = a ? { dates: datesOf(a), bio: a.bio } : previous?.authors?.[name];
+    authorMap[name] = a ? { dates: datesOf(a), bio: a.bio, ...(a.set ? { set: a.set } : {}), ...(a.fact ? { fact: a.fact } : {}) } : previous?.authors?.[name];
   }
   return {
     db: { version: DB_VERSION, authors: authorMap, dailyOrder, quotes },

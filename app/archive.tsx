@@ -7,6 +7,7 @@ import { content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
 import { useAppStore } from '@/data/store';
 import { type ArchiveDay, archiveMonths } from '@/game/archive';
+import { solvedDailyDates, stampBook } from '@/game/awards';
 import { dailyKey } from '@/game/session';
 import { today } from '@/game/today';
 import { Card, Enter, Hero, Inky, minTouch, ProgressRing, radius, Screen, space, Tag, Text, useTheme } from '@/ui';
@@ -19,6 +20,8 @@ export default function ArchiveScreen() {
   const root = useAppStore((s) => s.root!);
   const date = today();
   const months = useMemo(() => archiveMonths(root, content, date), [root, date]);
+  // Monthly stamp book: each solved daily is a stamp; a full month earns a medal.
+  const stamps = useMemo(() => new Map(stampBook(solvedDailyDates(root, content, date), date).map((m) => [m.month, m])), [root, date]);
   const monthName = (m: string) =>
     new Date(`${m}-15T12:00:00Z`).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric', timeZone: 'UTC' });
   // Monday-first narrow weekday names (2024-01-01 was a Monday).
@@ -67,6 +70,19 @@ export default function ArchiveScreen() {
                   {monthName(m.month)}
                 </Text>
               </View>
+              {stamps.get(m.month) ? (
+                <View
+                  accessible
+                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), count: stamps.get(m.month)!.stamps, days: stamps.get(m.month)!.days })}
+                  testID={`stamps-${m.month}`}
+                >
+                  {stamps.get(m.month)!.medal ? (
+                    <Tag label={t('stamps.medal')} icon="trophy" bg={hue(1).solid} fg={hue(1).on} />
+                  ) : (
+                    <Tag label={t('stamps.count', { count: stamps.get(m.month)!.stamps, days: stamps.get(m.month)!.days })} icon="check" bg={hue(3).tint} fg={hue(3).deep} />
+                  )}
+                </View>
+              ) : null}
             </View>
             <View style={styles.grid} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
               {weekdays.map((w, i) => (
@@ -167,7 +183,7 @@ function Legend({ kind, label }: { kind: 'solved' | 'inProgress'; label: string 
 
 const styles = StyleSheet.create({
   counts: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
-  monthHead: { flexDirection: 'row' },
+  monthHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: space.sm },
   monthPill: { paddingHorizontal: space.md, paddingVertical: 6, borderRadius: radius.pill },
   grid: { flexDirection: 'row', flexWrap: 'wrap' },
   weekday: { width: `${100 / 7}%`, alignItems: 'center' },

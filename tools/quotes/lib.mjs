@@ -245,7 +245,28 @@ export function readCsvObjects(text) {
 // ---- loaders ----
 
 export const readJson = (p, fallback) => (existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')) : fallback);
-export const loadAuthors = () => readJson(join(QUOTES_DIR, 'authors.json'), {});
+/** authors.json with author-extras.json (Library set + "Did you know?" fact) merged in. */
+export function loadAuthors() {
+  const authors = readJson(join(QUOTES_DIR, 'authors.json'), {});
+  const extras = readJson(join(QUOTES_DIR, 'author-extras.json'), {});
+  for (const [name, x] of Object.entries(extras)) {
+    if (name.startsWith('_') || !authors[name]) continue;
+    authors[name] = { ...authors[name], set: x.set, fact: x.fact };
+  }
+  return authors;
+}
+
+export const AUTHOR_SETS = ['poets', 'novelists', 'playwrights', 'thinkers', 'scientists', 'leaders', 'essayists'];
+
+/** Problems with an author's Library set / fact, if any (both optional). */
+export function extrasProblems(a) {
+  const out = [];
+  if (a?.set !== undefined && !AUTHOR_SETS.includes(a.set)) out.push(`unknown set "${a.set}"`);
+  if (a?.fact !== undefined && (typeof a.fact !== 'string' || a.fact.length < 30 || a.fact.length > 160 || !/[.!]$/.test(a.fact))) {
+    out.push('fact must be one sentence of 30-160 characters');
+  }
+  return out;
+}
 export const loadWorks = () => readJson(join(QUOTES_DIR, 'works.json'), {});
 export const loadBanned = () => parseBanned(readFileSync(join(QUOTES_DIR, 'banned.txt'), 'utf8'));
 

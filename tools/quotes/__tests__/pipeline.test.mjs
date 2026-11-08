@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { acceptRows, assembleDb } from '../build.mjs';
+import { acceptRows, assembleDb, isSundaySlot, SUNDAY_MIN_CHARS } from '../build.mjs';
 import { extract, matchHeading, parseWork } from '../extract.mjs';
 import { stripGutenberg } from '../fetch.mjs';
 import { buildReviewRows, reviewCsv } from '../filter.mjs';
@@ -201,6 +201,28 @@ describe('ID stability', () => {
     assert.deepEqual(c.db.dailyOrder.slice(0, 10), a.db.dailyOrder, 'existing days never move');
     assert.equal(new Set(c.db.dailyOrder).size, 20);
     assert.deepEqual(seededShuffle([1, 2, 3, 4, 5], 'x'), seededShuffle([1, 2, 3, 4, 5], 'x'));
+  });
+
+  it('puts long quotes on Sunday slots (Sunday specials)', () => {
+    // Launch (slot 0) is Friday 1 Jan 2027, so slot 2 is the first Sunday.
+    assert.equal(isSundaySlot(2), true);
+    assert.equal(isSundaySlot(9), true);
+    assert.equal(isSundaySlot(3), false);
+    const long = 'x'.repeat(SUNDAY_MIN_CHARS);
+    const names = 'abcdefghijklmn';
+    const texts = Array.from({ length: 14 }, (_, i) => mk(i < 2 ? 'Long quote ' + names[i] + ' ' + long + '.' : 'Short quote ' + names[i] + ' here.'));
+    const { db } = assembleDb(texts, { authors, ids: { next: 1, byText: {} } });
+    const text = (id) => db.quotes.find((q) => q.id === id).text;
+    assert.ok(text(db.dailyOrder[2]).length >= SUNDAY_MIN_CHARS);
+    assert.ok(text(db.dailyOrder[9]).length >= SUNDAY_MIN_CHARS);
+    assert.ok(text(db.dailyOrder[0]).length < SUNDAY_MIN_CHARS);
+  });
+
+  it('passes the Library set and fact through to the DB', () => {
+    const fact = 'She kept bees in her garden for forty years.';
+    const withExtras = { 'Jane Writer': { ...authors['Jane Writer'], set: 'poets', fact } };
+    const { db } = assembleDb([mk('A short and simple quote for the extras.')], { authors: withExtras, ids: { next: 1, byText: {} } });
+    assert.deepEqual(db.authors['Jane Writer'], { dates: '1800–1870', bio: 'Test author.', set: 'poets', fact });
   });
 
   it('writes the QuoteDb record shape', () => {

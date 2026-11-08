@@ -8,7 +8,7 @@
  * The migration tests fail until all three exist.
  */
 
-export const CURRENT_SCHEMA_VERSION = 3;
+export const CURRENT_SCHEMA_VERSION = 4;
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 export type Appearance = 'system' | 'light' | 'dark';
@@ -150,8 +150,25 @@ export type RootV3 = Omit<RootV2, 'schemaVersion' | 'daily'> & {
   goals: GoalsSave;
 };
 
+/**
+ * v4 (engagement, Phases B and C): badges and Inky's wardrobe.
+ * - awards.earned: badge id → local date earned. Kept forever; sync merge = union.
+ * - awards.seen: badges, ranks and wardrobe items the player has already been shown, so new
+ *   ones are celebrated exactly once.
+ * - outfit: what Inky wears. Items unlock from progress, so only the choice is stored.
+ * Rank, the Library, chapters and the stamp book are derived from existing progress.
+ */
+export type AwardsSave = { earned: Record<string, LocalDate>; seen: string[] };
+export type OutfitSave = { hat: string | null; face: string | null; neck: string | null; bg: string | null };
+
+export type RootV4 = Omit<RootV3, 'schemaVersion'> & {
+  schemaVersion: 4;
+  awards: AwardsSave;
+  outfit: OutfitSave;
+};
+
 /** The current root type. Point this at the newest RootVn when the schema changes. */
-export type Root = RootV3;
+export type Root = RootV4;
 
 export function defaultRoot(now: number): Root {
   return {
@@ -172,6 +189,8 @@ export function defaultRoot(now: number): Root {
     progress: { levelIndex: 0, seenQuoteIds: [], solved: {}, reportedQuoteIds: [] },
     daily: { streak: 0, best: 0, freezeUsedWeek: null, solvedDates: [], highestDateSeen: null, bonusFreezes: 0, milestonesAwarded: [] },
     goals: { date: null, progress: {}, rewarded: false },
+    awards: { earned: {}, seen: [] },
+    outfit: { hat: null, face: 'monocle', neck: null, bg: null },
     hints: { balance: 0, freeUsedDate: null, freeUsedCount: 0, rewardedDate: null, rewardedCount: 0 },
     inProgress: {},
     unlocks: { removeAds: false, packs: [] },

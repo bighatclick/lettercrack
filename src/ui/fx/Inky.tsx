@@ -13,6 +13,11 @@ import Animated, {
 import Svg, { Circle, Defs, Ellipse, G, Line, LinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
 
 import { useTheme } from '../theme';
+import { OutfitBack, OutfitFace, OutfitHat, OutfitNeck } from './InkyOutfit';
+
+/** What Inky wears (item ids from src/engine/wardrobe.ts). */
+export type InkyOutfit = { hat: string | null; face: string | null; neck: string | null; bg: string | null };
+const CLASSIC: InkyOutfit = { hat: null, face: 'monocle', neck: null, bg: null };
 
 export type InkyPose = 'idle' | 'wave' | 'think' | 'cheer';
 
@@ -36,7 +41,18 @@ const LIMB_TOP = '#5E72F2';
  * drawn in a soft 3D style. Bobs, blinks, waves and jumps; all motion stops with Reduce Motion.
  * Decorative unless a `label` is given.
  */
-function InkyImpl({ pose = 'idle', size = 140, label }: { pose?: InkyPose; size?: number; label?: string }) {
+function InkyImpl({
+  pose = 'idle',
+  size = 140,
+  label,
+  outfit = CLASSIC,
+}: {
+  pose?: InkyPose;
+  size?: number;
+  label?: string;
+  /** Defaults to the classic look: just the brass monocle. */
+  outfit?: InkyOutfit;
+}) {
   const { reduceMotion } = useTheme();
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const id = (n: string) => `${n}${uid}`;
@@ -190,6 +206,7 @@ function InkyImpl({ pose = 'idle', size = 140, label }: { pose?: InkyPose; size?
       accessibilityElementsHidden={!label}
       pointerEvents="none"
     >
+      {outfit.bg ? svg(<OutfitBack id={outfit.bg} />) : null}
       <Animated.View style={[StyleSheet.absoluteFill, shadowStyle]}>
         {svg(<Ellipse cx="100" cy="212" rx="62" ry="10" fill={url('shadow')} />)}
       </Animated.View>
@@ -247,10 +264,18 @@ function InkyImpl({ pose = 'idle', size = 140, label }: { pose?: InkyPose; size?
             )}
             <Path d={browL} fill="none" stroke={BROW} strokeWidth={5.5} strokeLinecap="round" />
             <Path d={browR} fill="none" stroke={BROW} strokeWidth={5.5} strokeLinecap="round" />
-            {/* Brass monocle and chain */}
-            <Circle cx="124" cy="122" r="25" fill="#CFE6FF" fillOpacity={0.16} stroke={url('brass')} strokeWidth={5} />
-            <Path d="M108 110 Q114 101 125 99" fill="none" stroke="#FFFFFF" strokeWidth={3} strokeLinecap="round" opacity={0.75} />
-            <Path d="M148 128 Q162 152 152 178" fill="none" stroke="#F5BE2E" strokeWidth={2} strokeDasharray="2.5 3.5" strokeLinecap="round" />
+            {/* Brass monocle and chain (the classic look), or a wardrobe pair of glasses */}
+            {outfit.face === 'monocle' ? (
+              <G>
+                <Circle cx="124" cy="122" r="25" fill="#CFE6FF" fillOpacity={0.16} stroke={url('brass')} strokeWidth={5} />
+                <Path d="M108 110 Q114 101 125 99" fill="none" stroke="#FFFFFF" strokeWidth={3} strokeLinecap="round" opacity={0.75} />
+                <Path d="M148 128 Q162 152 152 178" fill="none" stroke="#F5BE2E" strokeWidth={2} strokeDasharray="2.5 3.5" strokeLinecap="round" />
+              </G>
+            ) : (
+              <OutfitFace id={outfit.face} />
+            )}
+            <OutfitNeck id={outfit.neck} />
+            <OutfitHat id={outfit.hat} />
             {/* Mouth */}
             {pose === 'idle' || pose === 'think' ? (
               <G>

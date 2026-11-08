@@ -11,17 +11,21 @@ import Svg, { Circle, Path, Polygon } from 'react-native-svg';
 import { maybeShowInterstitial } from '@/ads/interstitial';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
+import { LEVELS_PER_CHAPTER } from '@/engine/chapters';
 import { type GoalId, goalProgress } from '@/engine/goals';
+import { type AwardKey, isSundaySpecial, markAwardsSeen, unseenAwards } from '@/game/awards';
 import { noteReminderOffered, shouldOfferReminder } from '@/game/reminder';
 import { noteReviewAsked, shouldAskForReview } from '@/game/review';
 import { nextLevelRef, refFromKey } from '@/game/session';
 import { dailyNumber, tomorrowFacts } from '@/game/teaser';
 import { today } from '@/game/today';
+import { useOutfit } from '@/game/useOutfit';
 import { requestReminderPermission } from '@/lib/notifications';
 import { syncReminders } from '@/lib/reminderSync';
 import { shareCard } from '@/lib/share';
 import { Button, Card, Confetti, Enter, Gradient, Icon, Inky, radius, Screen, space, Tag, Text, useLoop, useTheme } from '@/ui';
 import { formatDuration } from '@/ui/format';
+import { BadgeMedal } from '@/ui/game/Awards';
 import { GoalsCard } from '@/ui/game/GoalsCard';
 import { AuthorCard } from '@/ui/puzzle/AuthorCard';
 import { ShareCard } from '@/ui/share/ShareCard';
@@ -54,6 +58,19 @@ export default function SolvedScreen() {
     return params.from !== 'archive' && ref?.mode === 'daily' && shouldOfferReminder(root);
   });
   const cardRef = useRef<HostInstance>(null);
+  const outfit = useOutfit();
+  // New badges, ranks and outfits, fixed at open so the list doesn't vanish as they're marked seen.
+  const [fresh] = useState<AwardKey[]>(() => (params.clean !== undefined ? unseenAwards(useAppStore.getState().root!, content) : []));
+  const levelIndex = useAppStore((s) => s.root!.progress.levelIndex);
+  const authorSolves = useAppStore((s) => {
+    const name = ref ? content.quote(ref.quoteId)?.author : undefined;
+    return name ? Object.keys(s.root!.progress.solved).filter((id) => content.quote(Number(id))?.author === name).length : 0;
+  });
+  useEffect(() => {
+    // Celebrated here: badges and ranks count as seen. Outfits stay "new" until the wardrobe is opened.
+    const keys = fresh.filter((k) => !k.startsWith('item:'));
+    if (keys.length) useAppStore.getState().update((r) => markAwardsSeen(r, keys));
+  }, [fresh]);
   const quote = ref ? content.quote(ref.quoteId) : undefined;
   const justSolved = params.clean !== undefined;
 
@@ -163,7 +180,7 @@ ${t('solved.shareInvite')}` });
       <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + space.xxl }]}>
         <View style={styles.inner}>
           <View style={styles.mascotRow}>
-            <Inky pose="cheer" size={150} />
+            <Inky pose="cheer" size={150} outfit={outfit} />
             <Enter kind="pop" index={6} style={styles.seal}>
               <Seal />
             </Enter>
@@ -186,7 +203,16 @@ ${t('solved.shareInvite')}` });
             ) : null}
             {streak ? <Tag label={t('solved.streakUp', { count: streak })} icon="flame" bg="#FFC93C" fg="#1E1B3A" /> : null}
             {params.freeze === '1' ? <Tag label={t('solved.freezeUsed')} bg="rgba(255,255,255,0.2)" fg="#FFFFFF" /> : null}
+            {ref.mode === 'daily' && ref.dailyDate && isSundaySpecial(ref.dailyDate) ? (
+              <Tag label={t('solved.sunday')} icon="star" bg="#FF7EB6" fg="#2A0818" />
+            ) : null}
+            {justSolved && ref.mode === 'level' && levelIndex > 0 && levelIndex % LEVELS_PER_CHAPTER === 0 ? (
+              <Tag label={t('chapters.stamp', { number: levelIndex / LEVELS_PER_CHAPTER })} icon="book" bg="#20C3AF" fg="#0E2E2A" />
+            ) : null}
+            {justSolved && authorSolves === 1 ? <Tag label={t('solved.newAuthor')} icon="book" bg="#4DA3FF" fg="#0E1F3A" /> : null}
           </View>
+
+          {fresh.length ? <NewAwards keys={fresh} /> : null}
 
           {milestone ? (
             <Enter kind="pop" index={7}>
@@ -242,7 +268,7 @@ ${t('solved.shareInvite')}` });
           </Enter>
 
           <Enter index={10}>
-            <AuthorCard author={quote.author} dates={quote.authorDates} bio={author?.bio} work={quote.work} year={quote.workYear} />
+            <AuthorCard author={quote.author} dates={quote.authorDates} bio={author?.bio} fact={author?.fact} work={quote.work} year={quote.workYear} />
           </Enter>
 
           {justSolved ? (
@@ -320,6 +346,58 @@ ${t('solved.shareInvite')}` });
   );
 }
 
+/** New badges, ranks and outfits from this solve. Shows up to three badges, then "and N more". */
+function NewAwards({ keys }: { keys: AwardKey[] }) {
+  const { t } = useTranslation();
+  const { hue } = useTheme();
+  const badges = keys.filter((k) => k.startsWith('badge:')).map((k) => k.slice(6));
+  const ranks = keys.filter((k) => k.startsWith('rank:')).map((k) => k.slice(5));
+  const items = keys.filter((k) => k.startsWith('item:')).map((k) => k.slice(5));
+  const shown = badges.slice(0, 3);
+  return (
+    <Enter kind="pop" index={7}>
+      <Card style={styles.awards} testID="solved-awards">
+        {ranks.length ? (
+          <Text variant="title" style={styles.center} accessibilityRole="header">
+            {t('rank.up', { rank: t(`rank.${ranks[ranks.length - 1]}`) })}
+          </Text>
+        ) : null}
+        {badges.length ? (
+          <>
+            <Text variant="label" style={styles.center}>
+              {t('badges.newTitle', { count: badges.length })}
+            </Text>
+            <View style={styles.awardRow}>
+              {shown.map((id) => (
+                <View key={id} style={styles.award} accessible accessibilityLabel={`${t(`badges.${id}`)}. ${t(`badges.${id}_how`)}`}>
+                  <BadgeMedal id={id} earned size={52} />
+                  <Text variant="caption" style={styles.center} numberOfLines={2}>
+                    {t(`badges.${id}`)}
+                  </Text>
+                </View>
+              ))}
+            </View>
+            {badges.length > shown.length ? (
+              <Text variant="caption" color="inkMuted" style={styles.center}>
+                {t('badges.more', { count: badges.length - shown.length })}
+              </Text>
+            ) : null}
+          </>
+        ) : null}
+        {items.length ? (
+          <View style={[styles.note, { backgroundColor: hue(4).tint }]}>
+            <Icon name="shirt" color={hue(4).deep} size={18} />
+            <Text variant="caption" color={hue(4).deep} style={styles.flex}>
+              {t('wardrobe.newItems', { count: items.length })} {items.map((i) => t(`wardrobe.item_${i}`)).join(', ')}
+            </Text>
+          </View>
+        ) : null}
+        {items.length ? <Button label={t('wardrobe.try')} variant="secondary" icon="play" compact onPress={() => router.push('/wardrobe')} testID="solved-wardrobe" /> : null}
+      </Card>
+    </Enter>
+  );
+}
+
 function initials(name: string): string {
   const parts = name.split(/\s+/).filter((w) => /^[A-Z]/.test(w));
   return ((parts[0]?.[0] ?? '') + (parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? '') : '')).toUpperCase();
@@ -380,6 +458,9 @@ const styles = StyleSheet.create({
   teaser: { gap: space.sm },
   start: { alignSelf: 'flex-start' },
   milestone: { gap: space.sm, alignItems: 'center' },
+  awards: { gap: space.md, alignItems: 'center' },
+  awardRow: { flexDirection: 'row', gap: space.md, justifyContent: 'center', flexWrap: 'wrap' },
+  award: { width: 84, alignItems: 'center', gap: 4 },
   flameBadge: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center' },
   note: { flexDirection: 'row', alignItems: 'center', gap: space.sm, padding: space.md, borderRadius: radius.md, alignSelf: 'stretch' },
   center: { textAlign: 'center' },

@@ -1,17 +1,22 @@
 import { Redirect, router } from 'expo-router';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
-import { dailySeed, encrypt, makeCipherKey } from '@/engine/cipher';
+import { chapterOf, chapterTheme, isBigQuoteLevel, levelInChapter } from '@/engine/chapters';
 import { goalProgress } from '@/engine/goals';
+import { unlockedItems } from '@/engine/wardrobe';
 import { displayStreak } from '@/engine/streak';
 import { archiveMonths } from '@/game/archive';
+import { isSundaySpecial, library, rankOf, unlockFacts, unseenAwards } from '@/game/awards';
 import { needsOnboarding } from '@/game/onboarding';
-import { dailyKey, dailyRef, nextLevelRef } from '@/game/session';
+import { dailyKey, nextLevelRef } from '@/game/session';
 import { today } from '@/game/today';
+import { useOutfit } from '@/game/useOutfit';
+import { cipherPreview } from '@/game/widget';
 import {
   Button,
   Card,
@@ -20,6 +25,7 @@ import {
   Gradient,
   Hero,
   Icon,
+  type IconName,
   Inky,
   PressScale,
   Pulse,
@@ -32,6 +38,7 @@ import {
   Wiggle,
 } from '@/ui';
 import { shade } from '@/ui/color';
+import { RankCard } from '@/ui/game/Awards';
 import { GoalsCard } from '@/ui/game/GoalsCard';
 import { fontFamily, type GradientName, gradients } from '@/ui/tokens';
 
@@ -50,6 +57,20 @@ export default function Home() {
   const level = root.progress.levelIndex + 1;
   const goals = goalProgress(root.goals, date);
   const goalsRewarded = root.goals.date === date && root.goals.rewarded;
+  const outfit = useOutfit();
+  const chapter = chapterOf(level);
+  const theme = chapterTheme(chapter);
+  const progressView = useMemo(() => {
+    const lib = library(root, content);
+    return {
+      rank: rankOf(root, content),
+      authors: lib.collected.size,
+      totalAuthors: lib.total,
+      items: unlockedItems(unlockFacts(root, content)).length,
+      unseen: unseenAwards(root, content),
+    };
+  }, [root]);
+  const newItems = progressView.unseen.some((k) => k.startsWith('item:'));
 
   const preview = todayPreview(date);
   const toPlay = archiveMonths(root, content, date).reduce((sum, m) => sum + m.days.filter((d) => d.status !== 'solved').length, 0);
@@ -67,7 +88,7 @@ export default function Home() {
       overline={dateLabel}
       title={greeting}
       action={{ icon: 'gear', label: t('home.settings'), onPress: () => router.push('/settings'), testID: 'home-settings' }}
-      side={<Inky pose="wave" size={118} />}
+      side={<Inky pose="wave" size={118} outfit={outfit} />}
     >
       <View style={styles.heroRow}>
         {streak > 0 ? (
@@ -94,6 +115,7 @@ export default function Home() {
         <Card style={styles.daily}>
           <View style={styles.tags}>
             <Tag label={t('home.title').toUpperCase()} bg={hue(4).tint} fg={hue(4).deep} />
+            {isSundaySpecial(date) ? <Tag label={t('home.sunday')} icon="star" bg={hue(1).solid} fg={hue(1).on} /> : null}
             {preview ? <Tag label={t(`difficulty.${root.inProgress[key]?.difficulty ?? root.settings.defaultDifficulty}`)} bg={hue(2).tint} fg={hue(2).deep} /> : null}
             {preview ? <Tag label={t('home.letters', { count: preview.letters })} bg={hue(0).tint} fg={hue(0).deep} /> : null}
           </View>
@@ -145,12 +167,27 @@ export default function Home() {
       </Enter>
 
       <Enter index={3}>
+        <RankCard rank={progressView.rank} testID="home-rank" />
+      </Enter>
+
+      <Enter index={3}>
         <Card style={styles.levels}>
           <View style={styles.levelHead}>
             <Text variant="title">{t('home.levels')}</Text>
-            <Tag label={t('home.levelNow', { level })} bg={hue(0).tint} fg={hue(0).deep} />
+            <Tag label={t('home.levelNow', { level })} bg={hue(theme.hue).tint} fg={hue(theme.hue).deep} />
           </View>
-          <LevelPath current={level} />
+          <View style={[styles.chapter, { backgroundColor: hue(theme.hue).tint }]} testID="home-chapter">
+            <View style={styles.chapterHead}>
+              <Icon name="book" size={18} color={hue(theme.hue).deep} />
+              <Text variant="label" color={hue(theme.hue).deep} style={styles.flex}>
+                {t('home.chapter', { number: chapter, name: t(`chapters.${theme.id}`) })}
+              </Text>
+            </View>
+            <Text variant="caption" color={hue(theme.hue).deep}>
+              {isBigQuoteLevel(level) ? t('home.bigQuote') : t('home.chapterProgress', { level: levelInChapter(level) })}
+            </Text>
+          </View>
+          <LevelPath current={level} hueIndex={theme.hue} />
           {levelRef ? (
             <Button
               label={t('home.continueLevel', { level })}
@@ -184,31 +221,35 @@ export default function Home() {
           bars
         />
       </Enter>
+
+      <Enter index={5} style={styles.links}>
+        <BigTile
+          gradient="candy"
+          icon="book"
+          title={t('home.library')}
+          subtitle={t('home.librarySub', { count: progressView.authors, total: progressView.totalAuthors })}
+          onPress={() => router.push('/library')}
+          testID="home-library"
+        />
+        <BigTile
+          gradient="sky"
+          icon="shirt"
+          title={t('home.wardrobe')}
+          subtitle={t('home.wardrobeSub', { count: progressView.items })}
+          onPress={() => router.push('/wardrobe')}
+          testID="home-wardrobe"
+          dot={newItems ? t('home.newBadge') : undefined}
+        />
+      </Enter>
     </Screen>
   );
 }
 
 /** Today's quote, still in cipher (no spoilers): the first few words, shown as coloured tiles. */
-function todayPreview(date: string) {
-  const ref = dailyRef(date, content, date);
-  const q = ref ? content.quote(ref.quoteId) : undefined;
-  if (!q) return null;
-  const words = encrypt(q.text, makeCipherKey(dailySeed(date)))
-    .split(/\s+/)
-    .map((w) => w.replace(/[^A-Z]/g, ''))
-    .filter(Boolean);
-  const shown: string[] = [];
-  let n = 0;
-  for (const w of words) {
-    if (n + w.length > 16 && shown.length) break;
-    shown.push(w);
-    n += w.length;
-  }
-  return { words: shown, letters: q.text.replace(/[^a-z]/gi, '').length, difficulty: q.difficulty, more: shown.length < words.length };
-}
+const todayPreview = (date: string) => cipherPreview(date, content);
 
 /** A winding path of level nodes: done, current (pulsing) and the next few (locked). */
-function LevelPath({ current }: { current: number }) {
+function LevelPath({ current, hueIndex }: { current: number; hueIndex: number }) {
   const { colors, hue } = useTheme();
   const first = Math.max(1, current - 2);
   const nodes = Array.from({ length: 6 }, (_, i) => first + i);
@@ -221,7 +262,8 @@ function LevelPath({ current }: { current: number }) {
       {nodes.map((n, i) => {
         const done = n < current;
         const now = n === current;
-        const h = hue(n % 2 ? 2 : 3);
+        const h = hue(n % 2 ? hueIndex : hueIndex + 1);
+        const big = isBigQuoteLevel(n);
         const node = (
           <View
             style={[
@@ -239,6 +281,8 @@ function LevelPath({ current }: { current: number }) {
               <Text variant="label" color={hue(0).on}>
                 {n}
               </Text>
+            ) : big ? (
+              <Icon name="star" size={18} color={colors.accent} />
             ) : (
               <Icon name="lock" size={14} color={colors.inkMuted} />
             )}
@@ -262,18 +306,21 @@ function BigTile({
   onPress,
   testID,
   bars,
+  dot,
 }: {
   gradient: GradientName;
-  icon: 'calendar' | 'chart';
+  icon: IconName;
   title: string;
   subtitle: string;
   onPress: () => void;
   testID: string;
   bars?: boolean;
+  /** A small "New" flag in the corner. */
+  dot?: string;
 }) {
   const g = gradients[gradient];
   return (
-    <PressScale accessibilityRole="button" accessibilityLabel={`${title}. ${subtitle}`} onPress={onPress} style={styles.bigTile} testID={testID}>
+    <PressScale accessibilityRole="button" accessibilityLabel={`${title}. ${subtitle}${dot ? `. ${dot}` : ''}`} onPress={onPress} style={styles.bigTile} testID={testID}>
       <View style={[StyleSheet.absoluteFill, styles.bigClip]}>
         <Gradient name={gradient} glows={[{ x: 85, y: 10, r: 50, color: '#FFFFFF', opacity: 0.35 }]} />
       </View>
@@ -292,6 +339,7 @@ function BigTile({
             ))}
           </View>
         ) : null}
+        {dot ? <Tag label={dot} bg="#FF6B6B" fg="#FFFFFF" /> : null}
       </View>
       <Text variant="title" color={g.text}>
         {title}
@@ -321,6 +369,9 @@ const styles = StyleSheet.create({
   tileText: { fontFamily: fontFamily.mono, fontSize: 17 },
   ellipsis: { marginBottom: 2 },
   levels: { gap: space.md },
+  chapter: { gap: 2, paddingHorizontal: space.md, paddingVertical: space.sm, borderRadius: radius.md },
+  chapterHead: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  flex: { flex: 1 },
   levelHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   path: { height: 84, flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: space.xs },
   nodeSlot: { width: 48, alignItems: 'center' },

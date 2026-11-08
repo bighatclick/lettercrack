@@ -12,10 +12,12 @@ import { ThemeProvider } from '@/ui/theme';
 
 import Archive from '../archive';
 import Home from '../index';
+import Library from '../library';
 import Onboarding from '../onboarding';
 import Settings from '../settings';
 import Solved from '../solved';
 import Stats from '../stats';
+import Wardrobe from '../wardrobe';
 
 const mockPush = jest.fn();
 const mockReplace = jest.fn();
@@ -89,6 +91,17 @@ describe('Home', () => {
     expect(mockPush.mock.calls.map((c) => c[0])).toEqual(['/archive', '/stats', '/settings']);
   });
 
+  it('shows the rank and chapter, and links to the Library and wardrobe', async () => {
+    useAppStore.getState().update((r) => ({ ...r, meta: { ...r.meta, onboardedAt: 1 } }));
+    await render(wrap(<Home />));
+    expect(screen.getByTestId('home-rank')).toBeTruthy();
+    expect(screen.getByText(i18n.t('rank.rookie'))).toBeTruthy();
+    expect(screen.getByText(i18n.t('home.chapter', { number: 1, name: i18n.t('chapters.meadow') }))).toBeTruthy();
+    await press('home-library');
+    await press('home-wardrobe');
+    expect(mockPush.mock.calls.map((c) => c[0])).toEqual(['/library', '/wardrobe']);
+  });
+
   it("shows today's three goals with progress", async () => {
     useAppStore.getState().update((r) => ({ ...r, meta: { ...r.meta, onboardedAt: 1 } }));
     await render(wrap(<Home />));
@@ -117,6 +130,27 @@ describe('Solved', () => {
     expect(screen.getByText(i18n.t('goals.justDone'))).toBeTruthy();
     expect(screen.getByTestId('solved-teaser')).toBeTruthy();
     expect(screen.getByTestId('solved-share-result')).toBeTruthy();
+  });
+
+  it('celebrates new badges, a new author and shows a fun fact', async () => {
+    const id = content.levelPool[0]!.id;
+    useAppStore.getState().update((r) => ({
+      ...r,
+      meta: { ...r.meta, onboardedAt: 1, reminderOffered: true },
+      progress: { ...r.progress, levelIndex: 1, solved: { [id]: { date: TODAY, clean: true, timeMs: null, difficulty: 'medium' } } },
+      awards: { earned: { first_solve: TODAY, first_clean: TODAY }, seen: [] },
+    }));
+    mockParams = { key: `level:${id}`, clean: '1' };
+    await render(wrap(<Solved />));
+    expect(screen.getByTestId('solved-awards')).toBeTruthy();
+    expect(screen.getByText(i18n.t('badges.first_solve'))).toBeTruthy();
+    expect(screen.getByText(i18n.t('solved.newAuthor'))).toBeTruthy();
+    expect(screen.getByTestId('author-fact')).toBeTruthy();
+    // The starry-sky backdrop came with the clean-solve badge.
+    expect(screen.getByTestId('solved-wardrobe')).toBeTruthy();
+    // Badges are now seen; the outfit waits for the wardrobe.
+    expect(useAppStore.getState().root!.awards.seen).toEqual(expect.arrayContaining(['badge:first_solve', 'badge:first_clean']));
+    expect(useAppStore.getState().root!.awards.seen).not.toContain('item:stars');
   });
 
   it('shows no teaser or result line for an archive daily', async () => {
@@ -199,5 +233,42 @@ describe('Stats', () => {
     useAppStore.getState().update((r) => ({ ...r, daily: { ...r.daily, bonusFreezes: 2 } }));
     await render(wrap(<Stats />));
     expect(screen.getByTestId('stats-freezes')).toBeTruthy();
+  });
+});
+
+describe('Library', () => {
+  it('shows every set and reveals a collected author with a fun fact', async () => {
+    const id = content.levelPool[0]!.id;
+    const author = content.quote(id)!.author;
+    useAppStore.getState().update((r) => ({
+      ...r,
+      progress: { ...r.progress, solved: { [id]: { date: '2027-02-01', clean: true, timeMs: null, difficulty: 'medium' } } },
+    }));
+    await render(wrap(<Library />));
+    expect(screen.getByText(i18n.t('library.count', { count: 1, total: content.authors().length }))).toBeTruthy();
+    await act(async () => {
+      fireEvent.press(screen.getByLabelText(author));
+    });
+    expect(screen.getByText(`${i18n.t('library.didYouKnow')} ${content.author(author)!.fact}`)).toBeTruthy();
+  });
+});
+
+describe('Wardrobe', () => {
+  it('only lets Inky wear unlocked items', async () => {
+    await render(wrap(<Wardrobe />));
+    await press('wardrobe-crown');
+    expect(useAppStore.getState().root!.outfit.hat).toBeNull();
+    // Reaching Apprentice unlocks the beret.
+    const ids = content.levelPool.map((q) => q.id).concat(content.dailyOrder);
+    await act(async () => {
+      useAppStore.getState().update((r) => ({
+        ...r,
+        progress: { ...r.progress, solved: Object.fromEntries(ids.map((i) => [i, { date: '2027-02-01', clean: false, timeMs: null, difficulty: 'medium' as const }])) },
+      }));
+    });
+    await press('wardrobe-beret');
+    expect(useAppStore.getState().root!.outfit.hat).toBe('beret');
+    await press('wardrobe-hat-none');
+    expect(useAppStore.getState().root!.outfit.hat).toBeNull();
   });
 });

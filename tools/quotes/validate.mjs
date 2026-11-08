@@ -18,7 +18,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { DAILY_COUNT, bannedHits, loadBanned } from './lib.mjs';
+import { DAILY_COUNT, bannedHits, extrasProblems, loadBanned } from './lib.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const errors = [];
@@ -119,6 +119,7 @@ for (const f of dbFiles) {
     if (!Array.isArray(db) && db.authors) {
       const a = db.authors[q.author];
       if (!a?.bio || !a?.dates) fail(`${where}: author "${q.author}" has no dates/bio entry`);
+      for (const p of extrasProblems(a)) fail(`${where}: author "${q.author}": ${p}`);
     }
   }
   if (!Array.isArray(db) && Array.isArray(db.dailyOrder)) {

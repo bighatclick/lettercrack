@@ -1,16 +1,20 @@
 import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
+import { BADGE_GROUPS, BADGE_IDS, badgesIn } from '@/engine/badges';
 import { addDays } from '@/engine/daily';
+import { markAwardsSeen, rankOf, unseenAwards } from '@/game/awards';
 import { computeStats } from '@/game/stats';
 import { today } from '@/game/today';
+import { useOutfit } from '@/game/useOutfit';
 import { Card, Enter, Float, Gradient, Hero, Icon, Inky, ProgressRing, Pulse, radius, Screen, space, Text, useNoEntrance, useTheme } from '@/ui';
 import { shade } from '@/ui/color';
+import { BadgeMedal, RankCard } from '@/ui/game/Awards';
 import { formatDuration } from '@/ui/format';
 import { type GradientName, gradients, motion } from '@/ui/tokens';
 
@@ -24,6 +28,18 @@ export default function StatsScreen() {
   const root = useAppStore((s) => s.root!);
   const date = today();
   const s = useMemo(() => computeStats(root, content, date), [root, date]);
+  const rank = useMemo(() => rankOf(root, content), [root]);
+  const outfit = useOutfit();
+  const update = useAppStore((st) => st.update);
+  const freshBadges = useMemo(() => new Set(unseenAwards(root, content).filter((k) => !k.startsWith('item:'))), [root]);
+  // Looking at the shelf counts as seeing new badges and ranks (wardrobe items are seen in the wardrobe).
+  useEffect(() => {
+    if (!freshBadges.size) return;
+    const keys = [...freshBadges];
+    const id = setTimeout(() => update((r) => markAwardsSeen(r, keys)), 1500);
+    return () => clearTimeout(id);
+  }, [freshBadges, update]);
+  const earnedCount = BADGE_IDS.filter((id) => root.awards.earned[id]).length;
 
   // The last 7 days: did the player solve that day's daily?
   const week = useMemo(
@@ -79,7 +95,7 @@ export default function StatsScreen() {
                 </Text>
               ) : null}
             </View>
-            <Inky pose="cheer" size={92} />
+            <Inky pose="cheer" size={92} outfit={outfit} />
           </View>
           <View style={styles.weekRow}>
             {week.map((d) => (
@@ -94,6 +110,59 @@ export default function StatsScreen() {
             ))}
           </View>
         </View>
+      </Enter>
+
+      <Enter index={2}>
+        <RankCard rank={rank} testID="stats-rank" />
+      </Enter>
+
+      <Enter index={2}>
+        <Card style={{ gap: space.md }} testID="stats-badges">
+          <View style={styles.badgeHead}>
+            <Text variant="title" accessibilityRole="header" style={styles.flex}>
+              {t('badges.title')}
+            </Text>
+            <Text variant="label" color="inkMuted">
+              {t('badges.count', { earned: earnedCount, total: BADGE_IDS.length })}
+            </Text>
+          </View>
+          {BADGE_GROUPS.map((g) => (
+            <View key={g} style={{ gap: space.sm }}>
+              <Text variant="overline" color="inkMuted">
+                {t(`badges.group_${g}`).toUpperCase()}
+              </Text>
+              <View style={styles.shelf}>
+                {badgesIn(g).map((id) => {
+                  const when = root.awards.earned[id];
+                  const name = t(`badges.${id}`);
+                  const how = t(`badges.${id}_how`);
+                  const fresh = freshBadges.has(`badge:${id}`);
+                  return (
+                    <View
+                      key={id}
+                      style={styles.badge}
+                      accessible
+                      accessibilityLabel={when ? `${name}. ${how} ${t('badges.earned', { date: when })}` : `${name}. ${t('badges.locked', { how })}`}
+                      testID={`badge-${id}`}
+                    >
+                      <BadgeMedal id={id} earned={!!when} />
+                      <Text variant="caption" style={styles.badgeName} numberOfLines={2} color={when ? 'ink' : 'inkMuted'}>
+                        {name}
+                      </Text>
+                      {fresh ? (
+                        <View style={styles.newDot}>
+                          <Text variant="overline" color="#FFFFFF">
+                            {t('home.newBadge')}
+                          </Text>
+                        </View>
+                      ) : null}
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          ))}
+        </Card>
       </Enter>
 
       <Enter index={2} style={styles.tiles}>
@@ -287,6 +356,11 @@ const styles = StyleSheet.create({
   barCol: { flex: 1, alignItems: 'center', gap: 4 },
   bar: { width: '100%', maxWidth: 40, borderRadius: 10, borderBottomWidth: 4 },
   podium: { flexDirection: 'row', alignItems: 'flex-end', gap: space.sm },
+  badgeHead: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  shelf: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
+  badge: { width: 76, alignItems: 'center', gap: 4 },
+  badgeName: { textAlign: 'center' },
+  newDot: { position: 'absolute', top: -4, right: 2, backgroundColor: '#FF6B6B', borderRadius: 8, paddingHorizontal: 5 },
   podiumCol: { flex: 1, alignItems: 'center', gap: 4 },
   podiumName: { textAlign: 'center' },
   medal: { width: 46, height: 46, borderRadius: 23, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },

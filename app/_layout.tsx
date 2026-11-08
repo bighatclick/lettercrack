@@ -11,11 +11,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { createMMKVStore } from '@/data/mmkv';
 import { useAppStore } from '@/data/store';
+import { content } from '@/content/quotes';
+import { refreshAwards } from '@/game/awards';
 import { onAppOpen } from '@/game/session';
 import { today } from '@/game/today';
 import { i18n, initI18n } from '@/i18n';
 import { applyOrientationPolicy } from '@/lib/orientation';
 import { syncReminders } from '@/lib/reminderSync';
+import { syncWidget } from '@/lib/widget';
 import { initCrashReporting } from '@/lib/sentry';
 import { startCloudSync } from '@/sync/cloud';
 import { fontAssets, ThemeProvider, useTheme } from '@/ui';
@@ -53,8 +56,10 @@ export default function RootLayout() {
     if (!store.ready) store.hydrate(createMMKVStore());
     // Remember the highest date seen, on launch and whenever the app returns to the foreground.
     const onActive = () => {
-      useAppStore.getState().update((r) => onAppOpen(r, today()));
+      // Also awards badges earned from existing progress (players from before badges existed).
+      useAppStore.getState().update((r) => refreshAwards(onAppOpen(r, today()), content, today()).root);
       syncReminders(i18n.t.bind(i18n));
+      syncWidget(useAppStore.getState().root, i18n.t.bind(i18n));
     };
     onActive();
     const sub = AppState.addEventListener('change', (s) => s === 'active' && onActive());
@@ -64,9 +69,18 @@ export default function RootLayout() {
       update: (fn) => useAppStore.getState().update(fn),
       subscribe: (cb) => useAppStore.subscribe((s) => cb(s.root)),
     });
+    // Android home-screen widget: refreshed shortly after progress changes (cheap, and skipped when unchanged).
+    let widgetTimer: ReturnType<typeof setTimeout> | undefined;
+    const stopWidget = useAppStore.subscribe((s, prev) => {
+      if (s.root === prev.root) return;
+      if (widgetTimer) clearTimeout(widgetTimer);
+      widgetTimer = setTimeout(() => syncWidget(useAppStore.getState().root, i18n.t.bind(i18n)), 1500);
+    });
     return () => {
       sub.remove();
       stopSync();
+      stopWidget();
+      if (widgetTimer) clearTimeout(widgetTimer);
     };
   }, []);
 

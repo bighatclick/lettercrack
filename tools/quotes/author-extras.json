@@ -1,0 +1,783 @@
+{
+  "_comment": "Per-author extras for the Library and 'Did you know?'. set = one of poets|novelists|playwrights|thinkers|scientists|leaders|essayists. fact = one short, true, kid-safe sentence. Editorially reviewed.",
+  "William Shakespeare": {
+    "set": "playwrights",
+    "fact": "His plays were performed at the Globe, a round wooden theatre beside the River Thames in London."
+  },
+  "Alexander Pope": {
+    "set": "poets",
+    "fact": "At his riverside villa in Twickenham he built a famous grotto decorated with shells, minerals and mirrors."
+  },
+  "John Milton": {
+    "set": "poets",
+    "fact": "Milton knew many languages and worked as a government secretary writing official letters in Latin."
+  },
+  "Lord Byron": {
+    "set": "poets",
+    "fact": "As a student at Cambridge he kept a tame bear, because the college rules did not forbid bears."
+  },
+  "William Wordsworth": {
+    "set": "poets",
+    "fact": "He loved long walks and often composed his poems aloud while strolling the hills of the Lake District."
+  },
+  "Plutarch": {
+    "set": "essayists",
+    "fact": "Shakespeare used an English translation of his work as a source for plays such as Julius Caesar."
+  },
+  "Samuel Johnson": {
+    "set": "essayists",
+    "fact": "Johnson had a cat named Hodge and would go out himself to buy oysters for it."
+  },
+  "Alfred, Lord Tennyson": {
+    "set": "poets",
+    "fact": "His voice was recorded on an Edison wax cylinder in 1890, reading one of his own poems aloud."
+  },
+  "Oliver Goldsmith": {
+    "set": "novelists",
+    "fact": "His comedy She Stoops to Conquer first opened in 1773 and is still performed on stages today."
+  },
+  "William Cowper": {
+    "set": "poets",
+    "fact": "Cowper kept three pet hares named Puss, Tiney and Bess, and wrote about them for a magazine."
+  },
+  "Miguel de Cervantes": {
+    "set": "novelists",
+    "fact": "Don Quixote is often called the first modern novel, and its hero famously fights windmills he thinks are giants."
+  },
+  "Marcus Aurelius": {
+    "set": "thinkers",
+    "fact": "A bronze statue of him riding a horse has survived in Rome since ancient times and is now in a museum."
+  },
+  "James Russell Lowell": {
+    "set": "poets",
+    "fact": "Lowell was the first editor of The Atlantic Monthly, the magazine that began in Boston in 1857."
+  },
+  "John Dryden": {
+    "set": "poets",
+    "fact": "Dryden spent so much time at Will's Coffee House in London that he had his own chair by the fire."
+  },
+  "Thomas Moore": {
+    "set": "poets",
+    "fact": "He was a close friend of Lord Byron and later published a famous book of Byron's letters and life."
+  },
+  "Robert Burton": {
+    "set": "essayists",
+    "fact": "He published his famous book under the playful pen name Democritus Junior, after a laughing Greek thinker."
+  },
+  "Samuel Butler": {
+    "set": "poets",
+    "fact": "King Charles II enjoyed his comic poem so much that he often quoted lines from it."
+  },
+  "Edward Young": {
+    "set": "poets",
+    "fact": "Night Thoughts was so popular that the artist William Blake painted hundreds of watercolours for it."
+  },
+  "Ralph Waldo Emerson": {
+    "set": "essayists",
+    "fact": "Emerson let his friend Henry David Thoreau build a small cabin on his land beside Walden Pond."
+  },
+  "Robert Burns": {
+    "set": "poets",
+    "fact": "Every 25 January, people around the world hold Burns Night suppers with haggis to celebrate his birthday."
+  },
+  "Samuel Taylor Coleridge": {
+    "set": "poets",
+    "fact": "He and Wordsworth published Lyrical Ballads together in 1798, a book that helped start English Romanticism."
+  },
+  "Sir Walter Scott": {
+    "set": "novelists",
+    "fact": "He published his novels without his name at first, which earned him the nickname \"The Great Unknown\"."
+  },
+  "Robert Browning": {
+    "set": "poets",
+    "fact": "His poem The Pied Piper of Hamelin, about a piper who leads away the rats of a town, is a children's favourite."
+  },
+  "Michel de Montaigne": {
+    "set": "essayists",
+    "fact": "Latin was his first language: his father had everyone in the house speak only Latin to him as a child."
+  },
+  "Henry Wadsworth Longfellow": {
+    "set": "poets",
+    "fact": "He was the first American writer honoured with a bust in Poets' Corner at Westminster Abbey."
+  },
+  "Geoffrey Chaucer": {
+    "set": "poets",
+    "fact": "Chaucer wrote a guide to the astrolabe, an instrument for measuring the stars, for a boy named Lewis."
+  },
+  "Francis Bacon": {
+    "set": "thinkers",
+    "fact": "He championed learning by experiment and observation, an idea that shaped the modern scientific method."
+  },
+  "Jonathan Swift": {
+    "set": "novelists",
+    "fact": "The tiny people of Lilliput in his book gave English the word \"Lilliputian\", meaning very small."
+  },
+  "Richard Brinsley Sheridan": {
+    "set": "playwrights",
+    "fact": "His character Mrs Malaprop, who keeps mixing up her words, gave English the word \"malapropism\"."
+  },
+  "Thomas Campbell": {
+    "set": "poets",
+    "fact": "He was one of the leading founders of the University of London, now known as University College London."
+  },
+  "Edmund Burke": {
+    "set": "leaders",
+    "fact": "He was one of the first members of The Club, a London dining group started by Joshua Reynolds and Samuel Johnson."
+  },
+  "Benjamin Disraeli": {
+    "set": "leaders",
+    "fact": "He published his first novel, Vivian Grey, in 1826, when he was only about 21 years old."
+  },
+  "Thomas Gray": {
+    "set": "poets",
+    "fact": "Afraid of fire, he had an iron bar fitted at his Cambridge window to hold a rope ladder for escape."
+  },
+  "François de La Rochefoucauld": {
+    "set": "thinkers",
+    "fact": "His book of Maxims holds hundreds of short sayings, which he polished and revised over many years."
+  },
+  "Epictetus": {
+    "set": "thinkers",
+    "fact": "Epictetus wrote nothing down himself; his student Arrian recorded his lessons for later readers."
+  },
+  "James Thomson": {
+    "set": "poets",
+    "fact": "He wrote the words of Rule, Britannia!, the famous song set to music by the composer Thomas Arne."
+  },
+  "François Rabelais": {
+    "set": "novelists",
+    "fact": "Before writing his comic tales, he trained and worked as a doctor in the French city of Lyon."
+  },
+  "Thomas Hood": {
+    "set": "poets",
+    "fact": "For years he wrote and illustrated his own Comic Annual, packed with puns and funny drawings."
+  },
+  "Edmund Spenser": {
+    "set": "poets",
+    "fact": "Spenser invented the Spenserian stanza, a nine-line verse form later used by Keats, Byron and Shelley."
+  },
+  "Sydney Smith": {
+    "set": "essayists",
+    "fact": "He gave popular lectures on moral philosophy at the Royal Institution in London that drew big crowds."
+  },
+  "Oliver Wendell Holmes Sr.": {
+    "set": "poets",
+    "fact": "His poem Old Ironsides helped save the famous warship USS Constitution from being scrapped."
+  },
+  "Percy Bysshe Shelley": {
+    "set": "poets",
+    "fact": "His wife, Mary Shelley, wrote the famous novel Frankenstein, first published in 1818."
+  },
+  "George Chapman": {
+    "set": "playwrights",
+    "fact": "Keats wrote a famous sonnet, On First Looking into Chapman's Homer, praising his translation."
+  },
+  "John Gay": {
+    "set": "playwrights",
+    "fact": "The Beggar's Opera was the model for The Threepenny Opera, written by Bertolt Brecht two centuries later."
+  },
+  "George Herbert": {
+    "set": "poets",
+    "fact": "Some of his poems are printed in special shapes, such as Easter Wings, which looks like a pair of wings."
+  },
+  "Benjamin Franklin": {
+    "set": "leaders",
+    "fact": "Franklin invented bifocal glasses, the lightning rod and a stove that heated rooms more safely."
+  },
+  "Thomas Percy": {
+    "set": "essayists",
+    "fact": "His collection of old ballads thrilled the young Walter Scott and helped inspire the Romantic poets."
+  },
+  "Thomas Babington Macaulay": {
+    "set": "essayists",
+    "fact": "A famous reader, he could memorise long poems after one reading and recite them years later."
+  },
+  "John Lyly": {
+    "set": "novelists",
+    "fact": "The fancy, pattern-filled style of his Euphues gave English the word \"euphuism\" for showy writing."
+  },
+  "Izaak Walton": {
+    "set": "essayists",
+    "fact": "The Compleat Angler has been reprinted hundreds of times, making it one of the most reprinted books in English."
+  },
+  "James Montgomery": {
+    "set": "poets",
+    "fact": "His hymn Angels from the Realms of Glory is still sung at Christmas in many countries."
+  },
+  "Daniel Webster": {
+    "set": "leaders",
+    "fact": "He was the lawyer who won the famous Dartmouth College case before the US Supreme Court in 1819."
+  },
+  "John Keats": {
+    "set": "poets",
+    "fact": "Before becoming a full-time poet, Keats trained as an apothecary and studied at Guy's Hospital in London."
+  },
+  "Abraham Cowley": {
+    "set": "poets",
+    "fact": "He published his first book of poems, Poetical Blossoms, when he was just 15 years old."
+  },
+  "Matthew Prior": {
+    "set": "poets",
+    "fact": "As a boy he was found reading the Latin poet Horace by an earl, who then helped pay for his schooling."
+  },
+  "Joseph Addison": {
+    "set": "essayists",
+    "fact": "He created Sir Roger de Coverley, a kindly country gentleman, as a much-loved character in The Spectator."
+  },
+  "Isaac Watts": {
+    "set": "poets",
+    "fact": "His poem about the little busy bee was later playfully parodied by Lewis Carroll in Alice in Wonderland."
+  },
+  "Thomas Carlyle": {
+    "set": "essayists",
+    "fact": "When the only manuscript of his history of the French Revolution was accidentally burned, he rewrote it all."
+  },
+  "Thomas Middleton": {
+    "set": "playwrights",
+    "fact": "His play A Game at Chess, with characters as chess pieces, drew huge crowds in London in 1624."
+  },
+  "Thomas Haynes Bayly": {
+    "set": "poets",
+    "fact": "His song Long, Long Ago became one of the most popular parlour songs of the 1800s."
+  },
+  "Thomas Fuller": {
+    "set": "essayists",
+    "fact": "His book The Worthies of England is full of lively facts about famous people from each county."
+  },
+  "Ben Jonson": {
+    "set": "playwrights",
+    "fact": "In 1618 he walked all the way from London to Edinburgh, a journey of roughly 400 miles."
+  },
+  "Robert Herrick": {
+    "set": "poets",
+    "fact": "Before going to university, he spent several years training as a goldsmith under his uncle in London."
+  },
+  "Sir Walter Raleigh": {
+    "set": "leaders",
+    "fact": "The city of Raleigh, the capital of North Carolina, is named after him."
+  },
+  "Edmund Waller": {
+    "set": "poets",
+    "fact": "Dryden and other later poets praised him for making English rhyming verse sound smoother."
+  },
+  "Samuel Rogers": {
+    "set": "poets",
+    "fact": "A wealthy banker, he hosted famous breakfasts in London for the leading writers and artists of his day."
+  },
+  "Felicia Hemans": {
+    "set": "poets",
+    "fact": "Her first book of poems was published in 1808, when she was only about 14 years old."
+  },
+  "Douglas Jerrold": {
+    "set": "essayists",
+    "fact": "He was one of the early star writers for Punch, the famous British comic magazine."
+  },
+  "Elizabeth Barrett Browning": {
+    "set": "poets",
+    "fact": "Her pet spaniel Flush was so famous that Virginia Woolf later wrote a whole book about him."
+  },
+  "John Selden": {
+    "set": "essayists",
+    "fact": "He owned a huge collection of books and manuscripts, many of which went to Oxford's Bodleian Library."
+  },
+  "Sir Thomas Browne": {
+    "set": "essayists",
+    "fact": "He is credited with bringing the word \"electricity\" into English, in a 1646 book about common mistakes."
+  },
+  "George Crabbe": {
+    "set": "poets",
+    "fact": "Benjamin Britten's opera Peter Grimes is based on a story from his long poem The Borough."
+  },
+  "Charles Lamb": {
+    "set": "essayists",
+    "fact": "With his sister Mary he wrote Tales from Shakespeare, retelling the plays for children."
+  },
+  "Christopher Marlowe": {
+    "set": "playwrights",
+    "fact": "The son of a shoemaker in Canterbury, he went to Cambridge University on a scholarship."
+  },
+  "Colley Cibber": {
+    "set": "playwrights",
+    "fact": "Alexander Pope made him the king of the dunces in a later version of his comic poem The Dunciad."
+  },
+  "Edward Gibbon": {
+    "set": "essayists",
+    "fact": "He got the idea for his great history while sitting among the ruins of ancient Rome in 1764."
+  },
+  "Edward Bulwer-Lytton": {
+    "set": "novelists",
+    "fact": "A yearly contest for the worst possible opening sentence of a novel is named after him."
+  },
+  "Molière": {
+    "set": "playwrights",
+    "fact": "Born Jean-Baptiste Poquelin, the son of a royal upholsterer, he chose a stage name for his acting career."
+  },
+  "Blaise Pascal": {
+    "set": "scientists",
+    "fact": "As a teenager he built one of the first mechanical calculators to help his father with tax sums."
+  },
+  "John Fletcher": {
+    "set": "playwrights",
+    "fact": "Fletcher worked with Shakespeare on some of his later plays, including The Two Noble Kinsmen."
+  },
+  "Henry Carey": {
+    "set": "poets",
+    "fact": "He gave English the word \"namby-pamby\" as a teasing nickname for the poet Ambrose Philips."
+  },
+  "William Congreve": {
+    "set": "playwrights",
+    "fact": "His first comedy, The Old Bachelor, was a big hit in 1693, when he was only about 23."
+  },
+  "William Shenstone": {
+    "set": "poets",
+    "fact": "His garden at The Leasowes became so famous that visitors travelled from far away to walk in it."
+  },
+  "William Collins": {
+    "set": "poets",
+    "fact": "His Ode to Evening is unusual because it does not rhyme, yet it is one of his best-loved poems."
+  },
+  "Charles Churchill": {
+    "set": "poets",
+    "fact": "His first big success, The Rosciad, poked fun at the actors of the London stage."
+  },
+  "James Beattie": {
+    "set": "poets",
+    "fact": "He wrote a list of \"Scotticisms\" to help Scottish writers avoid Scottish words in formal English."
+  },
+  "Robert Southey": {
+    "set": "poets",
+    "fact": "He published the first known printed version of the story The Three Bears, in 1837."
+  },
+  "John Greenleaf Whittier": {
+    "set": "poets",
+    "fact": "His long poem Snow-Bound describes a family snowed in at their farmhouse during a winter storm."
+  },
+  "Tacitus": {
+    "set": "essayists",
+    "fact": "His short book Germania is one of the earliest written descriptions of the peoples of ancient Germany."
+  },
+  "Pliny the Younger": {
+    "set": "essayists",
+    "fact": "As a teenager he saw Mount Vesuvius erupt in AD 79 and later described it in famous letters."
+  },
+  "Sir Philip Sidney": {
+    "set": "poets",
+    "fact": "He wrote The Defence of Poesy, one of the first great essays in English on why poetry matters."
+  },
+  "Samuel Daniel": {
+    "set": "poets",
+    "fact": "He served as tutor to the young Lady Anne Clifford, who later became a famous diarist."
+  },
+  "Sir John Suckling": {
+    "set": "poets",
+    "fact": "He is often credited with inventing the card game cribbage, which is still played today."
+  },
+  "Andrew Marvell": {
+    "set": "poets",
+    "fact": "He worked alongside John Milton as an assistant in the government's office for foreign languages."
+  },
+  "Lord Chesterfield": {
+    "set": "essayists",
+    "fact": "He helped Britain switch to the Gregorian calendar in 1752, when 11 days were skipped."
+  },
+  "Robert Blair": {
+    "set": "poets",
+    "fact": "His son, also named Robert Blair, became one of Scotland's top judges as Lord President."
+  },
+  "William Cullen Bryant": {
+    "set": "poets",
+    "fact": "He was an early champion of creating a great public park in New York, which became Central Park."
+  },
+  "Samuel Lover": {
+    "set": "novelists",
+    "fact": "Lover wrote Handy Andy, a comic novel about a clumsy but lovable young Irish servant."
+  },
+  "Charles Mackay": {
+    "set": "essayists",
+    "fact": "His book Extraordinary Popular Delusions describes crazes like Tulip Mania, when bulbs sold for fortunes."
+  },
+  "Matthew Arnold": {
+    "set": "poets",
+    "fact": "For about 35 years he worked as a school inspector, visiting schools all over England."
+  },
+  "Jean de La Fontaine": {
+    "set": "poets",
+    "fact": "French schoolchildren still learn his fables by heart, such as The Grasshopper and the Ant."
+  },
+  "Voltaire": {
+    "set": "thinkers",
+    "fact": "Voltaire was a pen name; his real name was Francois-Marie Arouet, and he was born in Paris."
+  },
+  "Sir Henry Wotton": {
+    "set": "poets",
+    "fact": "He served as English ambassador to Venice and later became Provost of Eton College."
+  },
+  "John Webster": {
+    "set": "playwrights",
+    "fact": "His best-known plays, The Duchess of Malfi and The White Devil, are still staged around the world."
+  },
+  "Thomas Dekker": {
+    "set": "playwrights",
+    "fact": "His cheerful comedy The Shoemaker's Holiday is about a London shoemaker who becomes Lord Mayor."
+  },
+  "Henry Vaughan": {
+    "set": "poets",
+    "fact": "He had a twin brother, Thomas Vaughan, who became a well-known writer on alchemy."
+  },
+  "Thomas Tickell": {
+    "set": "poets",
+    "fact": "His translation of the first book of the Iliad came out the same week as Pope's, sparking a rivalry."
+  },
+  "Lady Mary Wortley Montagu": {
+    "set": "essayists",
+    "fact": "Her lively letters describe her time in Constantinople, where her husband served as British ambassador."
+  },
+  "Edward Moore": {
+    "set": "playwrights",
+    "fact": "He edited The World, a weekly paper with famous contributors such as Lord Chesterfield."
+  },
+  "Laurence Sterne": {
+    "set": "novelists",
+    "fact": "Tristram Shandy includes a completely black page, a marbled page and squiggly lines showing its plot."
+  },
+  "David Garrick": {
+    "set": "playwrights",
+    "fact": "Garrick organised the first big Shakespeare festival, the Jubilee at Stratford-upon-Avon, in 1769."
+  },
+  "Thomas Jefferson": {
+    "set": "leaders",
+    "fact": "Jefferson sold his personal library of thousands of books to Congress to help rebuild the Library of Congress."
+  },
+  "Leigh Hunt": {
+    "set": "essayists",
+    "fact": "He helped introduce Keats and Shelley to readers by printing their early poems in his newspaper."
+  },
+  "Richard Monckton Milnes": {
+    "set": "poets",
+    "fact": "He wrote the first major biography of the poet John Keats, published in 1848."
+  },
+  "Edgar Allan Poe": {
+    "set": "novelists",
+    "fact": "The Baltimore Ravens American football team is named after his poem The Raven."
+  },
+  "Richard Lovelace": {
+    "set": "poets",
+    "fact": "He belonged to the Cavalier poets, a group of witty writers at the court of King Charles I."
+  },
+  "Nicholas Rowe": {
+    "set": "playwrights",
+    "fact": "In 1709 he published one of the first edited collections of Shakespeare's plays, with a short life of him."
+  },
+  "Mark Akenside": {
+    "set": "poets",
+    "fact": "His long poem The Pleasures of Imagination was a big success when he was only in his early twenties."
+  },
+  "Anna Laetitia Barbauld": {
+    "set": "poets",
+    "fact": "Her Lessons for Children were among the first books printed in large, easy type for young readers."
+  },
+  "Charles Dibdin": {
+    "set": "poets",
+    "fact": "Besides writing songs, he composed music, performed one-man shows and ran a small theatre in London."
+  },
+  "Hannah More": {
+    "set": "essayists",
+    "fact": "As a young woman, she helped run a girls' boarding school in Bristol with her sisters."
+  },
+  "George Colman the Younger": {
+    "set": "playwrights",
+    "fact": "He managed the Haymarket Theatre in London, which his father had run before him."
+  },
+  "George Canning": {
+    "set": "leaders",
+    "fact": "As a pupil at Eton he helped start a school magazine called The Microcosm."
+  },
+  "Henry Clay": {
+    "set": "leaders",
+    "fact": "Clay was nicknamed \"The Great Compromiser\" for helping settle bitter disagreements in Congress."
+  },
+  "Bryan Waller Procter": {
+    "set": "poets",
+    "fact": "His daughter, Adelaide Anne Procter, also became a popular poet, encouraged by Charles Dickens."
+  },
+  "Fitz-Greene Halleck": {
+    "set": "poets",
+    "fact": "For years he worked as a private secretary to John Jacob Astor, then the richest man in America."
+  },
+  "Charles Dickens": {
+    "set": "novelists",
+    "fact": "As a boy of twelve he worked in a factory, sticking labels on pots of boot polish."
+  },
+  "Ulysses S. Grant": {
+    "set": "leaders",
+    "fact": "His real first name was Hiram; a mix-up at West Point turned him into Ulysses S. Grant."
+  },
+  "Thomas Tusser": {
+    "set": "poets",
+    "fact": "His rhyming farming advice was so popular that it was reprinted many times in the 1500s and 1600s."
+  },
+  "Francis Quarles": {
+    "set": "poets",
+    "fact": "His Emblems pairs short poems with pictures, and it was one of the best-selling books of its century."
+  },
+  "John Bunyan": {
+    "set": "novelists",
+    "fact": "Before becoming a writer he worked as a tinker, mending pots and pans just like his father."
+  },
+  "John Dyer": {
+    "set": "poets",
+    "fact": "His long poem The Fleece is all about sheep, wool and the people who work with them."
+  },
+  "John Home": {
+    "set": "playwrights",
+    "fact": "He later worked as private secretary to the Earl of Bute, who went on to become Prime Minister."
+  },
+  "Duke of Wellington": {
+    "set": "leaders",
+    "fact": "Wellington boots are named after him, because he had his boots made in a new, practical style."
+  },
+  "Jane Taylor": {
+    "set": "poets",
+    "fact": "She wrote many poems for children with her sister Ann, in books such as Original Poems for Infant Minds."
+  },
+  "Samuel Woodworth": {
+    "set": "poets",
+    "fact": "He trained as a printer in Boston and later published newspapers and magazines in New York."
+  },
+  "Charles Wolfe": {
+    "set": "poets",
+    "fact": "He is remembered mainly for one poem, which was first printed without his name and became widely famous."
+  },
+  "Charles Darwin": {
+    "set": "scientists",
+    "fact": "Darwin spent five years sailing around the world as a naturalist aboard the ship HMS Beagle."
+  },
+  "Bayard Taylor": {
+    "set": "essayists",
+    "fact": "As a young man he toured Europe largely on foot, then wrote a bestseller about it called Views A-Foot."
+  },
+  "Grover Cleveland": {
+    "set": "leaders",
+    "fact": "Before becoming president, he served as mayor of Buffalo and then as governor of New York."
+  },
+  "Quintilian": {
+    "set": "thinkers",
+    "fact": "He urged teachers to make learning fun for small children and to use praise rather than punishment."
+  },
+  "Nicolas Boileau": {
+    "set": "poets",
+    "fact": "His poem The Art of Poetry set out rules for good writing that guided French poets for generations."
+  },
+  "Michael Drayton": {
+    "set": "poets",
+    "fact": "His huge poem Poly-Olbion describes the landscape, rivers and history of England and Wales."
+  },
+  "John Donne": {
+    "set": "poets",
+    "fact": "For the last ten years of his life he was Dean of St Paul's Cathedral in London."
+  },
+  "Philip Massinger": {
+    "set": "playwrights",
+    "fact": "His comedy A New Way to Pay Old Debts stayed popular on the stage for more than 200 years."
+  },
+  "Thomas Heywood": {
+    "set": "playwrights",
+    "fact": "He claimed to have helped write about 220 plays, though only a few dozen of them survive."
+  },
+  "Francis Beaumont": {
+    "set": "playwrights",
+    "fact": "His comedy The Knight of the Burning Pestle has a grocer from the audience who keeps interrupting the play."
+  },
+  "George Wither": {
+    "set": "poets",
+    "fact": "His poems were rediscovered two centuries later and warmly praised by the essayist Charles Lamb."
+  },
+  "James Shirley": {
+    "set": "playwrights",
+    "fact": "When London's theatres were closed in the 1640s, he earned his living as a schoolmaster."
+  },
+  "Sir William Davenant": {
+    "set": "playwrights",
+    "fact": "He helped create The Siege of Rhodes in 1656, often called the first English opera."
+  },
+  "Thomas Otway": {
+    "set": "playwrights",
+    "fact": "His tragedy Venice Preserv'd was one of the most often performed plays in England for over a century."
+  },
+  "Sir Richard Steele": {
+    "set": "essayists",
+    "fact": "He wrote The Tatler under the made-up name Isaac Bickerstaff, borrowed from a joke by Jonathan Swift."
+  },
+  "George Farquhar": {
+    "set": "playwrights",
+    "fact": "His comedy The Recruiting Officer was the first play ever staged in Australia, in 1789."
+  },
+  "John Byrom": {
+    "set": "poets",
+    "fact": "Byrom coined the names \"Tweedledum and Tweedledee\" in a poem about two quarrelling musicians."
+  },
+  "Matthew Green": {
+    "set": "poets",
+    "fact": "He spent his working life as a clerk at the Custom House in London, writing poems in his spare time."
+  },
+  "Henry Fielding": {
+    "set": "novelists",
+    "fact": "Fielding helped found the Bow Street Runners, often called London's first professional police force."
+  },
+  "Sir William Blackstone": {
+    "set": "essayists",
+    "fact": "He gave the first university lectures on English law, at Oxford, starting in 1753."
+  },
+  "Thomas Warton": {
+    "set": "poets",
+    "fact": "He became Poet Laureate in 1785 and wrote the first full history of English poetry."
+  },
+  "John Logan": {
+    "set": "poets",
+    "fact": "He gave popular public lectures on the history of the world in Edinburgh around 1780."
+  },
+  "John Trumbull": {
+    "set": "poets",
+    "fact": "A brilliant child, he passed the entrance exam for Yale College at seven, though he started there later."
+  },
+  "Walter Savage Landor": {
+    "set": "poets",
+    "fact": "Charles Dickens admired him so much that he named one of his sons Walter Landor Dickens."
+  },
+  "Horace Smith": {
+    "set": "poets",
+    "fact": "Smith wrote a sonnet about Ozymandias in a friendly contest with his friend Percy Bysshe Shelley."
+  },
+  "Allan Cunningham": {
+    "set": "poets",
+    "fact": "He began work as a stonemason's apprentice before becoming a writer in London."
+  },
+  "Winthrop Mackworth Praed": {
+    "set": "poets",
+    "fact": "As a pupil at Eton he started a lively school magazine called The Etonian."
+  },
+  "George Pope Morris": {
+    "set": "poets",
+    "fact": "He wrote the poem Woodman, Spare That Tree!, which became a popular song in the 1800s."
+  },
+  "Mary Howitt": {
+    "set": "poets",
+    "fact": "She was one of the first people to translate Hans Christian Andersen's fairy tales into English."
+  },
+  "Eliza Cook": {
+    "set": "poets",
+    "fact": "She ran her own weekly magazine, Eliza Cook's Journal, from 1849 to 1854."
+  },
+  "Nathaniel Parker Willis": {
+    "set": "essayists",
+    "fact": "He gave a young Edgar Allan Poe a job at his New York newspaper, the Evening Mirror."
+  },
+  "Charles Kingsley": {
+    "set": "novelists",
+    "fact": "He wrote Westward Ho!, and a seaside village in Devon was later named after the book."
+  },
+  "Alexander Smith": {
+    "set": "poets",
+    "fact": "He worked as a designer of lace patterns in Glasgow before becoming famous for his poems."
+  },
+  "Juvenal": {
+    "set": "poets",
+    "fact": "Very little is known about his life; most of what we know comes from hints in his own poems."
+  },
+  "Alain-René Lesage": {
+    "set": "novelists",
+    "fact": "He also wrote dozens of short comic plays for the lively fairground theatres of Paris."
+  },
+  "Johann Wolfgang von Goethe": {
+    "set": "poets",
+    "fact": "He was also a keen scientist and wrote a book called Theory of Colours, published in 1810."
+  },
+  "Washington Irving": {
+    "set": "novelists",
+    "fact": "His pen name Diedrich Knickerbocker inspired the name of the New York Knicks basketball team."
+  },
+  "George Washington": {
+    "set": "leaders",
+    "fact": "Washington never lived in the White House, which was finished just after his time as president."
+  },
+  "Abraham Lincoln": {
+    "set": "leaders",
+    "fact": "Lincoln is the only US president to hold a patent, for a device to lift boats over shallow water."
+  },
+  "Patrick Henry": {
+    "set": "leaders",
+    "fact": "He became the first governor of Virginia after it declared independence from Britain in 1776."
+  },
+  "Horace Walpole": {
+    "set": "essayists",
+    "fact": "Walpole coined the word \"serendipity\" in a letter he wrote to a friend in 1754."
+  },
+  "Tobias Smollett": {
+    "set": "novelists",
+    "fact": "Before writing novels, he worked as a surgeon's mate on a Royal Navy ship."
+  },
+  "Thomas Hobbes": {
+    "set": "thinkers",
+    "fact": "Still busy in old age, he translated all of Homer's Iliad and Odyssey into English verse in his eighties."
+  },
+  "Thomas Carew": {
+    "set": "poets",
+    "fact": "He served at the court of King Charles I, where his job included serving dishes at the royal table."
+  },
+  "John Quincy Adams": {
+    "set": "leaders",
+    "fact": "After his presidency he went on to serve in the House of Representatives for 17 years."
+  },
+  "Jean-Jacques Rousseau": {
+    "set": "thinkers",
+    "fact": "He was also a composer, and his short opera The Village Soothsayer was a hit in Paris in 1752."
+  },
+  "Martial": {
+    "set": "poets",
+    "fact": "He was born in Bilbilis, in Hispania, in what is now Spain, and moved to Rome as a young man."
+  },
+  "Edward Everett Hale": {
+    "set": "novelists",
+    "fact": "His 1869 story The Brick Moon is one of the first stories about an artificial satellite."
+  },
+  "Francis Bret Harte": {
+    "set": "novelists",
+    "fact": "He edited the Overland Monthly magazine in San Francisco and was friends with Mark Twain."
+  },
+  "Henry David Thoreau": {
+    "set": "essayists",
+    "fact": "He worked in his family's pencil business and helped improve the way their pencils were made."
+  },
+  "Jane Austen": {
+    "set": "novelists",
+    "fact": "Her first novels were published without her name; Sense and Sensibility was signed only \"By a Lady\"."
+  },
+  "Mark Twain": {
+    "set": "novelists",
+    "fact": "Before becoming a writer, he worked as a steamboat pilot on the Mississippi River."
+  },
+  "Oscar Wilde": {
+    "set": "playwrights",
+    "fact": "He also wrote fairy tales for children, such as The Happy Prince and The Selfish Giant."
+  },
+  "Emily Dickinson": {
+    "set": "poets",
+    "fact": "She was a keen gardener and, as a teenager, made an album of hundreds of pressed plants and flowers."
+  },
+  "Ella Wheeler Wilcox": {
+    "set": "poets",
+    "fact": "She began publishing poems as a teenager while growing up on a farm in Wisconsin."
+  },
+  "Robert Louis Stevenson": {
+    "set": "novelists",
+    "fact": "He drew a treasure map with his stepson first, then wrote Treasure Island around it."
+  },
+  "Lewis Carroll": {
+    "set": "novelists",
+    "fact": "Lewis Carroll was a pen name; his real name was Charles Lutwidge Dodgson."
+  },
+  "Jerome K. Jerome": {
+    "set": "essayists",
+    "fact": "His comic book Three Men in a Boat includes a mischievous fox terrier named Montmorency."
+  }
+}

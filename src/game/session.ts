@@ -6,6 +6,7 @@ import { freeHintsPerDay } from '@/config/features';
 import type { Content } from '@/content/quotes';
 import type { PuzzleSave, Root } from '@/data/schema';
 import { afterSolve } from '@/ads/policy';
+import { isBigQuoteLevel } from '@/engine/chapters';
 import { dailySeed, levelSeed } from '@/engine/cipher';
 import { dailyQuoteId, isPlayableDaily, type LocalDate, noteSeenDate } from '@/engine/daily';
 import { GOALS_REWARD_HINTS, type GoalsResult, recordGoalSolve } from '@/engine/goals';
@@ -56,11 +57,13 @@ export function nextLevelRef(root: Root, content: Content, difficulty: Difficult
     .filter(([, s]) => s.mode === 'level' && content.quote(s.quoteId) && !reported.has(s.quoteId))
     .sort((a, b) => b[1].updatedAt - a[1].updatedAt)[0];
   if (open) return { key: open[0], mode: 'level', quoteId: open[1].quoteId, dailyDate: null };
+  // The last level of each chapter is a big quote: prefer the long (Expert-length) band.
+  const big = isBigQuoteLevel(root.progress.levelIndex + 1);
   const id = pickNextQuote({
     pool: content.levelPool,
     seen: root.progress.seenQuoteIds,
     exclude: reported,
-    difficulty,
+    difficulty: big ? 'expert' : difficulty,
   });
   return id === null ? null : { key: levelKey(id), mode: 'level', quoteId: id, dailyDate: null };
 }

@@ -4,75 +4,111 @@
   "authors": {
     "Benjamin Franklin": {
       "dates": "1706–1790",
-      "bio": "American printer, writer, scientist and statesman."
+      "bio": "American printer, writer, scientist and statesman.",
+      "set": "leaders",
+      "fact": "Franklin invented bifocal glasses, the lightning rod and a stove that heated rooms more safely."
     },
     "William Shakespeare": {
       "dates": "1564–1616",
-      "bio": "English playwright and poet."
+      "bio": "English playwright and poet.",
+      "set": "playwrights",
+      "fact": "His plays were performed at the Globe, a round wooden theatre beside the River Thames in London."
     },
     "Henry David Thoreau": {
       "dates": "1817–1862",
-      "bio": "American essayist who lived for two years beside Walden Pond."
+      "bio": "American essayist who lived for two years beside Walden Pond.",
+      "set": "essayists",
+      "fact": "He worked in his family's pencil business and helped improve the way their pencils were made."
     },
     "Ralph Waldo Emerson": {
       "dates": "1803–1882",
-      "bio": "American essayist, lecturer and poet."
+      "bio": "American essayist, lecturer and poet.",
+      "set": "essayists",
+      "fact": "Emerson let his friend Henry David Thoreau build a small cabin on his land beside Walden Pond."
     },
     "Jane Austen": {
       "dates": "1775–1817",
-      "bio": "English novelist of manners, money and courtship."
+      "bio": "English novelist of manners, money and courtship.",
+      "set": "novelists",
+      "fact": "Her first novels were published without her name; Sense and Sensibility was signed only \"By a Lady\"."
     },
     "Charles Dickens": {
       "dates": "1812–1870",
-      "bio": "English novelist of Victorian London."
+      "bio": "English novelist of Victorian London.",
+      "set": "novelists",
+      "fact": "As a boy of twelve he worked in a factory, sticking labels on pots of boot polish."
     },
     "John Keats": {
       "dates": "1795–1821",
-      "bio": "English Romantic poet."
+      "bio": "English Romantic poet.",
+      "set": "poets",
+      "fact": "Before becoming a full-time poet, Keats trained as an apothecary and studied at Guy's Hospital in London."
     },
     "Alfred, Lord Tennyson": {
       "dates": "1809–1892",
-      "bio": "Poet Laureate for most of Queen Victoria’s reign."
+      "bio": "Poet Laureate for most of Queen Victoria’s reign.",
+      "set": "poets",
+      "fact": "His voice was recorded on an Edison wax cylinder in 1890, reading one of his own poems aloud."
     },
     "Mark Twain": {
       "dates": "1835–1910",
-      "bio": "American humorist and author of Huckleberry Finn."
+      "bio": "American humorist and author of Huckleberry Finn.",
+      "set": "novelists",
+      "fact": "Before becoming a writer, he worked as a steamboat pilot on the Mississippi River."
     },
     "Oscar Wilde": {
       "dates": "1854–1900",
-      "bio": "Irish playwright, poet and wit."
+      "bio": "Irish playwright, poet and wit.",
+      "set": "playwrights",
+      "fact": "He also wrote fairy tales for children, such as The Happy Prince and The Selfish Giant."
     },
     "Emily Dickinson": {
       "dates": "1830–1886",
-      "bio": "American poet, published mostly after her death."
+      "bio": "American poet, published mostly after her death.",
+      "set": "poets",
+      "fact": "She was a keen gardener and, as a teenager, made an album of hundreds of pressed plants and flowers."
     },
     "Ella Wheeler Wilcox": {
       "dates": "1850–1919",
-      "bio": "American poet and newspaper columnist."
+      "bio": "American poet and newspaper columnist.",
+      "set": "poets",
+      "fact": "She began publishing poems as a teenager while growing up on a farm in Wisconsin."
     },
     "Edward Bulwer-Lytton": {
       "dates": "1803–1873",
-      "bio": "English novelist and playwright."
+      "bio": "English novelist and playwright.",
+      "set": "novelists",
+      "fact": "A yearly contest for the worst possible opening sentence of a novel is named after him."
     },
     "Henry Wadsworth Longfellow": {
       "dates": "1807–1882",
-      "bio": "American poet of Hiawatha and Paul Revere’s Ride."
+      "bio": "American poet of Hiawatha and Paul Revere’s Ride.",
+      "set": "poets",
+      "fact": "He was the first American writer honoured with a bust in Poets' Corner at Westminster Abbey."
     },
     "Alexander Pope": {
       "dates": "1688–1744",
-      "bio": "English poet and satirist."
+      "bio": "English poet and satirist.",
+      "set": "poets",
+      "fact": "At his riverside villa in Twickenham he built a famous grotto decorated with shells, minerals and mirrors."
     },
     "Robert Louis Stevenson": {
       "dates": "1850–1894",
-      "bio": "Scottish author of Treasure Island."
+      "bio": "Scottish author of Treasure Island.",
+      "set": "novelists",
+      "fact": "He drew a treasure map with his stepson first, then wrote Treasure Island around it."
     },
     "Lewis Carroll": {
       "dates": "1832–1898",
-      "bio": "English writer and mathematician, author of the Alice books."
+      "bio": "English writer and mathematician, author of the Alice books.",
+      "set": "novelists",
+      "fact": "Lewis Carroll was a pen name; his real name was Charles Lutwidge Dodgson."
     },
     "Jerome K. Jerome": {
       "dates": "1859–1927",
-      "bio": "English humorist and playwright."
+      "bio": "English humorist and playwright.",
+      "set": "essayists",
+      "fact": "His comic book Three Men in a Boat includes a mischievous fox terrier named Montmorency."
     }
   },
   "dailyOrder": [

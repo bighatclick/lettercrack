@@ -17,7 +17,11 @@ export type IconName =
   | 'lock'
   | 'home'
   | 'star'
-  | 'bell';
+  | 'bell'
+  | 'book'
+  | 'moon'
+  | 'trophy'
+  | 'shirt';
 
 /** Small line icons drawn for LetterCrack (24 × 24 grid). Decorative: hidden from screen readers. */
 export function Icon({ name, size = 22, color, strokeWidth = 2.4 }: { name: IconName; size?: number; color: string; strokeWidth?: number }) {
@@ -75,6 +79,10 @@ export function Icon({ name, size = 22, color, strokeWidth = 2.4 }: { name: Icon
       {name === 'star' ? (
         <Path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z" fill={color} stroke={color} strokeWidth={1.4} strokeLinejoin="round" />
       ) : null}
+      {name === 'book' ? <Path d="M12 6.5C9.5 4.5 6 4 3 4.5v14c3-.5 6.5 0 9 2 2.5-2 6-2.5 9-2v-14c-3-.5-6.5 0-9 2zM12 6.5v14" {...s} /> : null}
+      {name === 'moon' ? <Path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill={color} stroke={color} strokeWidth={1.4} strokeLinejoin="round" /> : null}
+      {name === 'trophy' ? <Path d="M8 3.5h8v5a4 4 0 01-8 0zM8 5.5H4.5a3.5 3.5 0 003.7 4M16 5.5h3.5a3.5 3.5 0 01-3.7 4M12 12.5v4M8.5 20.5h7M9.5 16.5h5v4h-5z" {...s} /> : null}
+      {name === 'shirt' ? <Path d="M8.5 3.5L3 6.5l2 4.5 2.5-1.2V20.5h9V9.8L19 11l2-4.5-5.5-3a3.5 3.5 0 01-7 0z" {...s} /> : null}
       {name === 'bell' ? <Path d="M6 16.5V11a6 6 0 0112 0v5.5l1.5 2h-15zM10 21h4" {...s} /> : null}
     </Svg>
   );

@@ -7,11 +7,12 @@
  * Seed IDs live in 90001+ so they can never collide with real, permanent quote IDs.
  * Every line is from a public-domain work published before 1929 by an author who died before 1956.
  */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const extras = JSON.parse(readFileSync(join(root, 'tools', 'quotes', 'author-extras.json'), 'utf8'));
 
 const authors = {
   'Benjamin Franklin': { dates: '1706–1790', bio: 'American printer, writer, scientist and statesman.' },
@@ -90,7 +91,9 @@ const quotes = lines.map(([text, author, work, workYear], i) => {
 const db = {
   version: 'seed',
   note: 'DEV SEED ONLY. Replaced by assets/quotes.v1.json from the Phase 2 pipeline.',
-  authors: Object.fromEntries(Object.entries(authors).map(([name, a]) => [name, { dates: a.dates, bio: a.bio }])),
+  authors: Object.fromEntries(
+    Object.entries(authors).map(([name, a]) => [name, { dates: a.dates, bio: a.bio, set: extras[name]?.set, fact: extras[name]?.fact }]),
+  ),
   // First 10 IDs are reserved for dailies; the rest form the level pool.
   dailyOrder: quotes.slice(0, 10).map((q) => q.id).reverse(),
   quotes,

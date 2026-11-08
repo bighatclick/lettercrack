@@ -6,6 +6,7 @@ import seed from '../../assets/quotes.seed.json';
 
 import type { Difficulty } from '@/engine/puzzle';
 import type { PoolQuote } from '@/engine/picker';
+import type { AuthorSet } from '@/engine/wardrobe';
 
 export type QuoteRecord = {
   id: number;
@@ -22,7 +23,14 @@ export type QuoteRecord = {
   retired?: boolean;
 };
 
-export type AuthorInfo = { dates: string; bio: string };
+export type AuthorInfo = {
+  dates: string;
+  bio: string;
+  /** Library set (Phase C). Authors without one are still collected, just in no set. */
+  set?: AuthorSet;
+  /** One short, checked "Did you know?" line. */
+  fact?: string;
+};
 
 export type QuoteDb = {
   version: string;
@@ -53,6 +61,8 @@ export function createContent(db: QuoteDb) {
   const levelPool: PoolQuote[] = db.quotes
     .filter((q) => !dailySet.has(q.id) && !q.retired)
     .map((q) => ({ id: q.id, length: q.text.length }));
+  // Authors with at least one live quote: the Library only lists people a player can meet.
+  const liveAuthors = [...new Set(db.quotes.filter((q) => !q.retired).map((q) => q.author))].sort((a, b) => a.localeCompare(b));
   return {
     version: db.version,
     dailyOrder: liveDailyOrder(db.dailyOrder, isLive),
@@ -64,6 +74,10 @@ export function createContent(db: QuoteDb) {
     },
     author(name: string): AuthorInfo | undefined {
       return db.authors[name];
+    },
+    /** Every author with a live quote, A–Z. */
+    authors(): readonly string[] {
+      return liveAuthors;
     },
   };
 }
