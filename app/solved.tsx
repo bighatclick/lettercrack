@@ -23,7 +23,7 @@ import { useOutfit } from '@/game/useOutfit';
 import { requestReminderPermission } from '@/lib/notifications';
 import { syncReminders } from '@/lib/reminderSync';
 import { shareCard } from '@/lib/share';
-import { Button, Card, Confetti, Enter, Gradient, Icon, Inky, radius, Screen, space, Tag, Text, useLoop, useTheme } from '@/ui';
+import { Button, Card, Confetti, Enter, FitText, Gradient, Icon, Inky, radius, Screen, space, StatusBackdrop, Tag, Text, useLoop, useScaledWidth, useStatusBackdrop, useTheme } from '@/ui';
 import { formatDuration } from '@/ui/format';
 import { BadgeMedal } from '@/ui/game/Awards';
 import { GoalsCard } from '@/ui/game/GoalsCard';
@@ -47,6 +47,8 @@ export default function SolvedScreen() {
     freezeEarned?: string;
     goalsDone?: string;
     goalsReward?: string;
+    newAuthor?: string;
+    items?: string;
   }>();
   const ref = useMemo(() => (params.key ? refFromKey(params.key, content, today()) : null), [params.key]);
   const record = useAppStore((s) => (ref ? s.root!.progress.solved[ref.quoteId] : undefined));
@@ -58,14 +60,17 @@ export default function SolvedScreen() {
     return params.from !== 'archive' && ref?.mode === 'daily' && shouldOfferReminder(root);
   });
   const cardRef = useRef<HostInstance>(null);
+  const going = useRef(false);
+  const backdrop = useStatusBackdrop(space.xl);
   const outfit = useOutfit();
   // New badges, ranks and outfits, fixed at open so the list doesn't vanish as they're marked seen.
-  const [fresh] = useState<AwardKey[]>(() => (params.clean !== undefined ? unseenAwards(useAppStore.getState().root!, content) : []));
-  const levelIndex = useAppStore((s) => s.root!.progress.levelIndex);
-  const authorSolves = useAppStore((s) => {
-    const name = ref ? content.quote(ref.quoteId)?.author : undefined;
-    return name ? Object.keys(s.root!.progress.solved).filter((id) => content.quote(Number(id))?.author === name).length : 0;
+  // Outfits: only the ones this solve unlocked; older unseen ones wait in the wardrobe with their "New" mark.
+  const [fresh] = useState<AwardKey[]>(() => {
+    if (params.clean === undefined) return [];
+    const thisSolve = new Set((params.items ?? '').split(',').filter(Boolean));
+    return unseenAwards(useAppStore.getState().root!, content).filter((k) => !k.startsWith('item:') || thisSolve.has(k.slice(5)));
   });
+  const levelIndex = useAppStore((s) => s.root!.progress.levelIndex);
   useEffect(() => {
     // Celebrated here: badges and ranks count as seen. Outfits stay "new" until the wardrobe is opened.
     const keys = fresh.filter((k) => !k.startsWith('item:'));
@@ -117,7 +122,9 @@ export default function SolvedScreen() {
 
   // The interstitial (if one is due) happens only here, after tapping Next (hard rule 2).
   const next = async () => {
-    if (busy) return;
+    // A ref, not state: a second tap within the same frame must not navigate twice.
+    if (going.current) return;
+    going.current = true;
     setBusy(true);
     const root = useAppStore.getState().root!;
     try {
@@ -177,7 +184,7 @@ ${t('solved.shareInvite')}` });
       />
       <Rays />
       <Confetti height={height} />
-      <ScrollView contentContainerStyle={[styles.scroll, { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + space.xxl }]}>
+      <ScrollView onScroll={backdrop.onScroll} scrollEventThrottle={32} contentContainerStyle={[styles.scroll, { paddingTop: insets.top + space.lg, paddingBottom: insets.bottom + space.xxl }]}>
         <View style={styles.inner}>
           <View style={styles.mascotRow}>
             <Inky pose="cheer" size={150} outfit={outfit} />
@@ -209,7 +216,7 @@ ${t('solved.shareInvite')}` });
             {justSolved && ref.mode === 'level' && levelIndex > 0 && levelIndex % LEVELS_PER_CHAPTER === 0 ? (
               <Tag label={t('chapters.stamp', { number: levelIndex / LEVELS_PER_CHAPTER })} icon="book" bg="#20C3AF" fg="#0E2E2A" />
             ) : null}
-            {justSolved && authorSolves === 1 ? <Tag label={t('solved.newAuthor')} icon="book" bg="#4DA3FF" fg="#0E1F3A" /> : null}
+            {justSolved && params.newAuthor === '1' ? <Tag label={t('solved.newAuthor')} icon="book" bg="#4DA3FF" fg="#0E1F3A" /> : null}
           </View>
 
           {fresh.length ? <NewAwards keys={fresh} /> : null}
@@ -338,6 +345,8 @@ ${t('solved.shareInvite')}` });
         </View>
       </ScrollView>
 
+      {backdrop.on ? <StatusBackdrop color="#2A1F6B" light /> : null}
+
       {/* Off-screen share card, captured at 1080×1350 when Share is tapped. */}
       <View style={styles.offscreen} pointerEvents="none">
         <ShareCard ref={cardRef} text={quote.text} author={quote.author} dates={quote.authorDates} footer={t('solved.shareFooter')} />
@@ -354,6 +363,7 @@ function NewAwards({ keys }: { keys: AwardKey[] }) {
   const ranks = keys.filter((k) => k.startsWith('rank:')).map((k) => k.slice(5));
   const items = keys.filter((k) => k.startsWith('item:')).map((k) => k.slice(5));
   const shown = badges.slice(0, 3);
+  const awardWidth = useScaledWidth(84);
   return (
     <Enter kind="pop" index={7}>
       <Card style={styles.awards} testID="solved-awards">
@@ -369,11 +379,11 @@ function NewAwards({ keys }: { keys: AwardKey[] }) {
             </Text>
             <View style={styles.awardRow}>
               {shown.map((id) => (
-                <View key={id} style={styles.award} accessible accessibilityLabel={`${t(`badges.${id}`)}. ${t(`badges.${id}_how`)}`}>
+                <View key={id} style={[styles.award, { width: awardWidth }]} accessible accessibilityLabel={`${t(`badges.${id}`)}. ${t(`badges.${id}_how`)}`}>
                   <BadgeMedal id={id} earned size={52} />
-                  <Text variant="caption" style={styles.center} numberOfLines={2}>
+                  <FitText variant="caption" style={styles.center} numberOfLines={3} fitFor={shown.map((b) => t(`badges.${b}`)).join(' ')}>
                     {t(`badges.${id}`)}
-                  </Text>
+                  </FitText>
                 </View>
               ))}
             </View>

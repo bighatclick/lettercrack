@@ -147,6 +147,25 @@ describe('session glue', () => {
     expect(done.root.progress.levelIndex).toBe(0);
   });
 
+  it('remembers an archive day solved later, without streak credit (D20)', () => {
+    const past = '2027-01-08';
+    const ref = dailyRef(past, content, TODAY)!;
+    const r0 = onAppOpen(root, TODAY);
+    const done = completePuzzle(r0, ref, 'medium', solve(openPuzzle(r0, ref, content).state), TODAY);
+    expect(done.streak?.credited).toBe(false);
+    expect(done.root.progress.lateDailies).toEqual([past]);
+    expect(done.root.daily.solvedDates).toEqual([]);
+  });
+
+  it("remembers today's daily solved on a wound-back clock (D21)", () => {
+    const r0 = onAppOpen(onAppOpen(root, '2027-01-12'), TODAY);
+    const ref = dailyRef(TODAY, content, TODAY)!;
+    const done = completePuzzle(r0, ref, 'medium', solve(openPuzzle(r0, ref, content).state), TODAY);
+    expect(done.streak?.credited).toBe(false);
+    expect(done.root.progress.lateDailies).toEqual([TODAY]);
+    expect(done.goals.state.progress.daily).toBe(1);
+  });
+
   it("counts the solve toward today's goals and grants the hint once they are all done", () => {
     const ref = dailyRef(TODAY, content, TODAY)!;
     const r0 = onAppOpen(root, TODAY);

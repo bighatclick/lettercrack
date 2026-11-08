@@ -147,7 +147,7 @@ Then **uninstall** the app before J1.
 
 | # | Step | Expected |
 |---|---|---|
-| 2.1 | Tap "Crack it". | Puzzle: back button, "Daily quote", chip "Hard" (1 given), progress ring, "⋯" menu. The board; Inky with a tip that is never the answer; the hint bar has "Reveal", "Check" (disabled) and "5 hints left". |
+| 2.1 | Tap "Crack it". | Puzzle: back button, "Daily quote", chip "Hard" (1 given), progress ring, "⋯" menu. The board; Inky with a tip that is never the answer; the hint bar has "Reveal", "Check" (disabled until you type a letter; givens and revealed letters don't count) and "5 hints left". |
 | 2.2 | Word wrapping. | No word split across lines; cipher and guess letters line up. |
 | 2.3 | Tap an empty cell. | It and every cell with the same cipher letter highlight. |
 | 2.4 | Tap the given cell. | Nothing; givens are locked. |
@@ -196,11 +196,11 @@ Then **uninstall** the app before J1.
 | 3.14 | Cancel; reopen; "Report and hide". | Jumps to the next level with a new quote. Home's level number advanced; the reported quote never comes back. |
 | 3.15 | Keep solving. Each time watch the Rank card. | XP rises by the quote's letters. When it reaches **500**: Solved shows **"New rank: Apprentice!"** and the outfit note "Painter's beret". The Home Rank card shows "Apprentice" and "N letters to Sleuth". |
 | 3.16 | Reach **Level 10** on Home. | The chapter strip reads **"Big quote level"** instead of "Level 10 of 10". |
-| 3.17 | Open Level 10. | A long quote from the Expert-length band (e.g. 90012 Austen 92 letters or 90018 Twain 87 letters, if still unsolved), whatever the default difficulty. |
+| 3.17 | Open Level 10. | A long quote from the Expert-length band (e.g. 90012 Austen 92 letters or 90018 Twain 87 letters, if still unsolved; otherwise any unseen quote), whatever the default difficulty. |
 | 3.18 | Solve Level 10. | Tag **"Chapter 1 stamped!"**; badge **First chapter**. |
 | 3.19 | Home. | "Level 11", **"Chapter 2 · Lantern Lane"** in new colours, "Level 1 of 10"; the path restarts. |
 | 3.20 | Settings → Default difficulty **Expert**; solve levels 11–20 (**[LR]** allowed). | Each starts with 0 givens. Badges: **Expert cracker** at the first, **Master of keys** at the tenth Expert solve; **1,000 letters** when XP ≥ 1,000; **Bookworm** at 10 authors. Level 20 is a big quote; "Chapter 2 stamped!". |
-| 3.21 | Home after level 20 (all 20 level quotes solved or reported). | The Levels card shows "You've decoded every quote. New ones arrive with updates." and no Continue button. No crash. |
+| 3.21 | Home after level 20 (all 20 level quotes solved or reported). | Once every level quote is used, the next level repeats the oldest one (hard rule 6: no repeats until the pool is exhausted). "You've decoded every quote. New ones arrive with updates." shows only when no eligible quote is left (all reported). No crash. |
 | 3.22 | Double-tap "Next puzzle" quickly on any Solved screen (before 3.21). | Only one navigation. |
 | 3.23 | Set the default difficulty back to Hard. | Saved. |
 | 3.24 | Throughout J3: hard rule 2. | No ad, interstitial or "watch to earn" offer anywhere. |
@@ -321,12 +321,12 @@ Then **uninstall** the app before J1.
 | # | Step | Expected |
 |---|---|---|
 | 10.1 | The Home tile with the "New" dot → the Wardrobe. | The "Inky's wardrobe" hero; a large Inky in the current outfit; the intro "Earn outfits by playing… Nothing here is for sale." |
-| 10.2 | Sections. | Hats (7), Glasses (4), Neckwear (5), Backdrops (5). Each section starts with a "None" tile. |
+| 10.2 | Sections. | Hats (7), Glasses (4), Neckwear (5), Backdrops (5). Each section starts with a "None" tile, except Glasses: Inky always wears glasses. |
 | 10.3 | Locked items. | Faded, with captions such as "Reach the Sleuth rank", "Earn the One month badge" and "Collect every author in Thinkers". |
 | 10.4 | Brass monocle. | Unlocked, with the caption "Always yours"; worn by default ("Wearing"). |
 | 10.5 | "New" markers. | Items unlocked since the last visit show "New"; after about 1.5 s on screen they're seen. Leave and reopen: no "New"; the Home dot is gone. |
 | 10.6 | Tap **Painter's beret**. | Inky wears it at once; the tile reads "Wearing"; the previous hat goes back to "Wear". |
-| 10.7 | Neckwear → **Grand sash**; Backdrops → **Starry sky**; Glasses → **None**. | The preview shows all three; no monocle. |
+| 10.7 | Neckwear → **Grand sash**; Backdrops → **Starry sky**; Glasses → **Reading glasses**. | The preview shows all three, with reading glasses instead of the monocle. |
 | 10.8 | Tap a locked item. | Nothing changes (locked items can't be worn). |
 | 10.9 | Back to Home and solve something. | Home's Inky and Solved's Inky wear the same outfit. |
 | 10.10 | Kill and relaunch. | The outfit is kept. |
@@ -382,8 +382,8 @@ Then **uninstall** the app before J1.
 | 13.2 | Same size: Home. | The greeting shrinks to fit ("codebreaker!" on one line); the Goals rows wrap cleanly; the Rank text isn't clipped; the chapter strip and tiles are readable. |
 | 13.3 | Same size: Solved with awards, milestone, goals and teaser cards. | Everything wraps and scrolls; badge names show up to 2 lines; "Cracked it!" wraps between words only. |
 | 13.4 | Same size: Stats badge shelf, Library and Wardrobe. | Grids reflow; no clipped captions. |
-| 13.5 | TalkBack: puzzle. | Cells read "cipher X, guess Y" / "empty", plus "given", "conflict" and "marked wrong". Keys read; ⌫ reads "Delete". The ring reads "N of M letters filled"; the menu reads "Report this quote". |
-| 13.6 | TalkBack: solve. | "Solved!" is announced; the title reads "Cracked it!". The awards card reads each badge name and how it was earned; the author card reads the "Did you know?" fact. |
+| 13.5 | TalkBack: puzzle (on an emulator, check the accessibility labels; spoken output needs a device). | Cells read "cipher X, guess Y" / "empty", plus "given", "conflict" and "marked wrong". Keys read; ⌫ reads "Delete". The ring reads "N of M letters filled"; the menu reads "Report this quote". |
+| 13.6 | TalkBack: solve (as 13.5). | "Solved!" is announced; the title reads "Cracked it!". The awards card reads each badge name and how it was earned; the author card reads the "Did you know?" fact. |
 | 13.7 | TalkBack: Home. | The goals, rank ("Rank: Apprentice. N letters decoded. …"), chapter and tiles (with "New") read correctly. |
 | 13.8 | Reduce Motion (Android "Remove animations"). | No entrance pops, pulsing node or **word hop**. On solve the board fades. Confetti and rays are still or absent. Home tiles, Stats charts, the badge shelf and wardrobe items are all **visible** (no content hidden behind animations). |
 | 13.9 | Touch targets. | Keys, cells, chips, round header buttons, archive days, tiles, goal rows, wardrobe items, Library author tiles and badge medals are ≥ 44 pt. Hint, Check and "e2e" buttons too. |

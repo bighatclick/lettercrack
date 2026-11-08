@@ -7,6 +7,7 @@ import { type Content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import {
   type Difficulty,
+  hasPlayerEntries,
   isFilled,
   type PuzzleAction,
   puzzleReducer,
@@ -17,12 +18,21 @@ import type { GoalsResult } from '@/engine/goals';
 import type { SolveResult } from '@/engine/streak';
 import { playSound } from '@/lib/sound';
 
-import { refreshAwards } from './awards';
+import { collectedAuthors, currentAwardKeys, refreshAwards } from './awards';
 import { cellFlags } from './flags';
 import { completePuzzle, consumeHint, hintsLeft, openPuzzle, type PuzzleRef, saveProgress } from './session';
 import { today } from './today';
+import { useToday } from './useNow';
 
-export type Completion = { clean: boolean; streak: SolveResult | null; goals: GoalsResult | null };
+export type Completion = {
+  clean: boolean;
+  streak: SolveResult | null;
+  goals: GoalsResult | null;
+  /** First quote by this author (a replay never counts). */
+  newAuthor: boolean;
+  /** Wardrobe items unlocked by this solve only (not older ones still unseen). */
+  newItems: string[];
+};
 
 const tap = (on: boolean) => {
   if (on) Haptics.selectionAsync().catch(() => {});
@@ -37,6 +47,8 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
   const update = useAppStore((s) => s.update);
   const settings = useAppStore((s) => s.root!.settings);
   const hints = useAppStore((s) => s.root!.hints);
+  // Free hints reset at midnight: re-read them when the app comes back or the hour turns.
+  const date = useToday();
 
   const [opened] = useState(() => openPuzzle(useAppStore.getState().root!, ref, content));
   const [state, setState] = useState<PuzzleState>(opened.state);
@@ -65,18 +77,29 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
       }
       if (l.completed) return;
       l.completed = true;
-      let completion: Completion = { clean: false, streak: null, goals: null };
+      let completion: Completion = { clean: false, streak: null, goals: null, newAuthor: false, newItems: [] };
       update((r) => {
         const day = today();
         const c = completePuzzle(r, ref, l.difficulty, next, day);
-        completion = { clean: c.clean, streak: c.streak, goals: c.goals };
         // Badges (Phase B): lifetime ones plus this solve's moment (time of day, length, goals).
-        return refreshAwards(c.root, content, day, {
+        const out = refreshAwards(c.root, content, day, {
           hour: new Date().getHours(),
           letters: next.plain.replace(/[^A-Z]/g, '').length,
           clean: c.clean,
           goalsDone: c.goals.rewardNow,
         }).root;
+        const author = content.quote(ref.quoteId)?.author;
+        const itemsBefore = new Set(currentAwardKeys(r, content).filter((k) => k.startsWith('item:')));
+        completion = {
+          clean: c.clean,
+          streak: c.streak,
+          goals: c.goals,
+          newAuthor: !!author && !collectedAuthors(r, content).has(author),
+          newItems: currentAwardKeys(out, content)
+            .filter((k) => k.startsWith('item:') && !itemsBefore.has(k))
+            .map((k) => k.slice(5)),
+        };
+        return out;
       });
       if (settings.haptics) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       playSound('rustle', settings.sound);
@@ -154,7 +177,7 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
   };
   const onReveal = () => spend({ type: 'reveal' });
   const onCheck = () => {
-    if (!live.current.state.entries.some((e) => e !== '')) {
+    if (!hasPlayerEntries(live.current.state)) {
       setNote(t('puzzle.nothingToCheck'));
       return;
     }
@@ -194,7 +217,7 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
     flags,
     used,
     message,
-    hintsLeft: hintsLeft(hints, today()),
+    hintsLeft: hintsLeft(hints, date),
     showTimer: settings.showTimer,
     onSelect,
     onLetter,

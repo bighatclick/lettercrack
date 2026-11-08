@@ -140,7 +140,7 @@ describe('Solved', () => {
       progress: { ...r.progress, levelIndex: 1, solved: { [id]: { date: TODAY, clean: true, timeMs: null, difficulty: 'medium' } } },
       awards: { earned: { first_solve: TODAY, first_clean: TODAY }, seen: [] },
     }));
-    mockParams = { key: `level:${id}`, clean: '1' };
+    mockParams = { key: `level:${id}`, clean: '1', newAuthor: '1', items: 'stars' };
     await render(wrap(<Solved />));
     expect(screen.getByTestId('solved-awards')).toBeTruthy();
     expect(screen.getByText(i18n.t('badges.first_solve'))).toBeTruthy();
@@ -151,6 +151,21 @@ describe('Solved', () => {
     // Badges are now seen; the outfit waits for the wardrobe.
     expect(useAppStore.getState().root!.awards.seen).toEqual(expect.arrayContaining(['badge:first_solve', 'badge:first_clean']));
     expect(useAppStore.getState().root!.awards.seen).not.toContain('item:stars');
+  });
+
+  it('lists only outfits from this solve, and no "new author" on a replay (D15, D16)', async () => {
+    const id = content.levelPool[0]!.id;
+    useAppStore.getState().update((r) => ({
+      ...r,
+      meta: { ...r.meta, onboardedAt: 1, reminderOffered: true },
+      progress: { ...r.progress, levelIndex: 1, solved: { [id]: { date: TODAY, clean: true, timeMs: null, difficulty: 'medium' } } },
+      // Badges already celebrated earlier; the starry sky is still unseen from an older solve.
+      awards: { earned: { first_solve: TODAY, first_clean: TODAY }, seen: ['badge:first_solve', 'badge:first_clean'] },
+    }));
+    mockParams = { key: `level:${id}`, clean: '1', newAuthor: '0', items: '' };
+    await render(wrap(<Solved />));
+    expect(screen.queryByTestId('solved-awards')).toBeNull();
+    expect(screen.queryByText(i18n.t('solved.newAuthor'))).toBeNull();
   });
 
   it('shows no teaser or result line for an archive daily', async () => {

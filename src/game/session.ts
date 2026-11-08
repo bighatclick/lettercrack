@@ -140,10 +140,20 @@ export function completePuzzle(
   if (ref.mode === 'daily' && ref.dailyDate) {
     streak = recordDailySolve(root.daily, ref.dailyDate, today);
     daily = streak.state;
+    // Not credited on its day (archive, or a wound-back clock): still remembered as solved.
+    const d = ref.dailyDate;
+    if (!daily.solvedDates.includes(d) && !progress.lateDailies.includes(d)) {
+      progress.lateDailies = [...progress.lateDailies, d].sort();
+    }
   }
   const goals = recordGoalSolve(root.goals, today, {
     mode: ref.mode,
-    dailyToday: streak?.credited ?? false,
+    // Today's daily, solved for the first time (with or without streak credit: a wound-back clock gets none).
+    dailyToday:
+      ref.mode === 'daily' &&
+      ref.dailyDate === today &&
+      !root.daily.solvedDates.includes(today) &&
+      !root.progress.lateDailies.includes(today),
     clean,
     difficulty,
     letters: state.plain.replace(/[^A-Z]/g, '').length,

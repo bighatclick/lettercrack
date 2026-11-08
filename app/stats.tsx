@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInUp } from 'react-native-reanimated';
@@ -12,7 +12,7 @@ import { markAwardsSeen, rankOf, unseenAwards } from '@/game/awards';
 import { computeStats } from '@/game/stats';
 import { today } from '@/game/today';
 import { useOutfit } from '@/game/useOutfit';
-import { Card, Enter, Float, Gradient, Hero, Icon, Inky, ProgressRing, Pulse, radius, Screen, space, Text, useNoEntrance, useTheme } from '@/ui';
+import { Card, Enter, FitText, Float, Gradient, Hero, Icon, Inky, ProgressRing, Pulse, radius, Screen, space, Text, useNoEntrance, useScaledWidth, useTheme } from '@/ui';
 import { shade } from '@/ui/color';
 import { BadgeMedal, RankCard } from '@/ui/game/Awards';
 import { formatDuration } from '@/ui/format';
@@ -31,14 +31,17 @@ export default function StatsScreen() {
   const rank = useMemo(() => rankOf(root, content), [root]);
   const outfit = useOutfit();
   const update = useAppStore((st) => st.update);
-  const freshBadges = useMemo(() => new Set(unseenAwards(root, content).filter((k) => !k.startsWith('item:'))), [root]);
+  // Fixed when Stats opens, so the "New" marks stay for this visit and are gone on the next one.
+  const [freshBadges] = useState(() => new Set(unseenAwards(useAppStore.getState().root!, content).filter((k) => !k.startsWith('item:'))));
   // Looking at the shelf counts as seeing new badges and ranks (wardrobe items are seen in the wardrobe).
   useEffect(() => {
     if (!freshBadges.size) return;
     const keys = [...freshBadges];
-    const id = setTimeout(() => update((r) => markAwardsSeen(r, keys)), 1500);
-    return () => clearTimeout(id);
+    update((r) => markAwardsSeen(r, keys));
   }, [freshBadges, update]);
+  const badgeWidth = useScaledWidth(76);
+  // Every badge name is sized as if it were the longest word on the shelf, so they all match.
+  const badgeNames = BADGE_IDS.map((id) => t(`badges.${id}`)).join(' ');
   const earnedCount = BADGE_IDS.filter((id) => root.awards.earned[id]).length;
 
   // The last 7 days: did the player solve that day's daily?
@@ -140,15 +143,15 @@ export default function StatsScreen() {
                   return (
                     <View
                       key={id}
-                      style={styles.badge}
+                      style={[styles.badge, { width: badgeWidth }]}
                       accessible
                       accessibilityLabel={when ? `${name}. ${how} ${t('badges.earned', { date: when })}` : `${name}. ${t('badges.locked', { how })}`}
                       testID={`badge-${id}`}
                     >
                       <BadgeMedal id={id} earned={!!when} />
-                      <Text variant="caption" style={styles.badgeName} numberOfLines={2} color={when ? 'ink' : 'inkMuted'}>
+                      <FitText variant="caption" style={styles.badgeName} numberOfLines={3} fitFor={badgeNames} color={when ? 'ink' : 'inkMuted'}>
                         {name}
-                      </Text>
+                      </FitText>
                       {fresh ? (
                         <View style={styles.newDot}>
                           <Text variant="overline" color="#FFFFFF">

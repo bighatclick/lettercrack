@@ -15,7 +15,7 @@ import { nextLevelRef, type PuzzleRef, refFromKey } from '@/game/session';
 import { today } from '@/game/today';
 import { type Completion, usePuzzleGame } from '@/game/usePuzzleGame';
 import { Button, Chip, Icon, type IconName, PressScale, ProgressRing, radius, Screen, softShadow, space, Text, useTheme } from '@/ui';
-import { formatDuration } from '@/ui/format';
+import { formatDuration, formatLocalDate } from '@/ui/format';
 import { DifficultySheet } from '@/ui/puzzle/DifficultySheet';
 import { PuzzleView } from '@/ui/puzzle/PuzzleView';
 import { motion, typeScale } from '@/ui/tokens';
@@ -37,7 +37,7 @@ export default function PuzzleScreen() {
 }
 
 function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors, hue, isDark, reduceMotion } = useTheme();
   const levelIndex = useAppStore((s) => s.root!.progress.levelIndex);
   const [levelNumber] = useState(levelIndex + 1);
@@ -46,6 +46,7 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
   const [opacity] = useState(() => new Animated.Value(1));
   const [revealing, setRevealing] = useState(false);
 
+  const isArchive = puzzleRef.mode === 'daily' && puzzleRef.dailyDate !== today();
   // On solve: flip letters left to right (600 ms), or a short fade with Reduce Motion, then show the solved screen.
   const onSolved = useCallback(
     (c: Completion) => {
@@ -62,6 +63,10 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
             freezeEarned: c.streak?.freezeEarned ? '1' : '0',
             goalsDone: c.goals?.completed.join(',') ?? '',
             goalsReward: c.goals?.rewardNow ? '1' : '0',
+            newAuthor: c.newAuthor ? '1' : '0',
+            items: c.newItems.join(','),
+            // An archive day goes back to the archive, not on to the level path.
+            ...(isArchive ? { from: 'archive' } : {}),
           },
         });
       if (reduceMotion) {
@@ -76,16 +81,15 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
         );
       }
     },
-    [reduceMotion, reveal, opacity, puzzleRef.key, t],
+    [reduceMotion, reveal, opacity, puzzleRef.key, isArchive, t],
   );
   const game = usePuzzleGame(puzzleRef, content, onSolved);
 
-  const isArchive = puzzleRef.mode === 'daily' && puzzleRef.dailyDate !== today();
   const title =
     puzzleRef.mode === 'level'
       ? t('puzzle.levelTitle', { level: levelNumber })
       : isArchive
-        ? t('puzzle.archiveTitle', { date: puzzleRef.dailyDate })
+        ? t('puzzle.archiveTitle', { date: formatLocalDate(puzzleRef.dailyDate!, i18n.language) })
         : t('puzzle.dailyTitle');
 
   // Report quote (§4.3): hidden locally, listed in the next feedback email. Nothing is sent now.

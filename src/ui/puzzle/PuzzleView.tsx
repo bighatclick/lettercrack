@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Animated, ScrollView, StyleSheet, View } from 'react-native';
 
-import type { PuzzleState } from '@/engine/puzzle';
+import { hasPlayerEntries, type PuzzleState } from '@/engine/puzzle';
 
 import { Inky } from '../fx/Inky';
 import { Enter } from '../fx/motion';
@@ -35,7 +35,7 @@ export type PuzzleViewProps = {
 /** Presentational puzzle screen body: board, Inky's tip, hints and keyboard. No storage, no routing. */
 export function PuzzleView(p: PuzzleViewProps) {
   const { colors, isDark, highContrast } = useTheme();
-  const canCheck = p.state.entries.some((e) => e !== '');
+  const canCheck = hasPlayerEntries(p.state);
   return (
     <View style={styles.root}>
       {p.header}

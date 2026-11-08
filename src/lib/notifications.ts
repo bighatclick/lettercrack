@@ -26,15 +26,26 @@ export async function requestReminderPermission(): Promise<boolean> {
   }
 }
 
-/** Replaces all scheduled reminders. `enabled` false just cancels them. */
-export async function scheduleReminders(opts: {
+type ReminderOpts = {
   enabled: boolean;
   today: LocalDate;
   solvedToday: boolean;
   title: string;
   /** Text for the reminder on `date` (varies by day; never a spoiler). */
   body: (date: LocalDate) => string;
-}): Promise<void> {
+};
+
+// Calls run one at a time. Two overlapping runs (launch + foreground + a solve) could each cancel
+// and then each schedule, posting the same reminder twice.
+let queue: Promise<void> = Promise.resolve();
+
+/** Replaces all scheduled reminders. `enabled` false just cancels them. */
+export function scheduleReminders(opts: ReminderOpts): Promise<void> {
+  queue = queue.then(() => run(opts));
+  return queue;
+}
+
+async function run(opts: ReminderOpts): Promise<void> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
     if (!opts.enabled) return;
@@ -52,6 +63,8 @@ export async function scheduleReminders(opts: {
       const when = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), REMINDER_HOUR, 0, 0);
       if (when.getTime() <= now.getTime()) continue;
       await Notifications.scheduleNotificationAsync({
+        // One fixed ID per day: scheduling the same day again replaces it instead of adding a second.
+        identifier: `reminder-${date}`,
         content: { title: opts.title, body: opts.body(date) },
         trigger: { type: Notifications.SchedulableTriggerInputTypes.DATE, date: when, channelId: CHANNEL },
       });

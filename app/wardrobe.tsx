@@ -9,7 +9,7 @@ import { useAppStore } from '@/data/store';
 import { isUnlocked, type Item, ITEMS, type Slot, SLOTS, type Unlock, wear } from '@/engine/wardrobe';
 import { markAwardsSeen, unlockFacts, unseenAwards } from '@/game/awards';
 import { useOutfit } from '@/game/useOutfit';
-import { Card, Enter, Gradient, Hero, Icon, Inky, PressScale, radius, Screen, space, Tag, Text, useTheme } from '@/ui';
+import { Card, Enter, FitText, Gradient, Hero, Icon, Inky, PressScale, radius, Screen, space, Tag, Text, useTheme } from '@/ui';
 import { OutfitBack, OutfitFace, OutfitHat, OutfitNeck } from '@/ui/fx/InkyOutfit';
 
 /** Viewboxes that frame each slot's item on its own (Inky's 200 × 220 drawing space). */
@@ -72,6 +72,9 @@ export default function WardrobeScreen() {
       </Enter>
 
       {SLOTS.map((slot, si) => {
+        // Item names all share one size, set by the longest word among them.
+        const fitFor = [t('wardrobe.none'), ...ITEMS.map((i) => t(`wardrobe.item_${i.id}`))].join(' ');
+        const captionFitFor = ITEMS.map((i) => unlockText(i.unlock)).join(' ');
         const items = ITEMS.filter((i) => i.slot === slot);
         const h = hue(si + 1);
         return (
@@ -90,6 +93,7 @@ export default function WardrobeScreen() {
                     tint={h.tint}
                     deep={h.deep}
                     testID={`wardrobe-${slot}-none`}
+                    fitFor={fitFor}
                   >
                     <Icon name="delete" size={26} color={h.deep} />
                   </Tile>
@@ -110,6 +114,8 @@ export default function WardrobeScreen() {
                       tint={h.tint}
                       deep={h.deep}
                       testID={`wardrobe-${item.id}`}
+                      fitFor={fitFor}
+                      captionFitFor={captionFitFor}
                     >
                       <ItemArt item={item} locked={!open} />
                     </Tile>
@@ -158,9 +164,13 @@ function Tile({
   tint,
   deep,
   testID,
+  fitFor,
+  captionFitFor,
   children,
 }: {
   label: string;
+  fitFor?: string;
+  captionFitFor?: string;
   state: string;
   caption?: string;
   selected: boolean;
@@ -188,15 +198,15 @@ function Tile({
       ]}
     >
       <View style={styles.art}>{children}</View>
-      <Text variant="caption" style={styles.center} numberOfLines={2} color={disabled ? 'inkMuted' : 'ink'}>
+      <FitText variant="caption" style={styles.center} color={disabled ? 'inkMuted' : 'ink'} fitFor={fitFor}>
         {label}
-      </Text>
+      </FitText>
       {caption ? (
         <View style={styles.lockRow}>
           <Icon name="lock" size={11} color={colors.inkMuted} />
-          <Text variant="caption" color="inkMuted" style={styles.small} numberOfLines={3}>
+          <FitText variant="caption" color="inkMuted" style={styles.small} numberOfLines={4} fitFor={captionFitFor}>
             {caption}
-          </Text>
+          </FitText>
         </View>
       ) : null}
       {isNew ? (
@@ -226,6 +236,6 @@ const styles = StyleSheet.create({
   },
   art: { height: 64, alignItems: 'center', justifyContent: 'center' },
   lockRow: { flexDirection: 'row', gap: 3, alignItems: 'flex-start' },
-  small: { flexShrink: 1, fontSize: 11, lineHeight: 14 },
+  small: { flexShrink: 1 },
   newTag: { position: 'absolute', top: -6, right: -6 },
 });

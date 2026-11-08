@@ -1,5 +1,68 @@
 # E2E run results (suite v2)
 
+## Fix round and retest (9 Nov 2026)
+
+All defects from the v2 run were worked on, then retested on the phone emulator (and the tablet for D31) with the new code. Only JavaScript changed, so the existing dev build was reused, with Metro serving the new code. Unit tests: 849 pass; typecheck and lint are clean.
+
+### Defect status
+
+| # | Sev. | Status | Fix | Retest on emulator |
+|---|---|---|---|---|
+| D13 | Medium | **Fixed** | Check counts only letters the player typed (`hasPlayerEntries`); givens and reveals don't. | Pass: Check is disabled with only givens; tapping it costs nothing; typing enables it. |
+| D17 | Medium | **Fixed** | Next is guarded by a ref, and each puzzle key can be in the stack once (`dangerouslySingular`). | Pass: a double tap opened one puzzle; one Back went Home. |
+| D26 | Medium | **Fixed** | New `FitText`: text scales with the size settings but never breaks inside a word. Home tile titles share one size. | Pass at the largest text: "Inky's wardrobe" whole, no clipped lines. |
+| D28 | Medium | **Fixed** | Author circles grow with the text size, and the initials are sized to the circle. | Pass at the largest text. |
+| D29 | Medium | **Fixed** | Badge columns widen with the text size; names use `FitText` with one shared size. | Pass at the largest text on Stats; also used on the Solved awards card. |
+| D31 | Medium | **Not fixed** | Investigated, see below. | Fails only after rotating. A fresh launch is fine in both orientations. |
+| D14 | Low | **Fixed** | Closing the sheet without restarting forgets the pick. | Pass for Cancel and for tapping outside; Restart still works. |
+| D11 | Low | **Fixed** | `useNow` re-renders on foreground and every hour. Home reads the date from it, because the React Compiler memoises a bare `today()`. | Pass: afternoon → evening → next morning, date and daily card updated. |
+| D18 | Low | **Fixed** | Same mechanism in the puzzle hook. | Pass: "No hints left" → "5 hints left" after midnight without reopening. |
+| D21 | Low | **Fixed** | A daily solved on a wound-back clock is recorded (see D20), so Home shows it solved. Goal "Solve today's quote" also counts it. | Pass: "See today's quote", goal done, no streak credit. |
+| D20 | Low | **Fixed** | Schema v5: archive days solved later are recorded in `progress.lateDailies`. The old guess (by the quote's last solve date) runs once after the migration, its days are kept, then it is switched off. Migration v4 → v5 has a fixture and tests. Cloud merge = union. | Pass on a fresh install: solving 13 Feb left 3 and 23 Feb (same quote) open; 1 stamp. |
+| D23 | Low | **Fixed** | Archive solves pass `from: 'archive'` to Solved. | Pass: "Back to archive" returns to the archive with the day solved. |
+| D24 | Low | **Fixed** | Stats fixes its "New" set when it opens and marks them seen at once; the marks stay for that visit. | Pass with the U0 save: marks shown at open and still after 10 s; gone on the next visit. |
+| D16 | Low | **Fixed** | "New author" is decided at solve time (author not collected before), so a replay never shows it. | Unit test (a replay needs the pool exhausted). |
+| D15 | Low | **Fixed** | The Solved card lists only outfits unlocked by this solve; older unseen ones keep their "New" mark in the wardrobe. | Pass: no outfit note on a solve that unlocked none. |
+| D25 | Low | **Fixed** | Wardrobe labels use `FitText` (no one-line clip). | Pass: "Top hat" in full at normal and largest text. |
+| D27 | Low | **Fixed** | The ×N counter never shrinks; it wraps to its own line. | Pass at the largest text. |
+| D30 | Low | **Fixed** | Each screen exists once in the stack (`dangerouslySingular`). | Pass: `stats` twice + one Back = Home; a link to an open screen brings it forward. Back still steps through the distinct screens opened, as any stack does. |
+| D12 | Cosmetic | **Fixed** | A backdrop fills the status-bar area once a page scrolls (Screen and Solved). | Pass on Home, Stats and Solved. |
+| D22 | Cosmetic | **Fixed** | Archive title shows "February 3, 2027". | Pass. |
+| D19 | Low | **Fixed (likely cause)** | Reminder scheduling runs one call at a time, and each day's reminder has a fixed ID, so a repeat replaces it. | Pass: 7 alarms after 3 quick foregrounds, one per day; exactly 1 notification at 09:00. The original was seen once, so this can't prove the race is gone. |
+| D10 | Low | **Partly** | No code change. | The 3 "imperative router" errors no longer appear. W1 ("linking configured in multiple places") still shows in the dev build when a font-size change recreates the screen; it's a dev warning, and the app recovers. Recheck on a release build. |
+| D8 | Low | **Open (design)** | Not changed. | Cells are 44+ tall and keys 52 tall, but their width is set by fitting about 15 cells and 10 keys across a phone, and they touch, so the hit area can't grow sideways. Needs a design decision. |
+
+New issues found while retesting, all fixed and retested:
+- The D20 fix at first still applied the old rule to solves made on the migration day. Fixed by settling the old rule once on launch (`settleLegacyDailies`).
+- The goal "Solve today's quote" didn't count a solve on a wound-back clock (part of D21).
+- Wardrobe lock notes broke "Cryptograph / er" at the largest text. They now use `FitText`.
+
+### D31 (tablet text cut off): what was found
+
+- It happens **only after rotating** the tablet. A fresh launch shows "TODAY'S QUOTE" and "…Let's crack it!" in full, in portrait and in landscape.
+- React Native measures the same bounds before and after the rotation. Android then draws the glyphs about 1.5% wider, so the text wraps inside a box sized for one line, and the second line is hidden.
+- Remounting the text on a size change didn't help (tried, then reverted). The cause is below the app's code.
+- Next step: check on a real tablet and a release build before changing the layout. If it reproduces, give these one-line labels spare width.
+
+### Steps that weren't run last time
+
+| Step | Result |
+|---|---|
+| 7.6 Sunday regular | **Pass**: the 4th Sunday solved from the archive earned "Sunday regular". |
+| 7.7 Archive count | **Pass**: "13 to play" → "11 to play" after two archive solves; streak unchanged. |
+| 11.5 Widget after midnight | **Pass**: the next day's cipher, "Tap to crack today's quote", and "1-day streak" still shown (bridgeable). The launcher needed a restart to redraw, which the step allows. |
+| U0 again (v2 save → v5) | **Pass**: loads, badges awarded, archive days kept. |
+| 2.6 Word hop | **Not verifiable** on the debug build: with animations on, typed letters arrived more than 10 s late, past the recording. The code path is unchanged; check on a release build. |
+| 12.13, 14.6, 14.7 | Still can't run here: no signed-in mail, no Play Store, and MMKV keeps its backup in the same file. |
+
+Test-case corrections from the v2 run (2.1, 3.17, 3.21, 10.2, 10.7, 13.5, 13.6) are now applied in `TEST_CASES.md`.
+
+**How the retest ran:** Metro must run **without** `CI=1`; in CI mode Expo turns off file watching, so the phone keeps getting the code from when Metro started. Clearing app data also removes the home-screen widget, and force-stopping the app greys it out on Android 15.
+
+---
+
+## v2 run (8 Nov 2026)
+
 Run on 8 Nov 2026 against `c1fc66c` (latest `main`). The steps are in `TEST_CASES.md` v2. The v1 run's results are in git history.
 
 | Item | Value |

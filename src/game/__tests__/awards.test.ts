@@ -72,7 +72,8 @@ describe('Sunday specials and the stamp book', () => {
     const r = defaultRoot(0);
     r.daily.solvedDates = ['2027-01-01'];
     const late = dailyQuoteId('2027-01-02', content.dailyOrder);
-    const withArchive = solve(r, [late], '2027-01-05');
+    const solvedLate = solve(r, [late], '2027-01-05');
+    const withArchive = { ...solvedLate, progress: { ...solvedLate.progress, lateDailies: ['2027-01-02'] } };
     expect(solvedDailyDates(withArchive, content, '2027-01-05')).toEqual(['2027-01-01', '2027-01-02']);
     expect(badgeFacts(withArchive, content, '2027-01-05').archiveSolves).toBe(1);
   });

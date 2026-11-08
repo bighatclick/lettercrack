@@ -4,6 +4,7 @@ import {
   conflicts,
   createPuzzle,
   type Difficulty,
+  hasPlayerEntries,
   isClean,
   isLetterCell,
   isLockedCell,
@@ -300,5 +301,18 @@ describe('fuzz: random play keeps the invariants', () => {
         if (s.solved) break;
       }
     }
+  });
+});
+
+describe('hasPlayerEntries (D13: Check needs a typed letter)', () => {
+  it('ignores givens and revealed letters, and counts typed ones', () => {
+    let s = createPuzzle({ text: 'Well done is better than well said.', seed: 'has-entries', difficulty: 'easy', autoFill: true });
+    expect(s.givens.length).toBeGreaterThan(0);
+    expect(hasPlayerEntries(s)).toBe(false);
+    s = puzzleReducer(s, { type: 'reveal' });
+    expect(s.revealed.length).toBe(1);
+    expect(hasPlayerEntries(s)).toBe(false);
+    s = puzzleReducer(s, { type: 'input', letter: 'Q', keyId: 1 });
+    expect(hasPlayerEntries(s)).toBe(true);
   });
 });
