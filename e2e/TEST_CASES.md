@@ -77,70 +77,74 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 
 ---
 
-## Current status (10 Nov 2026)
+## Current status (10 Nov 2026, after the 30-scenario run)
 
-**🟢 171 tested · 🔴 1 failed · ⚪ 39 pending, of 211 steps: 81.0% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟥⬜
+**🟢 203 tested · 🔴 4 failed · ⚪ 4 pending, of 211 steps: 96.2% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥
 
 | Run | Steps | 🟢 Tested | 🔴 Failed | ⚪ Pending | Done |
 |---|---:|---:|---:|---:|---:|
 | First run (v2 build) | 188 | 165 | 15 | 8 | 87.8% |
 | 9 Nov, after fixes and retests | 188 | 186 | 0 | 2 | 98.9% |
 | 10 Nov, real-phone install (D32) | 190 | 185 | 1 | 4 | 97.4% |
-| **10 Nov, after the date fixes (D33–D35) and the 30-scenario review** | **211** | **171** | **1** | **39** | **81.0%** |
+| 10 Nov, after the date fixes, before the run | 211 | 171 | 1 | 39 | 81.0% |
+| **10 Nov, 30-scenario run on the emulator** | **211** | **203** | **4** | **4** | **96.2%** |
 
 | | |
 |---|---|
-| **Tested (passed)** | 171. Steps marked ⟳ (2.22, 6.3, 7.1–7.11, 14.9) passed before but their expected result changed with the date fixes, so they are pending again. |
-| **Failed** | 14.5 (D32): on a real phone in Nov 2026, a daily started before midnight and solved after it showed "This puzzle isn't available." Fixed in code with unit tests; red until it is retested on a device. |
-| **Pending** | 39: 14 rewritten steps (⟳); J15 (13 real-world scenarios); J16 (8 retests for the date fixes); 14.12, 14.13 (new); 12.13 (Gmail not signed in); 14.6 (review prompt, parked). |
+| **Tested (passed)** | 203. The 14 rewritten steps (✅), 14.5, 14.12, 14.13, J16 and 7 of J15 passed on the x86_64 release E2E build with D32–D35. |
+| **Failed** | 4 steps: 15.2 (D37 debug-signed builds can't be updated), 15.5 (D42 reminder up to an hour late in Doze), 15.6 (D41 widget not refreshed at midnight), 15.13 (D40 solve counts disagree). Scenario #18 is also red (D38: the install-month medal is too easy) although its steps pass as written. |
+| **Pending** | 4: 15.3 (real ARM phones), 15.4 (iOS), 12.13 (Gmail not signed in), 14.6 (review prompt, parked). |
+| **Findings, low** | D36 (travel west: wrong "Time traveller" badge, goals reset), D39 ("0 of 1 days"). |
 | **Accepted exception** | D8: cells and keys are ≥ 44 pt tall but narrower than 44 pt, because the line width sets them (13.9). |
-| **Builds** | Emulator runs used x86_64 builds with the clock moved to Jan 2027. The phone build (ARM) with D32–D35 is built but not yet run against this plan. Unit tests: 873 pass; typecheck and lint clean. |
-| **Still to do** | Run the pending steps on a release build (J15 needs real devices). Apply the earlier test-case corrections in `RESULTS.md` (2.1, 3.17, 3.21, 10.2, 10.7). |
+| **Content** | The app still ships the 30-quote seed (`assets/quotes.seed.json`): no long Sunday quotes, and quotes repeat every 10 days. Ship `quotes.v1.json` before release. |
+| **Still to do** | Fix or accept D36–D42. Run 15.3 and 15.4 on real devices. Apply the earlier test-case corrections in `RESULTS.md` (2.1, 3.17, 3.21, 10.2, 10.7). |
 
 ---
 
 ## Scenario tracker (10 Nov 2026): missed scenarios and scenarios impacted by the date fixes
 
+Run on 10 Nov 2026 on the Pixel 7 emulator (x86_64 release E2E build with D32–D35), clock and time zone moved per step. Defects D36–D42 are in `RESULTS.md`.
+
 Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any earlier run. "Impacted by fix" = behaviour changed with D32–D35, so earlier passes no longer count.
 
 | # | Scenario | Type | Steps | Status | Note |
 |---:|---|---|---|---|---|
-| 1 | Daily crosses midnight on the real date (D32, D34) | Missed | 14.5, 14.12 | 🔴 Failed | Failed on a real phone; fixed in code (unit tests); device retest pending |
-| 2 | Travelling west: the local date goes back a day | Missed | 15.1 | ⚪ Pending | Likely bug (from the code) |
-| 3 | Updating from the debug-signed APK to a release-key build | Missed | 15.2 | ⚪ Pending | Likely problem: uninstall wipes progress |
-| 4 | Real ARM phones, including low-end | Missed | 15.3 | ⚪ Pending |  |
-| 5 | iOS (iCloud sync, prompts, widget) | Missed | 15.4 | ⚪ Pending | Needs a Mac / TestFlight |
-| 6 | Reminders on real phones (battery savers, alarm limits) | Missed | 15.5 | ⚪ Pending |  |
-| 7 | Widget at midnight on real launchers | Missed | 15.6 | ⚪ Pending |  |
-| 8 | New phone / Google backup restore | Missed | 15.7 | ⚪ Pending |  |
-| 9 | Install on any date (archive start, stamp book, daily changes) | Missed | 14.13 | ⚪ Pending | D33 fixed in code |
-| 10 | App left open across midnight | Missed | 15.8 | ⚪ Pending |  |
-| 11 | Returning after a long gap (60 days) | Missed | 15.9 | ⚪ Pending |  |
-| 12 | Year end and leap day | Missed | 15.10 | ⚪ Pending | Unit tests only |
-| 13 | Different screens and navigation modes | Missed | 15.11 | ⚪ Pending |  |
-| 14 | Android kills the app mid-puzzle | Missed | 15.12 | ⚪ Pending |  |
-| 15 | Numbers agree across Home, Stats, Archive, Solved | Missed | 15.13 | ⚪ Pending |  |
-| 16 | Archive grid starts on the install day | Impacted by fix | 7.1 | ⚪ Pending | Step rewritten |
-| 17 | Archive days before install are gone | Impacted by fix | 7.3–7.6 | ⚪ Pending | Steps rewritten (20 Jan, 31 Jan) |
-| 18 | Full-month medal in the install month (D35 decision) | Impacted by fix | 7.2, 7.8–7.10 | ⚪ Pending | Install month needs only the days from the install day; unit-tested |
-| 19 | Daily number in the share text | Impacted by fix | 2.22, 6.3 | ⚪ Pending | Now #73 / #75 |
-| 20 | Which quote shows on which date | Impacted by fix | 7.11 | ⚪ Pending | Step rewritten |
-| 21 | Sunday specials stay on Sundays | Impacted by fix | 16.1 | ⚪ Pending | Unit-tested |
-| 22 | Streak, freezes, milestones | Impacted by fix | 16.2 (J6) | ⚪ Pending |  |
-| 23 | Rewound-clock guard with the midnight rule | Impacted by fix | 16.3 | ⚪ Pending | Unit-tested |
-| 24 | "Solve today's quote" goal across midnight | Impacted by fix | 16.4 | ⚪ Pending |  |
-| 25 | Badges built on daily history | Impacted by fix | 16.5 (J8) | ⚪ Pending |  |
-| 26 | Home "N to play" | Impacted by fix | 7.7 | ⚪ Pending | Step rewritten |
-| 27 | Upgrading an old (pre-v5) save | Impacted by fix | 16.6 (U0) | ⚪ Pending |  |
-| 28 | Deep link to a date before install (D35 decision) | Impacted by fix | 14.9 | ⚪ Pending | Now blocked unless already started or solved; unit-tested |
-| 29 | Reopening a saved daily the next day | Impacted by fix | 16.7 | ⚪ Pending | Unit-tested |
-| 30 | Widget and reminder text | Impacted by fix | 16.8 (J11) | ⚪ Pending |  |
+| 1 | Daily crosses midnight on the real date (D32, D34) | Missed | 14.5, 14.12 | 🟢 Tested | Pass (emulator, real date 10–11 Nov 2026): Solved screen shown, "Streak: 1 day", Stats streak 1 + Tuesday dot, Archive 10 Nov solved, new quote next day |
+| 2 | Travelling west: the local date goes back a day | Missed | 15.1 | 🟢 Tested | Pass: playable, no streak credit, streak kept. Found D36: "Time traveller" awarded for a daily played from Home, and the day's goals reset after travelling back |
+| 3 | Updating from the debug-signed APK to a release-key build | Missed | 15.2 | 🔴 Failed | D37: Android refuses the update ("signatures do not match"); testers must uninstall and lose progress |
+| 4 | Real ARM phones, including low-end | Missed | 15.3 | ⚪ Pending | Blocked here: needs real ARM phones |
+| 5 | iOS (iCloud sync, prompts, widget) | Missed | 15.4 | ⚪ Pending | Blocked here: needs a Mac and TestFlight |
+| 6 | Reminders on real phones (battery savers, alarm limits) | Missed | 15.5 | 🔴 Failed | D42: reminders are inexact (1-hour window); in Doze the 9:00 reminder had not fired at 9:00:50, it came by 10:00. OEM battery savers not tested |
+| 7 | Widget at midnight on real launchers | Missed | 15.6 | 🔴 Failed | D41: the widget refreshes every 30 min only, so after midnight it shows yesterday's quote until the next refresh (right after a forced update). OEM launchers not tested |
+| 8 | New phone / Google backup restore | Missed | 15.7 | 🟢 Tested | Pass with the local backup transport: wiped and restored, onboarding skipped, letters, streak and badges back. Real Google Drive restore not tested |
+| 9 | Install on any date (archive start, stamp book, daily changes) | Missed | 14.13 | 🟢 Tested | Pass (installs on 2026-11-20, 2027-05-20, 2028-02-29). Found D39: "0 of 1 days stamped" (plural) |
+| 10 | App left open across midnight | Missed | 15.8 | 🟢 Tested | Pass: Home switched to the new day at midnight without a restart |
+| 11 | Returning after a long gap (60 days) | Missed | 15.9 | 🟢 Tested | Pass: streak ended, archive lists every day since install, opens within 1 s |
+| 12 | Year end and leap day | Missed | 15.10 | 🟢 Tested | Pass: streak 1→5 across 31 Dec (weekly freeze bridged 2 Jan); 1→4 across 29 Feb 2028 |
+| 13 | Different screens and navigation modes | Missed | 15.11 | 🟢 Tested | Pass: 720×1280 with 3-button nav, and a 1840×2208 foldable shape with gestures; nothing cut off |
+| 14 | Android kills the app mid-puzzle | Missed | 15.12 | 🟢 Tested | Pass: "Don't keep activities" + process kill; "Continue level 1" kept the typed letters |
+| 15 | Numbers agree across Home, Stats, Archive, Solved | Missed | 15.13 | 🔴 Failed | D40: Archive 23 dailies solved vs Stats "Daily quotes solved: 13" (on-day only) vs "12 quotes solved" (per quote; the seed repeats quotes) |
+| 16 | Archive grid starts on the install day | Impacted by fix | 7.1 | 🟢 Tested | Pass (7.1): starts on 10 Jan |
+| 17 | Archive days before install are gone | Impacted by fix | 7.3–7.6 | 🟢 Tested | Pass (7.3–7.6 on 20 and 31 Jan) |
+| 18 | Full-month medal in the install month (D35 decision) | Impacted by fix | 7.2, 7.8–7.10 | 🔴 Failed | Steps pass as written, but D38: a late-month install earns "Full month" and the Gold medal after 1–3 days (seen: install 29 Dec, medal 1 Jan). Decision needed |
+| 19 | Daily number in the share text | Impacted by fix | 2.22, 6.3 | 🟢 Tested | Pass (6.3): "LetterCrack #75 …"; 2.22 uses the same numbering |
+| 20 | Which quote shows on which date | Impacted by fix | 7.11 | 🟢 Tested | Pass (7.11): 11 and 21 Jan show the same quote as separate days; letters counted once |
+| 21 | Sunday specials stay on Sundays | Impacted by fix | 16.1 | 🟢 Tested | Tag on every Sunday (3 checked). The shipped seed has no long quotes, so "long" can't be checked until quotes.v1.json ships |
+| 22 | Streak, freezes, milestones | Impacted by fix | 16.2 (J6) | 🟢 Tested | Pass: milestones 3 and 7, saved freeze earned and kept, weekly freeze bridged 20 Jan, 2 missed days reset the streak |
+| 23 | Rewound-clock guard with the midnight rule | Impacted by fix | 16.3 | 🟢 Tested | Pass: rewound clock, opened 23:59, solved 00:01: no streak credit, kept as solved |
+| 24 | "Solve today's quote" goal across midnight | Impacted by fix | 16.4 | 🟢 Tested | Pass: the new day's "Solve today's quote" stays 0 of 1; no extra hint |
+| 25 | Badges built on daily history | Impacted by fix | 16.5 (J8) | 🟢 Tested | Pass: Daily decoder, Time traveller, Perfect week, One week, Warming up, Full month, Sunday regular on the right dates |
+| 26 | Home "N to play" | Impacted by fix | 7.7 | 🟢 Tested | Pass (7.7): 3 → 2 to play; Home matches Archive |
+| 27 | Upgrading an old (pre-v5) save | Impacted by fix | 16.6 (U0) | 🟢 Tested | Pass: v2 save upgraded; 13 quotes, best 8, saved freeze, all 11 old solved days kept (archive from 1 Jan) |
+| 28 | Deep link to a date before install (D35 decision) | Impacted by fix | 14.9 | 🟢 Tested | Pass (14.9): 12 Jan opens; 5 Jan, 20 Dec, a future date and a Solved link for 5 Jan are refused |
+| 29 | Reopening a saved daily the next day | Impacted by fix | 16.7 | 🟢 Tested | Pass: started 25 Jan, reopened 26 Jan from the Archive with the letters, solved to the Solved screen |
+| 30 | Widget and reminder text | Impacted by fix | 16.8 (J11) | 🟢 Tested | Pass: widget shows the same quote as Home; reminder text differs day to day |
 
 | Scenarios | Total | 🟢 Tested | 🔴 Failed | ⚪ Pending |
 |---|---:|---:|---:|---:|
-| Missed in earlier runs | 15 | 0 | 1 | 14 |
-| Impacted by the date fixes | 15 | 0 | 0 | 15 |
-| **All** | **30** | **0** | **1** | **29** |
+| Missed in earlier runs | 15 | 9 | 4 | 2 |
+| Impacted by the date fixes | 15 | 14 | 1 | 0 |
+| **All** | **30** | **23** | **5** | **2** |
 
 ---
 
@@ -148,26 +152,26 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 
 | Journey | Area | Steps | Clock | 🟢 Tested | 🔴 Failed | ⚪ Pending | Done | Progress | Note |
 |---|---|---:|---|---:|---:|---:|---:|---|---|
-| U0 | Upgrade from the previous build (v2 save → v4) | 7 | as it is | 7 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Rerun as 16.6 |
+| U0 | Upgrade from the previous build (v2 save → v4) | 7 | as it is | 7 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Rerun as 16.6: pass |
 | J1 | Fresh install, onboarding, new Home | 12 | 01-10 | 12 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
-| J2 | Daily puzzle, input, hints, Solved screen (new cards) | 24 | 01-10 | 23 | 0 | 1 | **95.8%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 2.22 retest (daily number) |
+| J2 | Daily puzzle, input, hints, Solved screen (new cards) | 24 | 01-10 | 24 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | 2.22 via the 6.3 numbering check |
 | J3 | Levels, difficulty sheet, chapters, big quote, rank, report | 24 | 01-10 → | 24 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
-| J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Midnight case in 16.4 |
+| J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
 | J5 | Hint exhaustion and midnight refill | 6 | 01-10 → 01-11 | 6 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
-| J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 | 15 | 0 | 1 | **93.8%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 6.3 retest; full rerun as 16.2 |
-| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | 0 | 0 | 11 | **0%** | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ | All 11 rewritten for the install-day archive |
-| J8 | Stats: rank, freezes, badge shelf | 10 | any | 10 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Badge rerun as 16.5 |
+| J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 | 16 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Rerun as 16.2: pass |
+| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | 11 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | All 11 retested (install-day archive). D38 open |
+| J8 | Stats: rank, freezes, badge shelf | 10 | any | 10 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Badge rerun as 16.5: pass |
 | J9 | Library and author facts | 9 | any | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
 | J10 | Inky's wardrobe and time-of-day badges | 13 | any | 13 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
-| J11 | Android home-screen widget | 9 | 01-10 → | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Rerun as 16.8 |
+| J11 | Android home-screen widget | 9 | 01-10 → | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Rerun as 16.8: pass |
 | J12 | Settings, About, notifications | 15 | any | 14 | 0 | 1 | **93.3%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 12.13 not run (Gmail not signed in) |
 | J13 | Accessibility, text size, reduce motion, tablet | 12 | any | 12 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | D8 accepted |
-| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 13 | any | 8 | 1 | 4 | **61.5%** | 🟩🟩🟩🟩🟩🟩🟥⬜⬜⬜ | 14.5 failed on a real phone (fixed, retest); 14.9 rewritten; 14.12, 14.13 new; 14.6 parked |
-| J15 | Real-world scenarios the emulator runs never covered | 13 | real | 0 | 0 | 13 | **0%** | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ | New (10 Nov) |
-| J16 | Retests for the date fixes (D32–D35) | 8 | any | 0 | 0 | 8 | **0%** | ⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜ | New (10 Nov) |
-| **Total** | | **211** | | **171** | **1** | **39** | **81.0%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟥⬜ | |
+| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 13 | any | 12 | 0 | 1 | **92.3%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 14.5, 14.12, 14.13 pass on the real date; 14.6 parked |
+| J15 | Real-world scenarios the emulator runs never covered | 13 | real | 7 | 4 | 2 | **53.8%** | 🟩🟩🟩🟩🟩🟥🟥🟥⬜⬜ | 15.2 D37, 15.5 D42, 15.6 D41, 15.13 D40 failed; 15.3, 15.4 need real devices |
+| J16 | Retests for the date fixes (D32–D35) | 8 | any | 8 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| **Total** | | **211** | | **203** | **4** | **4** | **96.2%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥 | |
 
-🟢 tested (passed) · 🔴 failed · ⚪ pending (not run yet, or needs a retest after the date fixes). **Done** = steps passed ÷ steps. Each progress square is 10%: 🟩 passed, 🟥 failed, ⬜ pending.
+🟢 tested (passed) · 🔴 failed · ⚪ pending (not run yet). **Done** = steps passed ÷ steps. Each progress square is 10%: 🟩 passed, 🟥 failed, ⬜ pending.
 
 ---
 
@@ -239,7 +243,7 @@ Then **uninstall** the app before J1.
 | 2.19 | Goals card on Solved. | "Solve today's quote" ✓ "Done!"; the other two 0/1. |
 | 2.20 | **Tomorrow's teaser.** | "Tomorrow's quote: 9 words from the 1800s, by an author whose name starts with R." and the tag "Ready tomorrow". No words of the quote are shown. |
 | 2.21 | Buttons. | "Play a level", **"Share result"**, then "Share" and "Home". No reminder card (it needs 2 daily solves). No ad. |
-| 2.22 | "Share result". | ⟳ **Retest (D33–D35).** The share sheet carries the text "LetterCrack #73: I cracked today's quote on Hard" (daily numbers count from 30 Oct 2026: 10 Jan 2027 is #73) and, on the next line, "Can you crack it?". No clean or streak part (the streak is 1). No quote words. |
+| 2.22 | "Share result". | ✅ **Retested 10 Nov (emulator).** The share sheet carries the text "LetterCrack #73: I cracked today's quote on Hard" (daily numbers count from 30 Oct 2026: 10 Jan 2027 is #73) and, on the next line, "Can you crack it?". No clean or streak part (the streak is 1). No quote words. |
 | 2.23 | "Share". | The share sheet with a PNG card (quote, author, "Solved on LetterCrack · lettercrack.app"). With no target, the alert "Sharing isn't available right now." No crash. |
 | 2.24 | "Home", then "See today's quote". | Home: flame "1-day streak", bubble "Nice work today!…", "Solved. A new quote arrives tomorrow.", goals 1/3, Stats "1 quote solved", Library "1 of 18 authors", Wardrobe "2 items unlocked" with a **"New"** dot. "See today's quote" reopens Solved **without** the streak tag, awards card or goals card; the teaser and "Share result" stay. "Home". |
 
@@ -317,7 +321,7 @@ Then **uninstall** the app before J1.
 |---|---|---|
 | 6.1 | The 01-11 Solved screen (from J4.6). | "Streak: 2 days" and the reminder card "Want a nudge tomorrow?" with "Remind me" / "No thanks". The teaser reads "10 words from the 1800s, by… H". |
 | 6.2 | "Remind me". | The Android 13+ permission dialog; allow. The card disappears; Settings shows "Daily reminder" on. |
-| 6.3 | **01-12:** solve the daily cleanly. | ⟳ **Retest (D33–D35).** "Streak: 3 days" and the **milestone card "3-day streak!"** with "Inky is proud of you…" and **no** freeze note. Badge **Warming up**. "Share result" reads "LetterCrack #75: I cracked today's quote on Hard · with no hints · 3-day streak". |
+| 6.3 | **01-12:** solve the daily cleanly. | ✅ **Retested 10 Nov (emulator).** "Streak: 3 days" and the **milestone card "3-day streak!"** with "Inky is proud of you…" and **no** freeze note. Badge **Warming up**. "Share result" reads "LetterCrack #75: I cracked today's quote on Hard · with no hints · 3-day streak". |
 | 6.4 | **01-13 to 01-15:** solve each daily. | Streaks 4, 5, 6; no milestone card (4–6 aren't milestones). |
 | 6.5 | **01-16:** solve. | Milestone **"7-day streak!"** with the note "Inky gave you a streak freeze…". Badge **One week**; the outfit note **Party hat**. |
 | 6.6 | Stats. | The streak card shows "7", "best 7" and **"1 saved streak freeze"**. |
@@ -340,17 +344,17 @@ Then **uninstall** the app before J1.
 
 | # | Step | Expected |
 |---|---|---|
-| 7.1 | The "Archive" tile. | ⟳ **Retest (D33–D35).** The "Archive" hero, Inky thinking, the intro, and tags "N solved / N started / N to play". The "January 2027" card starts on **10 Jan (the install day in J1)**, Monday-first grid, up to yesterday; no days before 10 Jan. Solved days have a dot. |
-| 7.2 | Stamp tag on the month header. | ⟳ **Retest (D33–D35).** "N of 22 stamps": the install month counts only from the install day (10–31 Jan); N is the January dailies solved (on the day or later). |
-| 7.3 | Tap **20 Jan** (skipped in J6), type one letter, back. | ⟳ **Retest (D33–D35).** 20 Jan shows a ring; "1 started". |
-| 7.4 | Reopen 20 Jan and solve it. | ⟳ **Retest (D33–D35).** No streak tag; "Back to archive"; no "Share result" or teaser. Badge **Time traveller**. Today's "Solve today's quote" goal is unchanged. The stamp count is +1. |
-| 7.5 | Tap 20 Jan again. | ⟳ **Retest (D33–D35).** Solved opens read-only with "Back to archive". |
-| 7.6 | In 7.8 (clock 02-01), solve **31 Jan** (a Sunday) from the archive. | ⟳ **Retest (D33–D35).** Tag "Sunday special". With 01-10, 01-17 and 01-24 already solved, this is the 4th Sunday: badge **Sunday regular**. (3 Jan is before the install day, so it is no longer in the archive.) |
-| 7.7 | Home. | ⟳ **Retest (D33–D35).** Archive "N to play" is down by 1 (20 Jan); the hero streak is unchanged. |
-| 7.8 | **[LR]** Set the clock to **2027-02-01**. In the Archive, solve every remaining January day (10–31 Jan). | ⟳ **Retest (D33–D35).** When the last one is solved: Solved shows badge **Full month** (the install month needs only the days from the install day), and the outfit note **Gold medal**. **Regular** needs 30 dailies, so it may not appear yet. |
-| 7.9 | Archive. | ⟳ **Retest (D33–D35).** The January header shows the tag **"Full month! Medal earned."** (trophy). February has no stamp tag, or "0 of 28 stamps" (later months need every day). |
-| 7.10 | TalkBack: focus a day and the stamp tag. | ⟳ **Retest (D33–D35).** A day reads "20 January, solved" / "in progress" / "not solved yet"; the tag reads "January 2027: 22 of 22 days stamped". |
-| 7.11 | Daily wrap-around: 01-21 shows the same quote as 01-11 (the seed has 10 daily quotes; note the ID). | ⟳ **Retest (D33–D35).** It plays as a separate daily (its own date key); a solve on one date doesn't mark the other date solved. XP for that quote is counted once. The ID differs from the old run (the calendar now starts 30 Oct 2026). |
+| 7.1 | The "Archive" tile. | ✅ **Retested 10 Nov (emulator).** The "Archive" hero, Inky thinking, the intro, and tags "N solved / N started / N to play". The "January 2027" card starts on **10 Jan (the install day in J1)**, Monday-first grid, up to yesterday; no days before 10 Jan. Solved days have a dot. |
+| 7.2 | Stamp tag on the month header. | ✅ **Retested 10 Nov (emulator).** "N of 22 stamps": the install month counts only from the install day (10–31 Jan); N is the January dailies solved (on the day or later). |
+| 7.3 | Tap **20 Jan** (skipped in J6), type one letter, back. | ✅ **Retested 10 Nov (emulator).** 20 Jan shows a ring; "1 started". |
+| 7.4 | Reopen 20 Jan and solve it. | ✅ **Retested 10 Nov (emulator).** No streak tag; "Back to archive"; no "Share result" or teaser. Badge **Time traveller**. Today's "Solve today's quote" goal is unchanged. The stamp count is +1. |
+| 7.5 | Tap 20 Jan again. | ✅ **Retested 10 Nov (emulator).** Solved opens read-only with "Back to archive". |
+| 7.6 | In 7.8 (clock 02-01), solve **31 Jan** (a Sunday) from the archive. | ✅ **Retested 10 Nov (emulator).** Tag "Sunday special". With 01-10, 01-17 and 01-24 already solved, this is the 4th Sunday: badge **Sunday regular**. (3 Jan is before the install day, so it is no longer in the archive.) |
+| 7.7 | Home. | ✅ **Retested 10 Nov (emulator).** Archive "N to play" is down by 1 (20 Jan); the hero streak is unchanged. |
+| 7.8 | **[LR]** Set the clock to **2027-02-01**. In the Archive, solve every remaining January day (10–31 Jan). | ✅ **Retested 10 Nov (emulator).** When the last one is solved: Solved shows badge **Full month** (the install month needs only the days from the install day), and the outfit note **Gold medal**. **Regular** needs 30 dailies, so it may not appear yet. |
+| 7.9 | Archive. | ✅ **Retested 10 Nov (emulator).** The January header shows the tag **"Full month! Medal earned."** (trophy). February has no stamp tag, or "0 of 28 stamps" (later months need every day). |
+| 7.10 | TalkBack: focus a day and the stamp tag. | ✅ **Retested 10 Nov (emulator).** A day reads "20 January, solved" / "in progress" / "not solved yet"; the tag reads "January 2027: 22 of 22 days stamped". |
+| 7.11 | Daily wrap-around: 01-21 shows the same quote as 01-11 (the seed has 10 daily quotes; note the ID). | ✅ **Retested 10 Nov (emulator).** It plays as a separate daily (its own date key); a solve on one date doesn't mark the other date solved. XP for that quote is counted once. The ID differs from the old run (the calendar now starts 30 Oct 2026). |
 
 ---
 
@@ -476,7 +480,7 @@ Then **uninstall** the app before J1.
 | 14.6 | Review prompt: install date ≥ 2 days ago, 3rd clean solve. | The review is requested about 1.2 s after Solved (on an emulator without Play it silently does nothing). It isn't asked again within 30 days. |
 | 14.7 | Data recovery: `adb shell run-as app.lettercrack`, overwrite the main MMKV file `files/mmkv/lettercrack` with junk (keep `lettercrack.backup`, the separate file with the latest good copy), relaunch. Then repeat with the main file deleted. | Both times Home shows "We restored your saved progress from a backup."; progress, streak, hints, badges, outfit and goals are as they were before (not as at the last upgrade). |
 | 14.8 | Deep links: `lettercrack://puzzle/level%3A1`, `…/puzzle/daily%3A2099-01-01`, `…/puzzle/garbage`, `lettercrack://solved?key=level%3A1`. | "This puzzle isn't available." with "Go home" / "Home"; no crash. |
-| 14.9 | `lettercrack://puzzle/daily%3A2027-01-12`, then `…/daily%3A2027-01-05`. | ⟳ **Retest (D33–D35).** 01-12 opens that archive daily. 01-05 is before the install day: "This puzzle isn't available." (D35), unless that daily was already started or solved. |
+| 14.9 | `lettercrack://puzzle/daily%3A2027-01-12`, then `…/daily%3A2027-01-05`. | ✅ **Retested 10 Nov (emulator).** 01-12 opens that archive daily. 01-05 is before the install day: "This puzzle isn't available." (D35), unless that daily was already started or solved. |
 | 14.10 | `lettercrack://wardrobe`, `lettercrack://library`, `lettercrack://stats`. | Each screen opens; back goes to Home (or closes); no crash. |
 | 14.12 | Real date, no clock change: install on today's date, open the daily before midnight, solve after it; then open Home, Archive and Stats. | The Solved screen shows the quote (never "This puzzle isn't available."). Archive shows yesterday as solved; Home shows today's new quote, unsolved; Stats counts the solve. |
 | 14.13 | Install on any date (set the clock to a few dates, e.g. 2026-11-20, 2027-05-20, 2028-02-29), fresh install each time. | The archive starts on the install day: no days before it, no "missed" days. Today's daily differs from yesterday's. The stamp book starts with the install month. |
