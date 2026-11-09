@@ -138,6 +138,8 @@ export function completePuzzle(
   difficulty: Difficulty,
   state: PuzzleState,
   today: LocalDate,
+  /** The date the puzzle screen was opened, if the clock wasn't wound back then (see usePuzzleGame). */
+  startedOn: LocalDate | null = null,
 ): Completion {
   if (!state.solved) throw new Error('completePuzzle called on an unsolved puzzle');
   const clean = isClean(state);
@@ -155,7 +157,7 @@ export function completePuzzle(
   let daily = root.daily;
   let streak: SolveResult | null = null;
   if (ref.mode === 'daily' && ref.dailyDate) {
-    streak = recordDailySolve(root.daily, ref.dailyDate, today);
+    streak = recordDailySolve(root.daily, ref.dailyDate, today, startedOn === ref.dailyDate);
     daily = streak.state;
     // Not credited on its day (archive, or a wound-back clock): still remembered as solved.
     const d = ref.dailyDate;

@@ -71,6 +71,22 @@ describe('session glue', () => {
     expect(refFromKey('daily:2026-11-09', content, '2026-11-10')?.dailyDate).toBe('2026-11-09');
   });
 
+  it('counts a daily opened before midnight and solved after it for its own day (streak, not a late solve)', () => {
+    const day1 = '2026-11-09';
+    const day2 = '2026-11-10';
+    const ref = refFromKey(`daily:${day1}`, content, day1)!;
+    const opened = openPuzzle(root, ref, content);
+    const late = completePuzzle(opened.root, ref, opened.difficulty, solve(opened.state), day2, day1);
+    expect(late.streak?.credited).toBe(true);
+    expect(late.root.daily.solvedDates).toEqual([day1]);
+    expect(late.root.daily.streak).toBe(1);
+    expect(late.root.progress.lateDailies).toEqual([]);
+    // Opened from the archive the next day: a late solve, no streak.
+    const fromArchive = completePuzzle(opened.root, ref, opened.difficulty, solve(opened.state), day2, day2);
+    expect(fromArchive.streak?.credited).toBe(false);
+    expect(fromArchive.root.progress.lateDailies).toEqual([day1]);
+  });
+
   it('still shows a daily solved after midnight when its date is no longer playable', () => {
     // Only today's daily is playable before the epoch (a phone clock set years back).
     const day1 = '2020-03-09';

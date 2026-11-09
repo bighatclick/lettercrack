@@ -51,6 +51,13 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
   const date = useToday();
 
   const [opened] = useState(() => openPuzzle(useAppStore.getState().root!, ref, content));
+  // The date this puzzle was opened: a daily opened on its day still counts for it if it is
+  // finished after midnight. Not set when the clock is behind a date already seen (rewound).
+  const [startedOn] = useState(() => {
+    const d = today();
+    const seen = useAppStore.getState().root!.daily.highestDateSeen;
+    return seen !== null && d < seen ? null : d;
+  });
   const [state, setState] = useState<PuzzleState>(opened.state);
   const [difficulty, setDifficulty] = useState<Difficulty>(opened.difficulty);
   const [note, setNote] = useState<string | null>(null);
@@ -80,7 +87,7 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
       let completion: Completion = { clean: false, streak: null, goals: null, newAuthor: false, newItems: [] };
       update((r) => {
         const day = today();
-        const c = completePuzzle(r, ref, l.difficulty, next, day);
+        const c = completePuzzle(r, ref, l.difficulty, next, day, startedOn);
         // Badges (Phase B): lifetime ones plus this solve's moment (time of day, length, goals).
         const out = refreshAwards(c.root, content, day, {
           hour: new Date().getHours(),
@@ -105,7 +112,7 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
       playSound('rustle', settings.sound);
       l.onSolved(completion);
     },
-    [ref, update, settings.haptics, settings.sound, content],
+    [ref, update, settings.haptics, settings.sound, content, startedOn],
   );
 
   const apply = useCallback(

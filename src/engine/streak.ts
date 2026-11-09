@@ -2,7 +2,8 @@ import { addDays, daysBetween, isoWeek, type LocalDate } from './daily';
 
 /**
  * Daily streak with one free freeze per ISO week (specs.md §5, CG-R15).
- * A streak counts dailies solved on their own date. A missed day is bridged automatically by
+ * A streak counts dailies solved on their own date, or started on it and finished the next day
+ * (the puzzle you were playing at midnight still counts for its day). A missed day is bridged automatically by
  * that week's freeze, if it is unused, and otherwise by a saved bonus freeze.
  * Bonus freezes are earned at streak milestones (never bought). Restoring a streak is never charged for.
  */
@@ -83,20 +84,30 @@ export type SolveResult = {
 /**
  * Records a daily solve. Credit only when the daily's date is today, it was not already
  * solved, and the clock has not been wound back below a date already seen.
+ * Also credited for its own date: yesterday's daily that was started yesterday (`startedOnDay`,
+ * checked against the rewound-clock guard when it was opened), while today's isn't solved yet.
  * Archive solves (any other date) never change the streak.
  */
-export function recordDailySolve(s: StreakState, dailyDate: LocalDate, today: LocalDate): SolveResult {
+export function recordDailySolve(
+  s: StreakState,
+  dailyDate: LocalDate,
+  today: LocalDate,
+  startedOnDay = false,
+): SolveResult {
   const none = { state: s, credited: false, freezeUsed: false, milestone: null, freezeEarned: false };
-  if (dailyDate !== today || s.solvedDates.includes(today)) return none;
-  if (s.highestDateSeen !== null && today < s.highestDateSeen) return none;
+  const overMidnight = startedOnDay && dailyDate === addDays(today, -1) && !s.solvedDates.some((d) => d >= dailyDate);
+  if ((dailyDate !== today && !overMidnight) || s.solvedDates.includes(dailyDate)) return none;
+  if (!overMidnight && s.highestDateSeen !== null && today < s.highestDateSeen) return none;
 
+  // The day being credited: today, or yesterday for a daily finished just after midnight.
+  const day = dailyDate;
   const last = lastSolved(s);
   let streak = 1;
   let freezeUsedWeek = s.freezeUsedWeek;
   let bonusFreezes = s.bonusFreezes;
   let freezeUsed = false;
-  if (last !== null && last < today) {
-    const b = bridge(last, today, s.freezeUsedWeek, bonusFreezes);
+  if (last !== null && last < day) {
+    const b = bridge(last, day, s.freezeUsedWeek, bonusFreezes);
     if (b) {
       streak = s.streak + 1;
       freezeUsed = b.week !== s.freezeUsedWeek || b.bonusUsed > 0;
@@ -119,7 +130,7 @@ export function recordDailySolve(s: StreakState, dailyDate: LocalDate, today: Lo
     streak,
     best: Math.max(s.best, streak),
     freezeUsedWeek,
-    solvedDates: [...s.solvedDates, today],
+    solvedDates: [...s.solvedDates, day],
     highestDateSeen: today > (s.highestDateSeen ?? '') ? today : s.highestDateSeen,
     bonusFreezes,
     milestonesAwarded: awarded,
