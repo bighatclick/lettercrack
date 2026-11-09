@@ -79,20 +79,21 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 
 ## Current status (9 Nov 2026)
 
-**🟢 186 pass · 🔴 0 fail · ⚪ 2 not run: 98.9% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜
+**🟢 185 pass · 🔴 1 fail · ⚪ 4 not run: 97.4% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥
 
 | Run | 🟢 Pass | 🔴 Fail | ⚪ Not run | Done |
 |---|---:|---:|---:|---:|
 | First run (v2 build) | 165 | 15 | 8 | 87.8% |
-| Now, after fixes and retests | 186 | 0 | 2 | **98.9%** |
+| 9 Nov, after fixes and retests (188 steps) | 186 | 0 | 2 | 98.9% |
+| 10 Nov, after a real-phone install (190 steps) | 185 | 1 | 4 | **97.4%** |
 
 Every defect from the v2 run (D10–D31) is fixed and retested. Details, evidence and the defect list are in `RESULTS.md`.
 
 | | |
 |---|---|
 | **Passed** | 186. The first run had 165; the 15 failures passed on retest after their fixes, and 6 steps not run the first time were run later (2.6, 7.6, 7.7, 11.5, 14.7, U.7). |
-| **Failing** | None. |
-| **Not run** | 12.13 "Send feedback": the emulator's Gmail isn't signed in, so the mail body can't be read. 14.6 Review prompt: parked by request (the emulator has no Play Store). |
+| **Failing** | 14.5 (D32): on a real phone in Nov 2026, a daily started before midnight and solved after it showed "This puzzle isn't available." It passed before only because every run set the clock to Jan 2027, after the hard-coded launch date. Fixed in code with unit tests; red until it is retested on a device. |
+| **Not run** | 14.12 and 14.13 (new, D32/D33: today's real date, and install on any day). 12.13 "Send feedback": the emulator's Gmail isn't signed in, so the mail body can't be read. 14.6 Review prompt: parked by request (the emulator has no Play Store). |
 | **Accepted exception** | D8: cells and keys are ≥ 44 pt tall but narrower than 44 pt, because the line width sets them (13.9). |
 | **Builds** | Most retests ran on the debug build with Metro. D10, D31 and 2.6 ran on the release build. The two Maestro flows pass on the final release build (with the D31 fix) on the phone, twice in a row. Unit tests: 863 pass; typecheck and lint clean. |
 | **Still to do** | Apply the test-case corrections listed in `RESULTS.md` (2.1, 3.17, 3.21, 10.2, 10.7). The D31 fix touches every `Text`; on the phone it was covered by the Maestro flows and a look at Home, not by a full rerun of the journeys. |
@@ -117,8 +118,8 @@ Every defect from the v2 run (D10–D31) is fixed and retested. Details, evidenc
 | J11 | Android home-screen widget | 9 | 01-10 → | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
 | J12 | Settings, About, notifications | 15 | any | 14 | 0 | 1 | **93.3%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 12.13 not run (Gmail not signed in) |
 | J13 | Accessibility, text size, reduce motion, tablet | 12 | any | 12 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | D8 accepted |
-| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 11 | any | 10 | 0 | 1 | **90.9%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 14.6 parked |
-| **Total** | | **188** | | **186** | **0** | **2** | **98.9%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | |
+| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 13 | any | 9 | 1 | 3 | **69.2%** | 🟩🟩🟩🟩🟩🟩🟥⬜⬜⬜ | 14.5 failed on a real phone (D32, fixed, retest); 14.12, 14.13 new; 14.6 parked |
+| **Total** | | **190** | | **185** | **1** | **4** | **97.4%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥 | |
 
 🟢 pass · 🔴 fail · ⚪ not run. **Done** = steps passed ÷ steps. Each progress square is 10%: 🟩 pass, 🟥 fail, ⬜ not run. A row is all green only when every step passes.
 
@@ -425,12 +426,14 @@ Then **uninstall** the app before J1.
 | 14.2 | Rotate, notification shade, or an incoming call (emulator extended controls) mid-puzzle. | The state survives. |
 | 14.3 | Type 10 keys in about 1 s. | One letter per tap; the word hop doesn't drop or double input. |
 | 14.4 | Solve a puzzle, then background the app within 1 s (before the Solved screen). | On return: the Solved screen or Home. Progress, goals, badges and the streak are recorded once (no double award, no double hint). |
-| 14.5 | Midnight during a puzzle: open the daily at 23:59, solve at 00:01. | The solve counts for the puzzle's date (now an archive day): no streak credit for the new day; "Solve today's quote" isn't ticked for the new day. |
+| 14.5 | Midnight during a puzzle: open the daily at 23:59, solve at 00:01. Run it with the device's real date too, not only a moved clock (D32). | The solve counts for the puzzle's date (now an archive day): no streak credit for the new day; "Solve today's quote" isn't ticked for the new day. |
 | 14.6 | Review prompt: install date ≥ 2 days ago, 3rd clean solve. | The review is requested about 1.2 s after Solved (on an emulator without Play it silently does nothing). It isn't asked again within 30 days. |
 | 14.7 | Data recovery: `adb shell run-as app.lettercrack`, overwrite the main MMKV file `files/mmkv/lettercrack` with junk (keep `lettercrack.backup`, the separate file with the latest good copy), relaunch. Then repeat with the main file deleted. | Both times Home shows "We restored your saved progress from a backup."; progress, streak, hints, badges, outfit and goals are as they were before (not as at the last upgrade). |
 | 14.8 | Deep links: `lettercrack://puzzle/level%3A1`, `…/puzzle/daily%3A2099-01-01`, `…/puzzle/garbage`, `lettercrack://solved?key=level%3A1`. | "This puzzle isn't available." with "Go home" / "Home"; no crash. |
 | 14.9 | `lettercrack://puzzle/daily%3A2027-01-05`. | Opens that archive daily. |
 | 14.10 | `lettercrack://wardrobe`, `lettercrack://library`, `lettercrack://stats`. | Each screen opens; back goes to Home (or closes); no crash. |
+| 14.12 | Real date, no clock change: install on today's date, open the daily before midnight, solve after it; then open Home, Archive and Stats. | The Solved screen shows the quote (never "This puzzle isn't available."). Archive shows yesterday as solved; Home shows today's new quote, unsolved; Stats counts the solve. |
+| 14.13 | Install on any date (set the clock to a few dates, e.g. 2026-11-20, 2027-05-20, 2028-02-29), fresh install each time. | The archive starts on the install day: no days before it, no "missed" days. Today's daily differs from yesterday's. The stamp book starts with the install month. |
 | 14.11 | Uninstall, reinstall, launch. | Onboarding again, with a clean state: no badges, Rookie, monocle only, Library 0 of 18. |
 
 ---

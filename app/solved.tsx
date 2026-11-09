@@ -16,7 +16,7 @@ import { type GoalId, goalProgress } from '@/engine/goals';
 import { type AwardKey, isSundaySpecial, markAwardsSeen, unseenAwards } from '@/game/awards';
 import { noteReminderOffered, shouldOfferReminder } from '@/game/reminder';
 import { noteReviewAsked, shouldAskForReview } from '@/game/review';
-import { nextLevelRef, refFromKey } from '@/game/session';
+import { nextLevelRef, refForPlayer } from '@/game/session';
 import { dailyNumber, tomorrowFacts } from '@/game/teaser';
 import { today } from '@/game/today';
 import { useOutfit } from '@/game/useOutfit';
@@ -50,7 +50,7 @@ export default function SolvedScreen() {
     newAuthor?: string;
     items?: string;
   }>();
-  const ref = useMemo(() => (params.key ? refFromKey(params.key, content, today()) : null), [params.key]);
+  const ref = useMemo(() => (params.key ? refForPlayer(params.key, useAppStore.getState().root!, content, today()) : null), [params.key]);
   const record = useAppStore((s) => (ref ? s.root!.progress.solved[ref.quoteId] : undefined));
   const goalsState = useAppStore((s) => s.root!.goals);
   const liveStreak = useAppStore((s) => s.root!.daily.streak);

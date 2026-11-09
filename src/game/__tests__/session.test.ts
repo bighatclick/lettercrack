@@ -14,6 +14,7 @@ import {
   nextLevelRef,
   onAppOpen,
   openPuzzle,
+  refForPlayer,
   refFromKey,
   saveProgress,
 } from '../session';
@@ -63,6 +64,34 @@ describe('session glue', () => {
     expect(refFromKey('daily:2027-01-11', content, TODAY)).toBeNull();
     expect(refFromKey('daily:2027-01-10', content, TODAY)?.mode).toBe('daily');
     expect(refFromKey('rm -rf', content, TODAY)).toBeNull();
+  });
+
+  it('keeps a daily started before midnight playable and showable after it', () => {
+    // The phone case: daily opened late on the 9th, solved after midnight. Yesterday stays playable.
+    expect(refFromKey('daily:2026-11-09', content, '2026-11-10')?.dailyDate).toBe('2026-11-09');
+  });
+
+  it('still shows a daily solved after midnight when its date is no longer playable', () => {
+    // Only today's daily is playable before the epoch (a phone clock set years back).
+    const day1 = '2020-03-09';
+    const day2 = '2020-03-10';
+    const key = `daily:${day1}`;
+    const ref = refFromKey(key, content, day1)!;
+    const opened = openPuzzle(root, ref, content);
+    const saved = saveProgress(opened.root, ref, opened.difficulty, opened.state, NOW);
+    expect(refFromKey(key, content, day2)).toBeNull();
+    // An open save can be resumed the next day.
+    expect(refForPlayer(key, saved, content, day2)).toEqual(ref);
+    // The solve is recorded and the Solved screen can still show it.
+    const done = completePuzzle(saved, ref, opened.difficulty, solve(opened.state), day2).root;
+    expect(done.progress.solved[ref.quoteId]).toBeDefined();
+    expect(done.progress.lateDailies).toContain(day1);
+    expect(refForPlayer(key, done, content, day2)).toEqual(ref);
+    // Unknown past dailies, future dates and garbage stay unavailable.
+    expect(refForPlayer('daily:2020-03-08', done, content, day2)).toBeNull();
+    expect(refForPlayer('daily:2020-03-11', done, content, day2)).toBeNull();
+    expect(refForPlayer('daily:2026-13-40', done, content, day2)).toBeNull();
+    expect(refForPlayer('level:3', done, content, day2)?.quoteId).toBe(3);
   });
 
   it('never offers daily-reserved quotes as levels', () => {

@@ -1,6 +1,7 @@
 import {
   addDays,
   archiveDates,
+  DAILY_EPOCH,
   dailyIndex,
   dailyQuoteId,
   daysBetween,
@@ -65,6 +66,16 @@ describe('daily (F5)', () => {
     expect(dailyQuoteId('2027-03-14', ORDER, LAUNCH)).toBe(1000 + 72);
     expect(dailyQuoteId('2027-12-31', ORDER, LAUNCH)).toBe(1364);
     expect(dailyQuoteId('2028-01-01', ORDER, LAUNCH)).toBe(1000); // wraps after the pool
+  });
+
+  it('anchors the daily order on a past Friday, not on a release date', () => {
+    // Slot 0 of the quote builder is a Friday, so Sunday-special slots land on Sundays.
+    expect(new Date(`${DAILY_EPOCH}T00:00:00Z`).getUTCDay()).toBe(5);
+    // Release can be any day from now on: every date a player can see is on or after the epoch.
+    expect(DAILY_EPOCH <= '2026-11-10').toBe(true);
+    // A daily from yesterday stays playable today, before or after any release.
+    expect(isPlayableDaily('2026-11-09', '2026-11-10')).toBe(true);
+    expect(dailyIndex('2026-11-09')).not.toBe(dailyIndex('2026-11-10'));
   });
 
   it('clamps dates before launch to the first daily', () => {

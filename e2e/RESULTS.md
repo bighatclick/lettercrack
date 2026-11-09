@@ -1,5 +1,19 @@
 # E2E run results (suite v2)
 
+## Real-phone install (10 Nov 2026)
+
+First install on a real Android phone (ARM release build, real date 9–10 Nov 2026, no clock change).
+
+| Defect | Severity | What happened | Fix |
+|---|---|---|---|
+| D32 | High | Daily opened before midnight, solved after it: the Solved screen said "This puzzle isn't available." The solve *was* saved, but nothing showed it: before the launch date only today's daily was valid, the archive started at the launch date (so it was empty), and every day before launch used the same quote, so Home offered the just-solved quote again as "today's". | A daily the player has started or solved can always be reopened or shown (`refForPlayer` in `src/game/session.ts`). With D33 fixed, yesterday's daily is a normal archive day. Unit tests. |
+| D33 | High | The app assumed release on 1 Jan 2027 (`LAUNCH_DATE`, a placeholder set in code on 22 Oct and "frozen" on 5 Nov; never decided by the owner). Releasing on any other day breaks dailies: before it, one quote every day and no archive; after it, the archive would start before the app existed. | No release date in the app. `DAILY_EPOCH` (Fri 30 Oct 2026, in the past) only fixes which quote falls on which date; each player's archive, stamp book and daily badges start on their install day (`dailyStart` in `src/game/archive.ts`). The quote file is unchanged: the epoch is 9 weeks before the old date, so Sunday specials stay on Sundays. Pre-v5 saves still map their old solves with the old date. Unit tests. |
+
+**Why testing missed it.** Every E2E run set the emulator clock to dates in January 2027 (the journeys' "clock" column), all after the hard-coded launch date. So 14.5 (midnight during a puzzle) passed, and the period a real phone is in today, before 1 Jan 2027, was never exercised. The unit tests also took the launch date as given: they checked future dates were refused, but nothing checked that the date itself was right, or a release on another day. The launch date was a code assumption that nobody confirmed. New steps 14.12 (real date) and 14.13 (install on any day) cover it; 14.5 is red until it is retested on a device.
+
+Unit tests: 868 pass; typecheck, lint, quote pipeline tests (29) and `quotes:validate` clean.
+
+
 ## Remaining-items round (9 Nov 2026)
 
 Release build: `EXPO_PUBLIC_E2E=1 npm run android:local -- release` (x86_64, signed with the debug key), installed over the debug build on the Pixel 7 emulator and on the Pixel Tablet emulator. 14.7 and U.7 ran on the debug build first. Unit tests: 859 pass; typecheck and lint are clean.

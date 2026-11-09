@@ -60,12 +60,12 @@ describe('Sunday specials and the stamp book', () => {
 
   it('stamps solved dailies per month and gives a medal for a full month', () => {
     const jan = Array.from({ length: 31 }, (_, i) => `2027-01-${String(i + 1).padStart(2, '0')}`);
-    const book = stampBook([...jan, '2027-02-01'], '2027-02-10');
+    const book = stampBook([...jan, '2027-02-01'], '2027-02-10', '2027-01-01');
     expect(book).toEqual([
       { month: '2027-02', days: 28, stamps: 1, medal: false },
       { month: '2027-01', days: 31, stamps: 31, medal: true },
     ]);
-    expect(stampBook([], '2026-12-01')).toEqual([]);
+    expect(stampBook([], '2026-12-01', '2027-01-01')).toEqual([]);
   });
 
   it('finds dailies solved on the day or later from the archive', () => {

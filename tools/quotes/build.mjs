@@ -42,12 +42,15 @@ import {
 export const DB_VERSION = 'v1';
 export const DAILY_SEED = 'lettercrack:dailyOrder:v1';
 
-/** Must match LAUNCH_DATE in src/engine/daily.ts (day 0 of dailyOrder). */
-export const LAUNCH_DATE = '2027-01-01';
+/**
+ * Slot 0 of dailyOrder. Must match DAILY_EPOCH in src/engine/daily.ts (or be a whole number of
+ * weeks from it), so Sunday-special slots fall on Sundays.
+ */
+export const DAILY_EPOCH = '2026-10-30';
 /** A Sunday special is at least this long (Expert length band starts at 100). */
 export const SUNDAY_MIN_CHARS = 110;
 /** Does dailyOrder slot `i` fall on a Sunday? */
-export const isSundaySlot = (i) => new Date(Date.parse(`${LAUNCH_DATE}T00:00:00Z`) + i * 86_400_000).getUTCDay() === 0;
+export const isSundaySlot = (i) => new Date(Date.parse(`${DAILY_EPOCH}T00:00:00Z`) + i * 86_400_000).getUTCDay() === 0;
 
 /** Turns reviewed CSV rows into accepted quote inputs + warnings. Pure. */
 export function acceptRows(rows, { authors, banned }) {

@@ -6,7 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { content } from '@/content/quotes';
 import { createMemoryKV } from '@/data/kv';
 import { useAppStore } from '@/data/store';
-import { addDays, dailyQuoteId, LAUNCH_DATE } from '@/engine/daily';
+import { addDays, dailyQuoteId } from '@/engine/daily';
 import { i18n, initI18n } from '@/i18n';
 import { ThemeProvider } from '@/ui/theme';
 
@@ -219,11 +219,13 @@ describe('Settings', () => {
 });
 
 describe('Archive', () => {
-  it('shows past dailies with their status and opens them', async () => {
+  it("shows past dailies from the player's first day, with their status, and opens them", async () => {
     const solvedDay = '2027-01-02';
-    useAppStore.getState().update((r) => ({ ...r, daily: { ...r.daily, solvedDates: [solvedDay] } }));
+    const installedAt = new Date(2027, 0, 1, 9).getTime(); // 1 Jan 2027, local time
+    useAppStore.getState().update((r) => ({ ...r, installedAt, daily: { ...r.daily, solvedDates: [solvedDay] } }));
     await render(wrap(<Archive />));
-    expect(screen.getByTestId(`archive-${LAUNCH_DATE}`)).toBeTruthy();
+    expect(screen.getByTestId('archive-2027-01-01')).toBeTruthy();
+    expect(screen.queryByTestId('archive-2026-12-31')).toBeNull(); // before this player had the app
     expect(screen.queryByTestId('archive-2027-02-03')).toBeNull(); // today lives on Home
     expect(screen.getByTestId(`archive-${solvedDay}`).props.accessibilityLabel).toContain(i18n.t('archive.solved'));
     await press(`archive-${addDays(solvedDay, 1)}`);

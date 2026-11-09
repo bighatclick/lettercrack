@@ -8,7 +8,7 @@ import type { PuzzleSave, Root } from '@/data/schema';
 import { afterSolve } from '@/ads/policy';
 import { isBigQuoteLevel } from '@/engine/chapters';
 import { dailySeed, levelSeed } from '@/engine/cipher';
-import { dailyQuoteId, isPlayableDaily, type LocalDate, noteSeenDate } from '@/engine/daily';
+import { dailyQuoteId, isLocalDate, isPlayableDaily, type LocalDate, noteSeenDate } from '@/engine/daily';
 import { GOALS_REWARD_HINTS, type GoalsResult, recordGoalSolve } from '@/engine/goals';
 import { hintsAvailable, spendHint } from '@/engine/hints';
 import { markSeen, pickNextQuote } from '@/engine/picker';
@@ -43,6 +43,23 @@ export function refFromKey(key: string, content: Content, today: LocalDate): Puz
     return content.quote(id) ? { key, mode: 'level', quoteId: id, dailyDate: null } : null;
   }
   return null;
+}
+
+/**
+ * Like refFromKey, but also accepts a past daily the player already has: a save to resume, or a
+ * solve to show. Without this, a daily started before midnight and finished after it was rejected
+ * when its date wasn't playable any more (before launch only today's daily is), so the Solved screen
+ * said "This puzzle isn't available" and a saved daily couldn't be reopened. Future dates stay out.
+ */
+export function refForPlayer(key: string, root: Root, content: Content, today: LocalDate): PuzzleRef | null {
+  const ref = refFromKey(key, content, today);
+  if (ref) return ref;
+  const m = /^daily:(\d{4}-\d{2}-\d{2})$/.exec(key);
+  const date = m?.[1];
+  if (!date || !isLocalDate(date) || date > today) return null;
+  const known =
+    root.inProgress[key] !== undefined || root.daily.solvedDates.includes(date) || root.progress.lateDailies.includes(date);
+  return known ? { key, mode: 'daily', quoteId: dailyQuoteId(date, content.dailyOrder), dailyDate: date } : null;
 }
 
 export function dailyRef(date: LocalDate, content: Content, today: LocalDate): PuzzleRef | null {

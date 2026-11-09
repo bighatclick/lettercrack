@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
 import { useAppStore } from '@/data/store';
-import { type ArchiveDay, archiveMonths } from '@/game/archive';
+import { type ArchiveDay, archiveMonths, dailyStart } from '@/game/archive';
 import { solvedDailyDates, stampBook } from '@/game/awards';
 import { dailyKey } from '@/game/session';
 import { today } from '@/game/today';
@@ -21,7 +21,7 @@ export default function ArchiveScreen() {
   const date = today();
   const months = useMemo(() => archiveMonths(root, content, date), [root, date]);
   // Monthly stamp book: each solved daily is a stamp; a full month earns a medal.
-  const stamps = useMemo(() => new Map(stampBook(solvedDailyDates(root, content, date), date).map((m) => [m.month, m])), [root, date]);
+  const stamps = useMemo(() => new Map(stampBook(solvedDailyDates(root, content, date), date, dailyStart(root)).map((m) => [m.month, m])), [root, date]);
   const monthName = (m: string) =>
     new Date(`${m}-15T12:00:00Z`).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric', timeZone: 'UTC' });
   // Monday-first narrow weekday names (2024-01-01 was a Monday).
