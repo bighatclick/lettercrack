@@ -1,22 +1,13 @@
 import type { Content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
-import { addDays, archiveDates, DAILY_EPOCH, dailyQuoteId, type LocalDate, toLocalDate } from '@/engine/daily';
+import { addDays, archiveDates, dailyQuoteId, type LocalDate } from '@/engine/daily';
 
-import { dailyKey } from './session';
+import { dailyKey, dailyStart } from './session';
+
+export { dailyStart };
 
 /** The anchor pre-v5 saves were made with: their legacy solves map dates to quotes with it. */
 const LEGACY_EPOCH: LocalDate = '2027-01-01';
-
-/**
- * A player's first daily: the day they installed (or their earliest daily solve, if a wrong clock
- * put one earlier), never before the epoch. The archive, stamp book and daily badges start here,
- * so a player never sees days from before they had the app as "missed".
- */
-export function dailyStart(root: Root): LocalDate {
-  const dates = [toLocalDate(new Date(root.installedAt)), ...root.daily.solvedDates, ...root.progress.lateDailies];
-  const first = dates.reduce((a, b) => (b < a ? b : a));
-  return first < DAILY_EPOCH ? DAILY_EPOCH : first;
-}
 
 export type ArchiveDay = { date: LocalDate; day: number; status: 'solved' | 'inProgress' | 'open' };
 export type ArchiveMonth = {

@@ -12,8 +12,11 @@ First install on a real Android phone (ARM release build, real date 9–10 Nov 2
 **Why testing missed it.** Every E2E run set the emulator clock to dates in January 2027 (the journeys' "clock" column), all after the hard-coded launch date. So 14.5 (midnight during a puzzle) passed, and the period a real phone is in today, before 1 Jan 2027, was never exercised. The unit tests also took the launch date as given: they checked future dates were refused, but nothing checked that the date itself was right, or a release on another day. The launch date was a code assumption that nobody confirmed. New steps 14.12 (real date) and 14.13 (install on any day) cover it; 14.5 is red until it is retested on a device.
 
 | D34 | Medium | Stats didn't add up after D32: streak 0, best 0 and no dot on the week strip, yet 46 letters and the First crack badge. The daily, opened before midnight and finished just after, was filed as a late archive solve, which counts for letters and badges but never for the streak. | A daily started on its own date and finished after midnight now counts for that date, streak included, as long as today's daily isn't solved yet (`recordDailySolve`, `startedOn` in `usePuzzleGame`). A rewound clock at open still gets no credit; a daily opened from the archive is still a late solve. Unit tests. Saves made before the fix keep their late solve (no streak). |
+| D35 | Low | Two side effects of D33: the medal for a full month could never be earned in the install month (days before install can't be played), and a deep link to a date before install opened a daily that isn't in the archive (solving it moved the archive start). | Install month: only the days from the install day count toward the medal ("N of 22 stamps"). Dailies before the install day don't open ("This puzzle isn't available"), unless already started or solved. Unit tests. |
 
-Unit tests: 871 pass; typecheck, lint, quote pipeline tests (29) and `quotes:validate` clean.
+**Scenario review.** 30 scenarios (15 missed by earlier runs, 15 impacted by D32–D35) are in TEST_CASES.md: the scenario tracker, J15, J16, and 14 rewritten steps marked ⟳.
+
+Unit tests: 873 pass; typecheck, lint, quote pipeline tests (29) and `quotes:validate` clean.
 
 
 ## Remaining-items round (9 Nov 2026)

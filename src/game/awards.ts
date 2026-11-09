@@ -70,7 +70,10 @@ export function solvedDailyDates(root: Root, content: Content, today: LocalDate,
 
 export type StampMonth = { month: string; days: number; stamps: number; medal: boolean };
 
-/** Monthly stamp book: one stamp per solved daily; a medal for a full calendar month. Newest first. */
+/**
+ * Monthly stamp book: one stamp per solved daily; a medal for a full calendar month. Newest first.
+ * The player's first month starts on their first day (`start`), so it can still earn a medal.
+ */
 export function stampBook(solvedDailies: readonly LocalDate[], today: LocalDate, start: LocalDate): StampMonth[] {
   if (today < start) return [];
   const byMonth = new Map<string, number>();
@@ -80,7 +83,8 @@ export function stampBook(solvedDailies: readonly LocalDate[], today: LocalDate,
   const last = today.slice(0, 7);
   while (m <= last) {
     const [y, mo] = m.split('-').map(Number) as [number, number];
-    const days = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+    const inMonth = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+    const days = m === start.slice(0, 7) ? inMonth - Number(start.slice(8)) + 1 : inMonth;
     const stamps = byMonth.get(m) ?? 0;
     out.push({ month: m, days, stamps, medal: stamps >= days });
     m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`;

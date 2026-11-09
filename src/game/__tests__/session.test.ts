@@ -87,6 +87,16 @@ describe('session glue', () => {
     expect(fromArchive.root.progress.lateDailies).toEqual([day1]);
   });
 
+  it('does not open dailies from before the player installed, unless they already have them', () => {
+    const r = defaultRoot(new Date(2027, 0, 10, 9).getTime()); // installed 10 Jan 2027
+    expect(refForPlayer('daily:2027-01-05', r, content, '2027-01-12')).toBeNull();
+    expect(refForPlayer('daily:2027-01-10', r, content, '2027-01-12')?.dailyDate).toBe('2027-01-10');
+    expect(refForPlayer('daily:2027-01-12', r, content, '2027-01-12')?.dailyDate).toBe('2027-01-12');
+    expect(refForPlayer('daily:2027-01-13', r, content, '2027-01-12')).toBeNull();
+    const solved = { ...r, progress: { ...r.progress, lateDailies: ['2027-01-05'] } };
+    expect(refForPlayer('daily:2027-01-05', solved, content, '2027-01-12')?.dailyDate).toBe('2027-01-05');
+  });
+
   it('still shows a daily solved after midnight when its date is no longer playable', () => {
     // Only today's daily is playable before the epoch (a phone clock set years back).
     const day1 = '2020-03-09';

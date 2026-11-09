@@ -8,7 +8,7 @@ import type { PuzzleSave, Root } from '@/data/schema';
 import { afterSolve } from '@/ads/policy';
 import { isBigQuoteLevel } from '@/engine/chapters';
 import { dailySeed, levelSeed } from '@/engine/cipher';
-import { dailyQuoteId, isLocalDate, isPlayableDaily, type LocalDate, noteSeenDate } from '@/engine/daily';
+import { DAILY_EPOCH, dailyQuoteId, isLocalDate, isPlayableDaily, type LocalDate, noteSeenDate, toLocalDate } from '@/engine/daily';
 import { GOALS_REWARD_HINTS, type GoalsResult, recordGoalSolve } from '@/engine/goals';
 import { hintsAvailable, spendHint } from '@/engine/hints';
 import { markSeen, pickNextQuote } from '@/engine/picker';
@@ -46,20 +46,33 @@ export function refFromKey(key: string, content: Content, today: LocalDate): Puz
 }
 
 /**
- * Like refFromKey, but also accepts a past daily the player already has: a save to resume, or a
- * solve to show. Without this, a daily started before midnight and finished after it was rejected
- * when its date wasn't playable any more (before launch only today's daily is), so the Solved screen
- * said "This puzzle isn't available" and a saved daily couldn't be reopened. Future dates stay out.
+ * A player's first daily: the day they installed (or their earliest daily solve, if a wrong clock
+ * put one earlier), never before the epoch. The archive, stamp book and daily badges start here,
+ * so a player never sees days from before they had the app as "missed".
+ */
+export function dailyStart(root: Root): LocalDate {
+  const dates = [toLocalDate(new Date(root.installedAt)), ...root.daily.solvedDates, ...root.progress.lateDailies];
+  const first = dates.reduce((a, b) => (b < a ? b : a));
+  return first < DAILY_EPOCH ? DAILY_EPOCH : first;
+}
+
+/**
+ * What the puzzle and Solved screens open for a route key. Dailies run from the player's first
+ * day (`dailyStart`) to today, matching the archive, so a link to an earlier date says "This puzzle
+ * isn't available" (D35). A daily the player already has (a save to resume, or a solve to show)
+ * always opens, even if its date is no longer playable: a daily started before midnight and
+ * finished after it must still reach the Solved screen (D32). Future dates never open.
  */
 export function refForPlayer(key: string, root: Root, content: Content, today: LocalDate): PuzzleRef | null {
-  const ref = refFromKey(key, content, today);
-  if (ref) return ref;
   const m = /^daily:(\d{4}-\d{2}-\d{2})$/.exec(key);
-  const date = m?.[1];
-  if (!date || !isLocalDate(date) || date > today) return null;
+  if (!m) return refFromKey(key, content, today);
+  const date = m[1] as LocalDate;
+  if (!isLocalDate(date) || date > today) return null;
   const known =
     root.inProgress[key] !== undefined || root.daily.solvedDates.includes(date) || root.progress.lateDailies.includes(date);
-  return known ? { key, mode: 'daily', quoteId: dailyQuoteId(date, content.dailyOrder), dailyDate: date } : null;
+  if (known) return { key, mode: 'daily', quoteId: dailyQuoteId(date, content.dailyOrder), dailyDate: date };
+  if (date !== today && date < dailyStart(root)) return null;
+  return refFromKey(key, content, today);
 }
 
 export function dailyRef(date: LocalDate, content: Content, today: LocalDate): PuzzleRef | null {
