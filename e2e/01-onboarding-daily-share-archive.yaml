@@ -32,8 +32,19 @@ appId: app.lettercrack
     direction: DOWN
 - tapOn:
     id: solved-share
-# Dismiss the system share sheet.
+# Dismiss the system share sheet. Wait for it first: a Back sent while it is still opening is lost.
+- extendedWaitUntil:
+    visible:
+      text: "Sharing.*"
+    timeout: 10000
+    optional: true
 - back
+- runFlow:
+    when:
+      visible:
+        text: "Sharing.*"
+    commands:
+      - back
 - scrollUntilVisible:
     element:
       text: Home

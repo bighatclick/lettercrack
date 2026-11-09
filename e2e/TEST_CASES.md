@@ -87,8 +87,8 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 | **Failing** | None. |
 | **Not run** | 12.13 "Send feedback": the emulator's Gmail isn't signed in, so the mail body can't be read. 14.6 Review prompt: parked by request (the emulator has no Play Store). |
 | **Accepted exception** | D8: cells and keys are ≥ 44 pt tall but narrower than 44 pt, because the line width sets them (13.9). |
-| **Builds** | Most retests ran on the debug build with Metro. D10, D31, 2.6 and the two Maestro flows (2/2) ran on the release build. Unit tests: 863 pass; typecheck and lint clean. |
-| **Still to do** | The D31 fix touches every `Text` (it only acts after the window size changes). It was checked on the tablet, but the phone journeys and Maestro flows haven't been rerun since; run the Maestro flows on the phone before release. Also apply the test-case corrections listed in `RESULTS.md` (2.1, 3.17, 3.21, 10.2, 10.7). |
+| **Builds** | Most retests ran on the debug build with Metro. D10, D31 and 2.6 ran on the release build. The two Maestro flows pass on the final release build (with the D31 fix) on the phone, twice in a row. Unit tests: 863 pass; typecheck and lint clean. |
+| **Still to do** | Apply the test-case corrections listed in `RESULTS.md` (2.1, 3.17, 3.21, 10.2, 10.7). The D31 fix touches every `Text`; on the phone it was covered by the Maestro flows and a look at Home, not by a full rerun of the journeys. |
 
 ---
 

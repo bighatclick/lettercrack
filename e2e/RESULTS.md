@@ -19,6 +19,7 @@ Done in this round:
 | Maestro flows | Release | **Pass (2/2) after a flow fix.** Both failed at first because the goals, rank, awards and wardrobe cards now push `home-level`, `home-archive` and `solved-share` below the fold, and `tapOn` doesn’t scroll. The flows now `scrollUntilVisible` first. |
 | 2.6 Word hop | Release | **Pass.** Recorded at 30 fps with the emulator’s host recorder (`adb emu screenrecord`; the in-device `screenrecord` gave 0.8 fps). Erasing L and typing it again: KNOWLEDGED, UNIVERSALLY and SINGLE lift and grow, then settle; the line above doesn’t move. The first tries showed no hop because the emulator had Android animations off (all scales 0 = Reduce Motion), which correctly suppresses it. |
 | D10 | Release | **Was a crash; fixed.** See below. |
+| Maestro flows (after the D31 fix) | Release, phone | **Pass (2/2), twice in a row,** after a flow fix: flow 01 pressed Back while Android's share sheet was still opening, so the sheet stayed up and "Home" was never found. It now waits for the sheet ("Sharing…") and presses Back again if the sheet is still there. Home on the phone looks unchanged. |
 | D31 | Release, tablet | **Reproduced, then fixed.** Before the fix: after rotating, the tag read "TODAY’S" and Inky’s bubble ended "Let’s crack". After the fix (release build, Pixel Tablet): "TODAY’S QUOTE" and "…Let’s crack it!" in full on one line after 1, 2, 4, 5, 8, 9 and 12 rotations, both orientations. |
 
 ### D10: release-build crash after a font size change (fixed)
