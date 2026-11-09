@@ -14,6 +14,7 @@ import Svg, { Circle } from 'react-native-svg';
 
 import { useTheme } from '../theme';
 import { fontFamily } from '../tokens';
+import { useNoLoops } from './loops';
 import { useLoop } from './motion';
 
 const GHOST = 'QXRZKJMVPWEGTA';
@@ -65,10 +66,12 @@ export const Confetti = memo(function Confetti({ count = 22, height = 800 }: { c
 
 function Piece({ i, height }: { i: number; height: number }) {
   const fall = useSharedValue(0);
+  // In E2E builds each piece falls once instead of forever (see useNoLoops).
+  const once = useNoLoops();
   useEffect(() => {
-    fall.set(withDelay((i * 233) % 2400, withRepeat(withTiming(1, { duration: 3200 + (i % 5) * 600, easing: Easing.linear }), -1)));
+    fall.set(withDelay((i * 233) % 2400, withRepeat(withTiming(1, { duration: 3200 + (i % 5) * 600, easing: Easing.linear }), once ? 1 : -1)));
     return () => cancelAnimation(fall);
-  }, [fall, i]);
+  }, [fall, i, once]);
   const color = CONFETTI[i % CONFETTI.length] as string;
   const tile = i % 3 === 0;
   const sway = ((i * 17) % 30) - 15;

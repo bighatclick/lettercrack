@@ -1,5 +1,17 @@
 # E2E run results (suite v2)
 
+## Paused: remaining-items round (9 Nov 2026)
+
+Paused for a laptop restart. Done so far (uncommitted work committed with this note):
+- **E2E builds keep endless animations still** (`src/ui/fx/loops.ts`), so Maestro and uiautomator can read the screen. Unit-tested.
+- **14.7 fix:** the save is also kept in a separate MMKV file (`lettercrack.backup`, key `root.lastGood`) and updated on every save. A damaged or missing main file now comes back with the latest progress; before, only the copy from the last upgrade existed. 7 new unit tests.
+- **D8:** accepted as an exception (cells and keys ≥ 44 pt tall, width set by the line); 13.9 updated.
+- **Local builds:** `android:local` now turns off the Sentry upload (the release build failed on it) and takes `LC_NO_INSTALL=1`.
+- **14.6:** parked by request.
+
+Still to do: finish the release build (`EXPO_PUBLIC_E2E=1 npm run android:local -- release`); retest D31 (tablet), D10, 2.6 and the Maestro flows on it; run 14.7 and U.7 on the debug build.
+Local emulator files (not committed): `e2e/state/phone-feb18/` is the phone save before 14.7, and `e2e/state/u7-streak8/` is the v2 save with an 8-day streak for U.7.
+
 ## Fix round and retest (9 Nov 2026)
 
 All defects from the v2 run were worked on, then retested on the phone emulator (and the tablet for D31) with the new code. Only JavaScript changed, so the existing dev build was reused, with Metro serving the new code. Unit tests: 849 pass; typecheck and lint are clean.

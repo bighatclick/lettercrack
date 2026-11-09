@@ -3,6 +3,7 @@
  * Local Android build on this Windows laptop (Android builds never use EAS cloud).
  *   npm run android:local            → debug APK, installed on a running emulator/device if one is attached
  *   npm run android:local -- release → release APK (signed with the debug key; for testing only)
+ *   LC_NO_INSTALL=1                  → build only; don't install on the attached device
  *
  * Needs: Windows long paths on (HKLM\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled=1),
  * and SDK CMake 3.31.6 (bundles Ninja 1.12.1, which handles long paths). The 3.22.1 default does not.
@@ -36,7 +37,8 @@ if (process.platform === 'win32') {
 }
 if (!existsSync(join(cmakeDir, 'bin'))) fail(`CMake ${CMAKE_VERSION} missing. Run: sdkmanager "cmake;${CMAKE_VERSION}"`);
 
-const run = (cmd, cwd = root) => execSync(cmd, { cwd, stdio: 'inherit', env: process.env });
+// Local builds never upload source maps to Sentry (no org or token here); set it to false to upload.
+const run = (cmd, cwd = root) => execSync(cmd, { cwd, stdio: 'inherit', env: { SENTRY_DISABLE_AUTO_UPLOAD: 'true', ...process.env } });
 
 // Always regenerate android/ so config plugins and local modules are current.
 run('npx expo prebuild --platform android --clean --no-install');
@@ -59,7 +61,7 @@ console.log(`\n✓ ${apk}`);
 
 const adb = join(sdk, 'platform-tools', process.platform === 'win32' ? 'adb.exe' : 'adb');
 const devices = spawnSync(adb, ['devices'], { encoding: 'utf8' }).stdout ?? '';
-if (/\tdevice\b/.test(devices)) {
+if (/\tdevice\b/.test(devices) && process.env.LC_NO_INSTALL !== '1') {
   run(`"${adb}" install -r "${apk}"`);
   console.log('✓ installed on the attached device/emulator');
 }

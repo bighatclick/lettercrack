@@ -16,6 +16,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useTheme } from '../theme';
+import { useNoLoops } from './loops';
 import { motion } from '../tokens';
 
 /**
@@ -75,9 +76,9 @@ export function PressScale({ style, children, onPressIn, onPressOut, ...rest }: 
   );
 }
 
-/** A looping value 0 → 1 → 0 (or a sawtooth when `loop`), frozen at `rest` with Reduce Motion. */
+/** A looping value 0 → 1 → 0 (or a sawtooth when `loop`), frozen at `rest` with Reduce Motion and in E2E builds. */
 export function useLoop(durationMs: number, opts: { delay?: number; loop?: boolean; rest?: number } = {}) {
-  const { reduceMotion } = useTheme();
+  const reduceMotion = useNoLoops();
   const v = useSharedValue(opts.rest ?? 0);
   const { delay = 0, loop = false, rest = 0 } = opts;
   useEffect(() => {
@@ -109,7 +110,7 @@ export function Float({ children, style, distance = 6, duration = 1600, delay = 
 
 /** Wiggles children by a few degrees now and then. */
 export function Wiggle({ children, style, degrees = 8 }: { children: ReactNode; style?: StyleProp<ViewStyle>; degrees?: number }) {
-  const { reduceMotion } = useTheme();
+  const reduceMotion = useNoLoops();
   const v = useSharedValue(0);
   useEffect(() => {
     if (reduceMotion) return;

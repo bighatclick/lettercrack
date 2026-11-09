@@ -12,7 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Circle, Defs, Ellipse, G, Line, LinearGradient, Path, RadialGradient, Stop } from 'react-native-svg';
 
-import { useTheme } from '../theme';
+import { useNoLoops } from './loops';
 import { OutfitBack, OutfitFace, OutfitHat, OutfitNeck } from './InkyOutfit';
 
 /** What Inky wears (item ids from src/engine/wardrobe.ts). */
@@ -53,7 +53,8 @@ function InkyImpl({
   /** Defaults to the classic look: just the brass monocle. */
   outfit?: InkyOutfit;
 }) {
-  const { reduceMotion } = useTheme();
+  // Inky's bob, wave and blink loop forever, so they stay still under Reduce Motion and in E2E builds.
+  const reduceMotion = useNoLoops();
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
   const id = (n: string) => `${n}${uid}`;
   const url = (n: string) => `url(#${n}${uid})`;
