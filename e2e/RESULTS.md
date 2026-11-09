@@ -1,16 +1,44 @@
 # E2E run results (suite v2)
 
-## Paused: remaining-items round (9 Nov 2026)
+## Remaining-items round (9 Nov 2026)
 
-Paused for a laptop restart. Done so far (uncommitted work committed with this note):
+Release build: `EXPO_PUBLIC_E2E=1 npm run android:local -- release` (x86_64, signed with the debug key), installed over the debug build on the Pixel 7 emulator and on the Pixel Tablet emulator. 14.7 and U.7 ran on the debug build first. Unit tests: 859 pass; typecheck and lint are clean.
+
+Done in this round:
 - **E2E builds keep endless animations still** (`src/ui/fx/loops.ts`), so Maestro and uiautomator can read the screen. Unit-tested.
-- **14.7 fix:** the save is also kept in a separate MMKV file (`lettercrack.backup`, key `root.lastGood`) and updated on every save. A damaged or missing main file now comes back with the latest progress; before, only the copy from the last upgrade existed. 7 new unit tests.
+- **14.7 fix:** the save is also kept in a separate MMKV file (`lettercrack.backup`, key `root.lastGood`) and updated on every save, so a damaged or missing main file comes back with the latest progress (before, only the copy from the last upgrade existed). 7 unit tests.
 - **D8:** accepted as an exception (cells and keys ≥ 44 pt tall, width set by the line); 13.9 updated.
-- **Local builds:** `android:local` now turns off the Sentry upload (the release build failed on it) and takes `LC_NO_INSTALL=1`.
+- **Local builds:** `android:local` turns off the Sentry upload (the release build failed on it) and takes `LC_NO_INSTALL=1`.
+- **Jest in a worktree:** the `/.claude/` ignore pattern matched every path when the checkout itself is under `.claude/worktrees/`, so `npm test` found no tests. It is now `<rootDir>/.claude/`.
 - **14.6:** parked by request.
 
-Still to do: finish the release build (`EXPO_PUBLIC_E2E=1 npm run android:local -- release`); retest D31 (tablet), D10, 2.6 and the Maestro flows on it; run 14.7 and U.7 on the debug build.
-Local emulator files (not committed): `e2e/state/phone-feb18/` is the phone save before 14.7, and `e2e/state/u7-streak8/` is the v2 save with an 8-day streak for U.7.
+| Item | Build | Result |
+|---|---|---|
+| 14.7 Data recovery | Debug | **Pass.** Solved Level 10 first, so the latest save differed from any older copy (18 solved, Level 11, 976 letters, goals 34/150 and 1/2). Main file overwritten with 64 KB of junk: Home showed "We restored your saved progress from a backup." and every value above. Main file deleted: same result, plus 12 of 18 authors, 6 outfit items and 5 hints. The debug build also shows a "[lettercrack] Error: Main save missing…" toast (console.error in a dev build). |
+| U.7 Streak freeze credit | Debug | **Pass.** v2 save with streak 8 / best 8 (`e2e/state/u7-streak8/`) migrated on launch: Stats shows "1 saved streak freeze", "One week" earned. Current streak reads 0, which is right: that hand-edited save last solved on 16 Jan and the clock was 15 Feb. |
+| Maestro flows | Release | **Pass (2/2) after a flow fix.** Both failed at first because the goals, rank, awards and wardrobe cards now push `home-level`, `home-archive` and `solved-share` below the fold, and `tapOn` doesn’t scroll. The flows now `scrollUntilVisible` first. |
+| 2.6 Word hop | Release | **Pass.** Recorded at 30 fps with the emulator’s host recorder (`adb emu screenrecord`; the in-device `screenrecord` gave 0.8 fps). Erasing L and typing it again: KNOWLEDGED, UNIVERSALLY and SINGLE lift and grow, then settle; the line above doesn’t move. The first tries showed no hop because the emulator had Android animations off (all scales 0 = Reduce Motion), which correctly suppresses it. |
+| D10 | Release | **Was a crash; fixed.** See below. |
+| D31 | Release, tablet | **Reproduces.** Fresh launch in landscape is fine; after rotating to portrait the tag reads "TODAY’S" and Inky’s bubble ends "Let’s crack". Both boxes keep their one-line width while the text wraps. Not changed in this round. |
+
+### D10: release-build crash after a font size change (fixed)
+
+- **What happened:** with the app open, change Android’s font size (or anything else that makes Android recreate the activity), then tap any navigation button, e.g. "Continue level". The release build crashed: `FATAL EXCEPTION … JavascriptException: The imperative router is unavailable before the first render has finished`, thrown from an `onPress`. The crash came 36 s after the recreation, so it was not a startup race: navigation stayed broken until the app restarted.
+- **Cause (expo-router 58.0.25):** `ImperativeRoutingQueueBridge` binds the global `router` when a navigation root mounts and resets it to a stub that throws when a root unmounts. On recreation the new root mounts first, then the old root unmounts and unbinds the router the new root had just bound.
+- **Fix:** `patches/expo-router+58.0.25.patch` (applied by `patch-package` on `postinstall`, so EAS builds get it too): a bridge only unbinds if the router is still bound to it. `src/lib/__tests__/routerRebind.test.tsx` mounts a second bridge, unmounts the first and checks `router.push` still works; it fails without the patch. **When upgrading expo-router, check whether upstream fixed this and drop or redo the patch.**
+- **Retest on the release build:** four font size changes (1.3, 1.0, 1.15, 1.0) with the app open; Android recreated the screen each time (4 × `Running "main"`). After each one, Continue level and Settings opened, the process never restarted, and the log had no crash.
+
+### Still open
+
+- **D31** (tablet text cut off after rotating): reproduces on the release build. Next step is a layout change for one-line labels (spare width, or one line with shrink-to-fit), then a recheck on the tablet.
+- **14.6** parked; **12.13** needs a signed-in mail app.
+- Local emulator files (not committed): `e2e/state/phone-feb18/` (phone save before 14.7) and `e2e/state/u7-streak8/` (v2 save, 8-day streak).
+
+### Notes for the next run
+
+- This laptop came back on a temporary Windows profile (`C:\Users\TEMP`). The SDK, AVDs, Gradle cache, Python and git identity are under `C:\Users\Dell`, so set `ANDROID_HOME`, `ANDROID_AVD_HOME`, `GRADLE_USER_HOME`, `LOCALAPPDATA` (for `e2e/state/lib.sh`) to the Dell paths, or sign in to the normal profile.
+- After a JS-only change, `cd android && gradlew assembleRelease -PreactNativeArchitectures=x86_64` rebuilds the release APK in about 4 minutes; `android:local` regenerates `android/` and takes about 40.
+- The Pixel Tablet’s natural orientation is landscape; `wm user-rotation` didn’t rotate it. `adb emu rotate` with auto-rotate on does.
 
 ## Fix round and retest (9 Nov 2026)
 
@@ -25,7 +53,7 @@ All defects from the v2 run were worked on, then retested on the phone emulator 
 | D26 | Medium | **Fixed** | New `FitText`: text scales with the size settings but never breaks inside a word. Home tile titles share one size. | Pass at the largest text: "Inky's wardrobe" whole, no clipped lines. |
 | D28 | Medium | **Fixed** | Author circles grow with the text size, and the initials are sized to the circle. | Pass at the largest text. |
 | D29 | Medium | **Fixed** | Badge columns widen with the text size; names use `FitText` with one shared size. | Pass at the largest text on Stats; also used on the Solved awards card. |
-| D31 | Medium | **Not fixed** | Investigated, see below. | Fails only after rotating. A fresh launch is fine in both orientations. |
+| D31 | Medium | **Not fixed** | Investigated, see below. | Fails only after rotating. A fresh launch is fine in both orientations. Reproduces on the release build too (remaining-items round). |
 | D14 | Low | **Fixed** | Closing the sheet without restarting forgets the pick. | Pass for Cancel and for tapping outside; Restart still works. |
 | D11 | Low | **Fixed** | `useNow` re-renders on foreground and every hour. Home reads the date from it, because the React Compiler memoises a bare `today()`. | Pass: afternoon → evening → next morning, date and daily card updated. |
 | D18 | Low | **Fixed** | Same mechanism in the puzzle hook. | Pass: "No hints left" → "5 hints left" after midnight without reopening. |
@@ -41,7 +69,7 @@ All defects from the v2 run were worked on, then retested on the phone emulator 
 | D12 | Cosmetic | **Fixed** | A backdrop fills the status-bar area once a page scrolls (Screen and Solved). | Pass on Home, Stats and Solved. |
 | D22 | Cosmetic | **Fixed** | Archive title shows "February 3, 2027". | Pass. |
 | D19 | Low | **Fixed (likely cause)** | Reminder scheduling runs one call at a time, and each day's reminder has a fixed ID, so a repeat replaces it. | Pass: 7 alarms after 3 quick foregrounds, one per day; exactly 1 notification at 09:00. The original was seen once, so this can't prove the race is gone. |
-| D10 | Low | **Partly** | No code change. | The 3 "imperative router" errors no longer appear. W1 ("linking configured in multiple places") still shows in the dev build when a font-size change recreates the screen; it's a dev warning, and the app recovers. Recheck on a release build. |
+| D10 | **High** | **Fixed (remaining-items round)** | expo-router patch, see above. | On the release build this was a crash, not a warning. Fixed and retested on the release build. |
 | D8 | Low | **Open (design)** | Not changed. | Cells are 44+ tall and keys 52 tall, but their width is set by fitting about 15 cells and 10 keys across a phone, and they touch, so the hit area can't grow sideways. Needs a design decision. |
 
 New issues found while retesting, all fixed and retested:
@@ -64,8 +92,8 @@ New issues found while retesting, all fixed and retested:
 | 7.7 Archive count | **Pass**: "13 to play" → "11 to play" after two archive solves; streak unchanged. |
 | 11.5 Widget after midnight | **Pass**: the next day's cipher, "Tap to crack today's quote", and "1-day streak" still shown (bridgeable). The launcher needed a restart to redraw, which the step allows. |
 | U0 again (v2 save → v5) | **Pass**: loads, badges awarded, archive days kept. |
-| 2.6 Word hop | **Not verifiable** on the debug build: with animations on, typed letters arrived more than 10 s late, past the recording. The code path is unchanged; check on a release build. |
-| 12.13, 14.6, 14.7 | Still can't run here: no signed-in mail, no Play Store, and MMKV keeps its backup in the same file. |
+| 2.6 Word hop | **Not verifiable** on the debug build. Passed later on the release build (remaining-items round). |
+| 12.13, 14.6, 14.7 | 12.13 and 14.6 still can't run here (no signed-in mail, no Play Store). 14.7 passed later (remaining-items round). |
 
 Test-case corrections from the v2 run (2.1, 3.17, 3.21, 10.2, 10.7, 13.5, 13.6) are now applied in `TEST_CASES.md`.
 
