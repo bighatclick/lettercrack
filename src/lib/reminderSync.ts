@@ -3,6 +3,7 @@ import type { TFunction } from 'i18next';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import type { LocalDate } from '@/engine/daily';
+import { dailyStatus } from '@/game/archive';
 import { dailyFacts, reminderVariant } from '@/game/teaser';
 import { today } from '@/game/today';
 
@@ -23,7 +24,7 @@ export function syncReminders(t: TFunction) {
   void scheduleReminders({
     enabled: root.settings.dailyReminder,
     today: date,
-    solvedToday: root.daily.solvedDates.includes(date),
+    solvedToday: dailyStatus(root, content, date) === 'solved',
     title: t('notifications.title'),
     body: (d) => reminderBody(t, d),
   });

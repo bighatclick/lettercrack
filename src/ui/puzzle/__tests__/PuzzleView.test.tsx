@@ -129,6 +129,14 @@ describe('PuzzleView (component)', () => {
     expect(q.props.accessibilityState?.disabled).toBeFalsy();
   });
 
+  it('keeps Check disabled until a letter is typed (D13)', async () => {
+    await setup();
+    expect(screen.getByTestId('hint-check').props.accessibilityState?.disabled).toBe(true);
+    await press(`cell-${indicesOf('W')[0]}`);
+    await press('key-Q');
+    expect(screen.getByTestId('hint-check').props.accessibilityState?.disabled).toBe(false);
+  });
+
   it('delete clears the letter', async () => {
     await setup();
     const l = indicesOf('L')[0]!;

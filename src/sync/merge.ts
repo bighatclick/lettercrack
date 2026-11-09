@@ -27,6 +27,9 @@ export type CloudDoc = {
   settingsUpdatedAt: number;
   /** Badges (v4). Optional: older documents have none. Merge = union, earliest date. */
   awards?: Root['awards'];
+  /** Archive days solved later (v5). Optional: older documents have none. Merge = union. */
+  lateDailies?: string[];
+  legacyDailyCutoff?: string | null;
 };
 
 export function toCloud(root: Root): CloudDoc {
@@ -42,6 +45,8 @@ export function toCloud(root: Root): CloudDoc {
     settings: root.settings,
     settingsUpdatedAt: root.meta.settingsUpdatedAt,
     awards: root.awards,
+    lateDailies: [...root.progress.lateDailies].sort().slice(-MAX_SOLVED_DATES),
+    legacyDailyCutoff: root.progress.legacyDailyCutoff,
   };
 }
 
@@ -79,6 +84,8 @@ export function mergeCloud(local: Root, cloud: CloudDoc): Root {
       seenQuoteIds: union(local.progress.seenQuoteIds, decodeIdSet(cloud.seen)),
       reportedQuoteIds: union(local.progress.reportedQuoteIds, decodeIdSet(cloud.reported)),
       solved,
+      lateDailies: [...new Set([...local.progress.lateDailies, ...(cloud.lateDailies ?? [])])].sort(),
+      legacyDailyCutoff: maxStr(local.progress.legacyDailyCutoff, cloud.legacyDailyCutoff ?? null),
     },
     daily: {
       streak: Math.max(local.daily.streak, cloud.daily.streak),

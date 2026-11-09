@@ -42,7 +42,7 @@ export function HintBar({ hintsLeft, canCheck, onReveal, onCheck }: HintBarProps
         style={styles.btn}
         testID="hint-check"
       />
-      <View style={styles.count} accessible accessibilityLiveRegion="polite" accessibilityLabel={none ? t('puzzle.noHints') : t('puzzle.hintsLeft', { count: hintsLeft })}>
+      <View style={[styles.count, none ? null : styles.countFixed]} accessible accessibilityLiveRegion="polite" accessibilityLabel={none ? t('puzzle.noHints') : t('puzzle.hintsLeft', { count: hintsLeft })}>
         {none ? (
           <Text variant="caption" color="inkMuted" style={styles.noneText}>
             {t('puzzle.noHints')}
@@ -52,7 +52,7 @@ export function HintBar({ hintsLeft, canCheck, onReveal, onCheck }: HintBarProps
             <View style={[styles.badge, { backgroundColor: colors.accent }]}>
               <Icon name="bulb" color={colors.onAccent} size={16} strokeWidth={2.6} />
             </View>
-            <Text variant="label" color="ink">
+            <Text variant="label" color="ink" numberOfLines={1}>
               ×{hintsLeft}
             </Text>
           </>
@@ -66,6 +66,8 @@ const styles = StyleSheet.create({
   bar: { flexDirection: 'row', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' },
   btn: { paddingHorizontal: space.lg },
   count: { flexShrink: 1, flexGrow: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 6 },
+  // The ×N counter never shrinks: at large text it wraps to its own line instead of overlapping Check.
+  countFixed: { flexShrink: 0 },
   noneText: { textAlign: 'right', flexShrink: 1 },
   badge: { width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
 });

@@ -3,7 +3,7 @@ import { defaultRoot, type Root } from '@/data/schema';
 import { createPuzzle, puzzleReducer } from '@/engine/puzzle';
 import { pickNextQuote } from '@/engine/picker';
 
-import { archiveMonths, dailyStatus } from '../archive';
+import { archiveMonths, dailyStatus, settleLegacyDailies } from '../archive';
 import { completeOnboarding, needsOnboarding, ONBOARDING_TEXT, onboardingInit } from '../onboarding';
 import { noteReminderOffered, REMINDER_DAYS_AHEAD, reminderDates, shouldOfferReminder } from '../reminder';
 import { feedbackMailto, reportQuote } from '../report';
@@ -71,6 +71,7 @@ describe('archive (S4)', () => {
     const r = defaultRoot(NOW);
     r.daily.solvedDates = ['2027-01-01'];
     r.progress.solved = { 2: solvedRec('2027-01-05') }; // the 2 Jan daily, solved later from the archive
+    r.progress.lateDailies = ['2027-01-02'];
     r.inProgress['daily:2027-01-03'] = {} as Root['inProgress'][string];
     expect(dailyStatus(r, content, '2027-01-01', LAUNCH)).toBe('solved');
     expect(dailyStatus(r, content, '2027-01-02', LAUNCH)).toBe('solved');
@@ -83,6 +84,40 @@ describe('archive (S4)', () => {
     // Quote 1 is the daily for 1 Jan and again for 4 Jan (order wraps every 3 days).
     r.progress.solved = { 1: solvedRec('2027-01-01') };
     expect(dailyStatus(r, content, '2027-01-04', LAUNCH)).toBe('open');
+  });
+
+  it('does not count a later solve of the same quote on another day as solving this one (D20)', () => {
+    const r = defaultRoot(NOW);
+    // Quote 1 is the daily for 1 Jan and again for 4 Jan; only 4 Jan was played.
+    r.daily.solvedDates = ['2027-01-04'];
+    r.progress.solved = { 1: solvedRec('2027-01-04') };
+    expect(dailyStatus(r, content, '2027-01-04', LAUNCH)).toBe('solved');
+    expect(dailyStatus(r, content, '2027-01-01', LAUNCH)).toBe('open');
+  });
+
+  it('keeps the old rule for solves from before v5, up to the cutoff', () => {
+    const r = defaultRoot(NOW);
+    r.progress.solved = { 2: solvedRec('2027-01-05') };
+    r.progress.legacyDailyCutoff = '2027-01-06';
+    expect(dailyStatus(r, content, '2027-01-02', LAUNCH)).toBe('solved');
+    // A solve record newer than the cutoff is a v5 solve: only lateDailies counts.
+    r.progress.solved = { 2: solvedRec('2027-01-07') };
+    expect(dailyStatus(r, content, '2027-01-02', LAUNCH)).toBe('open');
+  });
+
+  it('settles the old rule once: its days are kept, and later solves no longer spread to other days', () => {
+    const r = defaultRoot(NOW);
+    r.progress.solved = { 2: solvedRec('2027-01-05') };
+    r.progress.legacyDailyCutoff = '2027-01-06';
+    const settled = settleLegacyDailies(r, content, LAUNCH);
+    // Quote 2 is the daily for 2, 5 and 8 Jan: the old rule marked 2 and 5 Jan.
+    expect(settled.progress.lateDailies).toEqual(['2027-01-02', '2027-01-05']);
+    expect(settled.progress.legacyDailyCutoff).toBeNull();
+    expect(settleLegacyDailies(settled, content, LAUNCH)).toBe(settled);
+    // A new solve of quote 2 on 9 Jan doesn't mark 8 Jan, and the settled days stay solved.
+    settled.progress.solved = { 2: solvedRec('2027-01-09') };
+    expect(dailyStatus(settled, content, '2027-01-08', LAUNCH)).toBe('open');
+    expect(dailyStatus(settled, content, '2027-01-02', LAUNCH)).toBe('solved');
   });
 
   it('is empty on launch day', () => {

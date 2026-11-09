@@ -7,7 +7,7 @@ import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import { ITEMS } from '@/engine/wardrobe';
 import { library } from '@/game/awards';
-import { Card, Enter, Hero, Icon, PressScale, radius, Screen, space, Tag, Text, useTheme } from '@/ui';
+import { Card, Enter, Hero, Icon, PressScale, radius, Screen, space, Tag, Text, useScaledWidth, useTheme } from '@/ui';
 
 const initials = (name: string) => {
   const parts = name.split(/[\s,]+/).filter((w) => /^[A-Z]/.test(w));
@@ -18,6 +18,10 @@ const initials = (name: string) => {
 export default function LibraryScreen() {
   const { t } = useTranslation();
   const { colors, hue } = useTheme();
+  // Author circles grow with the text size; their initials are sized to the circle, so they never spill.
+  const tileSize = useScaledWidth(48, 1.7);
+  const tileStyle = { width: tileSize, height: tileSize, borderRadius: tileSize / 2 };
+  const initialsStyle = { fontSize: Math.round(tileSize * 0.34), lineHeight: Math.round(tileSize * 0.44) };
   const root = useAppStore((s) => s.root!);
   const lib = useMemo(() => library(root, content), [root]);
   const [picked, setPicked] = useState<string | null>(null);
@@ -71,15 +75,15 @@ export default function LibraryScreen() {
                       accessibilityLabel={a}
                       accessibilityState={{ selected: on }}
                       onPress={() => setPicked(on ? null : a)}
-                      style={[styles.tile, { backgroundColor: on ? h.solid : h.tint }]}
+                      style={[styles.tile, tileStyle, { backgroundColor: on ? h.solid : h.tint }]}
                     >
-                      <Text variant="label" color={on ? h.on : h.deep}>
+                      <Text variant="label" color={on ? h.on : h.deep} allowFontScaling={false} numberOfLines={1} style={initialsStyle}>
                         {initials(a)}
                       </Text>
                     </PressScale>
                   ) : (
-                    <View key={a} style={[styles.tile, { backgroundColor: colors.surfaceRaised }]} accessible accessibilityLabel={t('library.unknownLabel')}>
-                      <Text variant="label" color="inkMuted">
+                    <View key={a} style={[styles.tile, tileStyle, { backgroundColor: colors.surfaceRaised }]} accessible accessibilityLabel={t('library.unknownLabel')}>
+                      <Text variant="label" color="inkMuted" allowFontScaling={false} style={initialsStyle}>
                         ?
                       </Text>
                     </View>

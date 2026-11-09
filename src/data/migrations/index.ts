@@ -9,11 +9,12 @@
 import { v1_to_v2 } from './v1_to_v2';
 import { v2_to_v3 } from './v2_to_v3';
 import { v3_to_v4 } from './v3_to_v4';
+import { v4_to_v5 } from './v4_to_v5';
 
 export type Migration = (old: Record<string, unknown>) => Record<string, unknown>;
 export type MigrationRegistry = Record<number, Migration>;
 
-export const migrations: MigrationRegistry = { 1: v1_to_v2, 2: v2_to_v3, 3: v3_to_v4 };
+export const migrations: MigrationRegistry = { 1: v1_to_v2, 2: v2_to_v3, 3: v3_to_v4, 4: v4_to_v5 };
 
 export class MigrationError extends Error {
   constructor(

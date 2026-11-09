@@ -8,7 +8,7 @@
  * The migration tests fail until all three exist.
  */
 
-export const CURRENT_SCHEMA_VERSION = 4;
+export const CURRENT_SCHEMA_VERSION = 5;
 
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'expert';
 export type Appearance = 'system' | 'light' | 'dark';
@@ -167,8 +167,24 @@ export type RootV4 = Omit<RootV3, 'schemaVersion'> & {
   outfit: OutfitSave;
 };
 
+/**
+ * v5: which archive days were actually solved.
+ * - progress.lateDailies: daily dates solved on a later day (archive) or on a wound-back clock,
+ *   so not in daily.solvedDates. Sync merge = union.
+ * - progress.legacyDailyCutoff: saves from before v5 didn't record those, so for them a quote's
+ *   solve record dated on or before this date still marks its daily solved (the old rule; nothing
+ *   a player saw as solved is lost). Null for installs that started on v5.
+ */
+export type RootV5 = Omit<RootV4, 'schemaVersion' | 'progress'> & {
+  schemaVersion: 5;
+  progress: RootV4['progress'] & {
+    lateDailies: LocalDate[];
+    legacyDailyCutoff: LocalDate | null;
+  };
+};
+
 /** The current root type. Point this at the newest RootVn when the schema changes. */
-export type Root = RootV4;
+export type Root = RootV5;
 
 export function defaultRoot(now: number): Root {
   return {
@@ -186,7 +202,7 @@ export function defaultRoot(now: number): Root {
       dailyReminder: false,
       defaultDifficulty: 'medium',
     },
-    progress: { levelIndex: 0, seenQuoteIds: [], solved: {}, reportedQuoteIds: [] },
+    progress: { levelIndex: 0, seenQuoteIds: [], solved: {}, reportedQuoteIds: [], lateDailies: [], legacyDailyCutoff: null },
     daily: { streak: 0, best: 0, freezeUsedWeek: null, solvedDates: [], highestDateSeen: null, bonusFreezes: 0, milestonesAwarded: [] },
     goals: { date: null, progress: {}, rewarded: false },
     awards: { earned: {}, seen: [] },

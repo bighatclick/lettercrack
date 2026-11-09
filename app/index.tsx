@@ -7,20 +7,22 @@ import Svg, { Path } from 'react-native-svg';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import { chapterOf, chapterTheme, isBigQuoteLevel, levelInChapter } from '@/engine/chapters';
+import { toLocalDate } from '@/engine/daily';
 import { goalProgress } from '@/engine/goals';
 import { unlockedItems } from '@/engine/wardrobe';
 import { displayStreak } from '@/engine/streak';
-import { archiveMonths } from '@/game/archive';
+import { archiveMonths, dailyStatus } from '@/game/archive';
 import { isSundaySpecial, library, rankOf, unlockFacts, unseenAwards } from '@/game/awards';
 import { needsOnboarding } from '@/game/onboarding';
 import { dailyKey, nextLevelRef } from '@/game/session';
-import { today } from '@/game/today';
+import { useNow } from '@/game/useNow';
 import { useOutfit } from '@/game/useOutfit';
 import { cipherPreview } from '@/game/widget';
 import {
   Button,
   Card,
   Enter,
+  FitText,
   Float,
   Gradient,
   Hero,
@@ -48,9 +50,12 @@ export default function Home() {
   const { colors, hue } = useTheme();
   const root = useAppStore((s) => s.root!);
   const status = useAppStore((s) => s.loadStatus);
-  const date = today();
+  const now = useNow();
+  // From `now`, not `today()`: the React Compiler would memoize a bare `today()` call.
+  const date = toLocalDate(new Date(now));
   const key = dailyKey(date);
-  const solvedToday = root.daily.solvedDates.includes(date);
+  // Also true after a solve on a wound-back clock, which isn't streak-credited.
+  const solvedToday = dailyStatus(root, content, date) === 'solved';
   const inProgress = !!root.inProgress[key];
   const streak = displayStreak(root.daily, date);
   const levelRef = nextLevelRef(root, content, root.settings.defaultDifficulty);
@@ -77,9 +82,11 @@ export default function Home() {
 
   if (needsOnboarding(root)) return <Redirect href="/onboarding" />;
 
-  const hour = new Date().getHours();
+  const hour = new Date(now).getHours();
   const greeting = hour < 12 ? t('home.greetMorning') : hour < 18 ? t('home.greetAfternoon') : t('home.greetEvening');
   const dateLabel = new Date(`${date}T12:00:00`).toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' });
+  // The tile titles share one size, set by the longest word among them.
+  const tileTitles = [t('home.archive'), t('home.stats'), t('home.library'), t('home.wardrobe')].join(' ');
   const bubble = solvedToday ? t('home.inkySolved') : inProgress ? t('home.inkyResume') : t('home.inkyReady');
 
   const hero = (
@@ -210,6 +217,7 @@ export default function Home() {
           subtitle={toPlay > 0 ? t('home.archiveToPlay', { count: toPlay }) : t('home.archiveSub')}
           onPress={() => router.push('/archive')}
           testID="home-archive"
+          fitFor={tileTitles}
         />
         <BigTile
           gradient="sunshine"
@@ -218,6 +226,7 @@ export default function Home() {
           subtitle={t('home.statsSub', { count: Object.keys(root.progress.solved).length })}
           onPress={() => router.push('/stats')}
           testID="home-stats"
+          fitFor={tileTitles}
           bars
         />
       </Enter>
@@ -230,6 +239,7 @@ export default function Home() {
           subtitle={t('home.librarySub', { count: progressView.authors, total: progressView.totalAuthors })}
           onPress={() => router.push('/library')}
           testID="home-library"
+          fitFor={tileTitles}
         />
         <BigTile
           gradient="sky"
@@ -238,6 +248,7 @@ export default function Home() {
           subtitle={t('home.wardrobeSub', { count: progressView.items })}
           onPress={() => router.push('/wardrobe')}
           testID="home-wardrobe"
+          fitFor={tileTitles}
           dot={newItems ? t('home.newBadge') : undefined}
         />
       </Enter>
@@ -307,6 +318,7 @@ function BigTile({
   testID,
   bars,
   dot,
+  fitFor,
 }: {
   gradient: GradientName;
   icon: IconName;
@@ -317,6 +329,8 @@ function BigTile({
   bars?: boolean;
   /** A small "New" flag in the corner. */
   dot?: string;
+  /** All four tile titles: sized together so they match. */
+  fitFor: string;
 }) {
   const g = gradients[gradient];
   return (
@@ -341,12 +355,12 @@ function BigTile({
         ) : null}
         {dot ? <Tag label={dot} bg="#FF6B6B" fg="#FFFFFF" /> : null}
       </View>
-      <Text variant="title" color={g.text}>
+      <FitText variant="title" color={g.text} fitFor={fitFor}>
         {title}
-      </Text>
-      <Text variant="caption" color={g.textMuted}>
+      </FitText>
+      <FitText variant="caption" color={g.textMuted}>
         {subtitle}
-      </Text>
+      </FitText>
     </PressScale>
   );
 }

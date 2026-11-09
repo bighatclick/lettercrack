@@ -23,10 +23,15 @@ export function DifficultySheet(props: {
 }) {
   const { t } = useTranslation();
   const [pick, setPick] = useState(props.current);
+  // Closing without restarting forgets the pick, so the next opening starts from the current difficulty.
+  const close = () => {
+    setPick(props.current);
+    props.onClose();
+  };
   const { hue } = useTheme();
   return (
-    <Modal visible={props.visible} transparent animationType="fade" onRequestClose={props.onClose}>
-      <Pressable style={styles.scrim} onPress={props.onClose} accessibilityLabel={t('puzzle.cancel')} />
+    <Modal visible={props.visible} transparent animationType="fade" onRequestClose={close}>
+      <Pressable style={styles.scrim} onPress={close} accessibilityLabel={t('puzzle.cancel')} />
       <View style={styles.center} pointerEvents="box-none">
         <Card style={styles.card} accessibilityViewIsModal>
           <Text variant="title" accessibilityRole="header">
@@ -39,7 +44,7 @@ export function DifficultySheet(props: {
           </View>
           <Text color="inkMuted">{t('puzzle.difficultyChange')}</Text>
           <View style={styles.row}>
-            <Button label={t('puzzle.cancel')} variant="ghost" compact onPress={props.onClose} />
+            <Button label={t('puzzle.cancel')} variant="ghost" compact onPress={close} />
             <Button label={t('puzzle.restart')} compact onPress={() => props.onRestart(pick)} disabled={pick === props.current} />
           </View>
         </Card>

@@ -6,3 +6,8 @@ export function formatDuration(ms: number): string {
   const s = String(total % 60).padStart(2, '0');
   return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
 }
+
+/** "2027-01-18" → "18 January 2027" (in the app language). Read in UTC so the day never shifts. */
+export function formatLocalDate(date: string, language: string): string {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString(language, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+}

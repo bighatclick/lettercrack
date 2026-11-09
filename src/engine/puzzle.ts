@@ -281,6 +281,11 @@ export const selectedCipher = (s: PuzzleState): string | null => (s.selected ===
 
 export const isLockedCell = isLocked;
 
+/** True once the player has typed at least one letter (givens and revealed letters don't count). */
+export function hasPlayerEntries(s: PuzzleState): boolean {
+  return s.entries.some((e, i) => e !== '' && isLetterCell(s, i) && !isLocked(s, i));
+}
+
 /** Plain letters currently used anywhere (the keyboard dims these, it never disables them). */
 export function usedLetters(s: PuzzleState): Set<string> {
   return new Set(s.entries.filter((e) => e !== ''));
