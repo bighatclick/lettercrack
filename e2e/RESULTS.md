@@ -19,7 +19,7 @@ Done in this round:
 | Maestro flows | Release | **Pass (2/2) after a flow fix.** Both failed at first because the goals, rank, awards and wardrobe cards now push `home-level`, `home-archive` and `solved-share` below the fold, and `tapOn` doesn’t scroll. The flows now `scrollUntilVisible` first. |
 | 2.6 Word hop | Release | **Pass.** Recorded at 30 fps with the emulator’s host recorder (`adb emu screenrecord`; the in-device `screenrecord` gave 0.8 fps). Erasing L and typing it again: KNOWLEDGED, UNIVERSALLY and SINGLE lift and grow, then settle; the line above doesn’t move. The first tries showed no hop because the emulator had Android animations off (all scales 0 = Reduce Motion), which correctly suppresses it. |
 | D10 | Release | **Was a crash; fixed.** See below. |
-| D31 | Release, tablet | **Reproduces.** Fresh launch in landscape is fine; after rotating to portrait the tag reads "TODAY’S" and Inky’s bubble ends "Let’s crack". Both boxes keep their one-line width while the text wraps. Not changed in this round. |
+| D31 | Release, tablet | **Reproduced, then fixed.** Before the fix: after rotating, the tag read "TODAY’S" and Inky’s bubble ended "Let’s crack". After the fix (release build, Pixel Tablet): "TODAY’S QUOTE" and "…Let’s crack it!" in full on one line after 1, 2, 4, 5, 8, 9 and 12 rotations, both orientations. |
 
 ### D10: release-build crash after a font size change (fixed)
 
@@ -30,7 +30,6 @@ Done in this round:
 
 ### Still open
 
-- **D31** (tablet text cut off after rotating): reproduces on the release build. Next step is a layout change for one-line labels (spare width, or one line with shrink-to-fit), then a recheck on the tablet.
 - **14.6** parked; **12.13** needs a signed-in mail app.
 - Local emulator files (not committed): `e2e/state/phone-feb18/` (phone save before 14.7) and `e2e/state/u7-streak8/` (v2 save, 8-day streak).
 
@@ -53,7 +52,7 @@ All defects from the v2 run were worked on, then retested on the phone emulator 
 | D26 | Medium | **Fixed** | New `FitText`: text scales with the size settings but never breaks inside a word. Home tile titles share one size. | Pass at the largest text: "Inky's wardrobe" whole, no clipped lines. |
 | D28 | Medium | **Fixed** | Author circles grow with the text size, and the initials are sized to the circle. | Pass at the largest text. |
 | D29 | Medium | **Fixed** | Badge columns widen with the text size; names use `FitText` with one shared size. | Pass at the largest text on Stats; also used on the Solved awards card. |
-| D31 | Medium | **Not fixed** | Investigated, see below. | Fails only after rotating. A fresh launch is fine in both orientations. Reproduces on the release build too (remaining-items round). |
+| D31 | Medium | **Fixed** (remaining-items round) | `src/ui/relayout.ts`, `src/ui/primitives/Text.tsx`: text is measured again once the window size settles. See below. | Verified on the release build on the tablet, 1–12 rotations. |
 | D14 | Low | **Fixed** | Closing the sheet without restarting forgets the pick. | Pass for Cancel and for tapping outside; Restart still works. |
 | D11 | Low | **Fixed** | `useNow` re-renders on foreground and every hour. Home reads the date from it, because the React Compiler memoises a bare `today()`. | Pass: afternoon → evening → next morning, date and daily card updated. |
 | D18 | Low | **Fixed** | Same mechanism in the puzzle hook. | Pass: "No hints left" → "5 hints left" after midnight without reopening. |
@@ -81,8 +80,10 @@ New issues found while retesting, all fixed and retested:
 
 - It happens **only after rotating** the tablet. A fresh launch shows "TODAY'S QUOTE" and "…Let's crack it!" in full, in portrait and in landscape.
 - React Native measures the same bounds before and after the rotation. Android then draws the glyphs about 1.5% wider, so the text wraps inside a box sized for one line, and the second line is hidden.
-- Remounting the text on a size change didn't help (tried, then reverted). The cause is below the app's code.
-- Next step: check on a real tablet and a release build before changing the layout. If it reproduces, give these one-line labels spare width.
+- Cause: React Native's text measure cache (`TextMeasureCache`, keyed on the text and its style) keeps returning the width measured before the rotation. A fresh process has an empty cache, which is why a fresh launch is fine.
+- What didn't work: remounting the text (same cache key); applying the OS text size in JS with `allowFontScaling={false}`; a new `maxFontSizeMultiplier` alone (cache misses, but the label wraps onto two lines at the old width); a font-size nudge that alternates back to 0 (the original size picks up the stale width again).
+- Fix: 500 ms after the window size stops changing, `Text` gets a `maxFontSizeMultiplier` it has never had (1000+, never caps a real text size) and a font size 0.006–0.06 pt larger that changes every time and never returns to the original. Both are invisible. Unit tests in `src/ui/__tests__/relayout.test.tsx`.
+- Freeing disk space for the rebuilds: E: was full, so 4.2 GB of debug-variant build output under this worktree's `node_modules/*/android/build` was deleted. The next debug build regenerates it and takes longer.
 
 ### Steps that weren't run last time
 
