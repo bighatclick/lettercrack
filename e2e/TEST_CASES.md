@@ -79,7 +79,14 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 
 ## Current status (9 Nov 2026)
 
-**186 of 188 steps pass, none fail, 2 are not run.** Every defect from the v2 run (D10–D31) is fixed and retested. Details, evidence and the defect list are in `RESULTS.md`.
+**🟢 186 pass · 🔴 0 fail · ⚪ 2 not run: 98.9% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜
+
+| Run | 🟢 Pass | 🔴 Fail | ⚪ Not run | Done |
+|---|---:|---:|---:|---:|
+| First run (v2 build) | 165 | 15 | 8 | 87.8% |
+| Now, after fixes and retests | 186 | 0 | 2 | **98.9%** |
+
+Every defect from the v2 run (D10–D31) is fixed and retested. Details, evidence and the defect list are in `RESULTS.md`.
 
 | | |
 |---|---|
@@ -94,24 +101,26 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 
 ## Journey overview
 
-| Journey | Area | Steps | Clock | Status (9 Nov 2026) |
-|---|---|---|---|---|
-| U0 | Upgrade from the previous build (v2 save → v4) | 7 | as it is | ✅ 7/7 |
-| J1 | Fresh install, onboarding, new Home | 12 | 01-10 | ✅ 12/12 |
-| J2 | Daily puzzle, input, hints, Solved screen (new cards) | 24 | 01-10 | ✅ 24/24 |
-| J3 | Levels, difficulty sheet, chapters, big quote, rank, report | 24 | 01-10 → | ✅ 24/24 |
-| J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 | ✅ 9/9 |
-| J5 | Hint exhaustion and midnight refill | 6 | 01-10 → 01-11 | ✅ 6/6 |
-| J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 | ✅ 16/16 |
-| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | ✅ 11/11 |
-| J8 | Stats: rank, freezes, badge shelf | 10 | any | ✅ 10/10 |
-| J9 | Library and author facts | 9 | any | ✅ 9/9 |
-| J10 | Inky's wardrobe and time-of-day badges | 13 | any | ✅ 13/13 |
-| J11 | Android home-screen widget | 9 | 01-10 → | ✅ 9/9 |
-| J12 | Settings, About, notifications | 15 | any | ⚠️ 14/15 (12.13 not run) |
-| J13 | Accessibility, text size, reduce motion, tablet | 12 | any | ✅ 12/12 (D8 accepted) |
-| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 11 | any | ⚠️ 10/11 (14.6 parked) |
-| **Total** | | **188** | | **186 pass, 0 fail, 2 not run** |
+| Journey | Area | Steps | Clock | 🟢 Pass | 🔴 Fail | ⚪ Not run | Done | Progress | Note |
+|---|---|---:|---|---:|---:|---:|---:|---|---|
+| U0 | Upgrade from the previous build (v2 save → v4) | 7 | as it is | 7 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J1 | Fresh install, onboarding, new Home | 12 | 01-10 | 12 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J2 | Daily puzzle, input, hints, Solved screen (new cards) | 24 | 01-10 | 24 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J3 | Levels, difficulty sheet, chapters, big quote, rank, report | 24 | 01-10 → | 24 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J5 | Hint exhaustion and midnight refill | 6 | 01-10 → 01-11 | 6 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 | 16 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | 11 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J8 | Stats: rank, freezes, badge shelf | 10 | any | 10 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J9 | Library and author facts | 9 | any | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J10 | Inky's wardrobe and time-of-day badges | 13 | any | 13 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J11 | Android home-screen widget | 9 | 01-10 → | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
+| J12 | Settings, About, notifications | 15 | any | 14 | 0 | 1 | **93.3%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 12.13 not run (Gmail not signed in) |
+| J13 | Accessibility, text size, reduce motion, tablet | 12 | any | 12 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | D8 accepted |
+| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 11 | any | 10 | 0 | 1 | **90.9%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 14.6 parked |
+| **Total** | | **188** | | **186** | **0** | **2** | **98.9%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | |
+
+🟢 pass · 🔴 fail · ⚪ not run. **Done** = steps passed ÷ steps. Each progress square is 10%: 🟩 pass, 🟥 fail, ⬜ not run. A row is all green only when every step passes.
 
 ---
 
