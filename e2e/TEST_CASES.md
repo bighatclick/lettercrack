@@ -77,26 +77,41 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 
 ---
 
+## Current status (9 Nov 2026)
+
+**186 of 188 steps pass, none fail, 2 are not run.** Every defect from the v2 run (D10–D31) is fixed and retested. Details, evidence and the defect list are in `RESULTS.md`.
+
+| | |
+|---|---|
+| **Passed** | 186. The first run had 165; the 15 failures passed on retest after their fixes, and 6 steps not run the first time were run later (2.6, 7.6, 7.7, 11.5, 14.7, U.7). |
+| **Failing** | None. |
+| **Not run** | 12.13 "Send feedback": the emulator's Gmail isn't signed in, so the mail body can't be read. 14.6 Review prompt: parked by request (the emulator has no Play Store). |
+| **Accepted exception** | D8: cells and keys are ≥ 44 pt tall but narrower than 44 pt, because the line width sets them (13.9). |
+| **Builds** | Most retests ran on the debug build with Metro. D10, D31, 2.6 and the two Maestro flows (2/2) ran on the release build. Unit tests: 863 pass; typecheck and lint clean. |
+| **Still to do** | The D31 fix touches every `Text` (it only acts after the window size changes). It was checked on the tablet, but the phone journeys and Maestro flows haven't been rerun since; run the Maestro flows on the phone before release. Also apply the test-case corrections listed in `RESULTS.md` (2.1, 3.17, 3.21, 10.2, 10.7). |
+
+---
+
 ## Journey overview
 
-| Journey | Area | Steps | Clock |
-|---|---|---|---|
-| U0 | Upgrade from the previous build (v2 save → v4) | 7 | as it is |
-| J1 | Fresh install, onboarding, new Home | 12 | 01-10 |
-| J2 | Daily puzzle, input, hints, Solved screen (new cards) | 24 | 01-10 |
-| J3 | Levels, difficulty sheet, chapters, big quote, rank, report | 24 | 01-10 → |
-| J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 |
-| J5 | Hint exhaustion and midnight refill | 6 | 01-10 → 01-11 |
-| J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 |
-| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 |
-| J8 | Stats: rank, freezes, badge shelf | 10 | any |
-| J9 | Library and author facts | 9 | any |
-| J10 | Inky's wardrobe and time-of-day badges | 13 | any |
-| J11 | Android home-screen widget | 9 | 01-10 → |
-| J12 | Settings, About, notifications | 15 | any |
-| J13 | Accessibility, text size, reduce motion, tablet | 12 | any |
-| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 11 | any |
-| **Total** | | **188** | |
+| Journey | Area | Steps | Clock | Status (9 Nov 2026) |
+|---|---|---|---|---|
+| U0 | Upgrade from the previous build (v2 save → v4) | 7 | as it is | ✅ 7/7 |
+| J1 | Fresh install, onboarding, new Home | 12 | 01-10 | ✅ 12/12 |
+| J2 | Daily puzzle, input, hints, Solved screen (new cards) | 24 | 01-10 | ✅ 24/24 |
+| J3 | Levels, difficulty sheet, chapters, big quote, rank, report | 24 | 01-10 → | ✅ 24/24 |
+| J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 | ✅ 9/9 |
+| J5 | Hint exhaustion and midnight refill | 6 | 01-10 → 01-11 | ✅ 6/6 |
+| J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 | ✅ 16/16 |
+| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | ✅ 11/11 |
+| J8 | Stats: rank, freezes, badge shelf | 10 | any | ✅ 10/10 |
+| J9 | Library and author facts | 9 | any | ✅ 9/9 |
+| J10 | Inky's wardrobe and time-of-day badges | 13 | any | ✅ 13/13 |
+| J11 | Android home-screen widget | 9 | 01-10 → | ✅ 9/9 |
+| J12 | Settings, About, notifications | 15 | any | ⚠️ 14/15 (12.13 not run) |
+| J13 | Accessibility, text size, reduce motion, tablet | 12 | any | ✅ 12/12 (D8 accepted) |
+| J14 | Resilience, deep links, data recovery, review prompt, reinstall | 11 | any | ⚠️ 10/11 (14.6 parked) |
+| **Total** | | **188** | | **186 pass, 0 fail, 2 not run** |
 
 ---
 
