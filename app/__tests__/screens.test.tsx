@@ -211,6 +211,13 @@ describe('Settings', () => {
     expect(root.meta.settingsUpdatedAt).toBeGreaterThan(0);
   });
 
+  it('shows the reminder off while notifications are not allowed, and keeps the saved choice (D42)', async () => {
+    useAppStore.getState().update((r) => ({ ...r, settings: { ...r.settings, dailyReminder: true } }));
+    await render(wrap(<Settings />));
+    expect(screen.getByTestId('setting-reminder').props.accessibilityState).toMatchObject({ checked: false });
+    expect(useAppStore.getState().root!.settings.dailyReminder).toBe(true);
+  });
+
   it('hides Restore Purchases while payments are off', async () => {
     await render(wrap(<Settings />));
     expect(screen.queryByText(i18n.t('settings.restore'))).toBeNull();

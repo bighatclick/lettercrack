@@ -1,7 +1,8 @@
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, View } from 'react-native';
+import { AppState, Linking, View } from 'react-native';
 
 import { content } from '@/content/quotes';
 import { PRIVACY_URL, TERMS_URL } from '@/config/links';
@@ -10,7 +11,7 @@ import type { Appearance, Difficulty } from '@/data/schema';
 import { feedbackMailto } from '@/game/report';
 import { syncReminders } from '@/lib/reminderSync';
 import { restorePurchasesAvailable } from '@/iap/availability';
-import { requestReminderPermission } from '@/lib/notifications';
+import { hasReminderPermission, requestReminderPermission } from '@/lib/notifications';
 import { Card, Chip, Enter, Hero, Inky, radius, Screen, space, Text, useTheme } from '@/ui';
 import { ChoiceRow, LinkRow, ToggleRow } from '@/ui/primitives/SettingRow';
 
@@ -44,11 +45,29 @@ export default function SettingsScreen() {
   const set = useAppStore((s) => s.setSetting);
   const version = Constants.expoConfig?.version ?? '1.0.0';
 
+  // D42: a restored save (or notifications turned off in system settings) can have the reminder
+  // switched on with nothing scheduled. The toggle shows what will really happen; the saved
+  // choice is kept, so granting permission later brings the reminder back.
+  const [permitted, setPermitted] = useState<boolean | null>(null);
+  const checkPermission = useCallback(() => {
+    void hasReminderPermission().then(setPermitted);
+  }, []);
+  useEffect(() => {
+    checkPermission();
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') checkPermission();
+    });
+    return () => sub.remove();
+  }, [checkPermission]);
+  const reminderOn = settings.dailyReminder && permitted !== false;
+
   const toggleReminder = async (on: boolean) => {
     if (on && !(await requestReminderPermission())) {
+      setPermitted(false);
       set('dailyReminder', false);
       return;
     }
+    if (on) setPermitted(true);
     set('dailyReminder', on);
     syncReminders(t);
   };
@@ -77,7 +96,7 @@ export default function SettingsScreen() {
             <Chip key={d} label={t(`difficulty.${d}`)} selected={settings.defaultDifficulty === d} onPress={() => set('defaultDifficulty', d)} />
           ))}
         </ChoiceRow>
-        <ToggleRow label={t('settings.reminder')} hint={t('settings.reminderHint')} value={settings.dailyReminder} onChange={toggleReminder} />
+        <ToggleRow label={t('settings.reminder')} hint={t('settings.reminderHint')} value={reminderOn} onChange={toggleReminder} testID="setting-reminder" />
       </Card>
       </Enter>
 

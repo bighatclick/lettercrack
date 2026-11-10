@@ -6,7 +6,7 @@ import type { Content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
 import { awardBadges, type BadgeFacts, type BadgeMoment } from '@/engine/badges';
 import { chaptersDone } from '@/engine/chapters';
-import { addDays, dayNumber, isoWeek, type LocalDate } from '@/engine/daily';
+import { addDays, dailyQuoteId, dayNumber, isoWeek, type LocalDate } from '@/engine/daily';
 import { rankFor, ranksReached, type RankView } from '@/engine/rank';
 import { AUTHOR_SETS, type AuthorSet, itemById, type UnlockFacts, unlockedItems } from '@/engine/wardrobe';
 
@@ -103,6 +103,10 @@ function perfectWeeks(solvedOnDay: readonly LocalDate[]): number {
   return [...weeks.values()].filter((s) => s.size >= 7).length;
 }
 
+function solvedOnItsDay(root: Root, content: Content, date: LocalDate): boolean {
+  return root.progress.solved[dailyQuoteId(date, content.dailyOrder)]?.date === date;
+}
+
 export function badgeFacts(root: Root, content: Content, today: LocalDate): BadgeFacts {
   const recs = Object.values(root.progress.solved);
   const dailies = solvedDailyDates(root, content, today);
@@ -115,7 +119,9 @@ export function badgeFacts(root: Root, content: Content, today: LocalDate): Badg
     expertSolves: recs.filter((r) => r.difficulty === 'expert').length,
     bestStreak: root.daily.best,
     dailies: Math.max(dailies.length, onDay.size),
-    archiveSolves: dailies.filter((d) => !onDay.has(d)).length,
+    // From the archive = solved on a later day. A daily solved on its own date without streak
+    // credit (travelling west, a wound-back clock) isn't an archive solve (D36).
+    archiveSolves: dailies.filter((d) => !onDay.has(d) && !solvedOnItsDay(root, content, d)).length,
     perfectWeeks: perfectWeeks(root.daily.solvedDates),
     authors: collectedAuthors(root, content).size,
     setsDone: setsDone(root, content).length,

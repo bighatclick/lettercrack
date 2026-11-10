@@ -57,7 +57,8 @@
           "color": "#6D3FE0"
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      "./plugins/withReleaseSigning"
     ],
     "experiments": {
       "typedRoutes": true,

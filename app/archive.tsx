@@ -73,13 +73,13 @@ export default function ArchiveScreen() {
               {stamps.get(m.month) ? (
                 <View
                   accessible
-                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), count: stamps.get(m.month)!.stamps, days: stamps.get(m.month)!.days })}
+                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days })}
                   testID={`stamps-${m.month}`}
                 >
                   {stamps.get(m.month)!.medal ? (
                     <Tag label={t('stamps.medal')} icon="trophy" bg={hue(1).solid} fg={hue(1).on} />
                   ) : (
-                    <Tag label={t('stamps.count', { count: stamps.get(m.month)!.stamps, days: stamps.get(m.month)!.days })} icon="check" bg={hue(3).tint} fg={hue(3).deep} />
+                    <Tag label={t('stamps.count', { stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days })} icon="check" bg={hue(3).tint} fg={hue(3).deep} />
                   )}
                 </View>
               ) : null}

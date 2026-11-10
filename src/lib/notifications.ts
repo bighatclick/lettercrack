@@ -26,6 +26,15 @@ export async function requestReminderPermission(): Promise<boolean> {
   }
 }
 
+/** Whether notifications are allowed right now (no prompt). False on any error. */
+export async function hasReminderPermission(): Promise<boolean> {
+  try {
+    return (await Notifications.getPermissionsAsync()).granted;
+  } catch {
+    return false;
+  }
+}
+
 type ReminderOpts = {
   enabled: boolean;
   today: LocalDate;

@@ -2,7 +2,10 @@
 /**
  * Local Android build on this Windows laptop (Android builds never use EAS cloud).
  *   npm run android:local            → debug APK, installed on a running emulator/device if one is attached
- *   npm run android:local -- release → release APK (signed with the debug key; for testing only)
+ *   npm run android:local -- release → release APK, signed with the upload key from
+ *                                      ~/.lettercrack/upload-keystore.properties (or LC_KEYSTORE_PROPERTIES;
+ *                                      see plugins/withReleaseSigning.js). Without it: the debug key, with a warning.
+ *                                      Back up that folder: builds signed with another key can't update installs.
  *   LC_NO_INSTALL=1                  → build only; don't install on the attached device
  *
  * Needs: Windows long paths on (HKLM\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled=1),
