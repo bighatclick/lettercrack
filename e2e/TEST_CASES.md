@@ -79,7 +79,7 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 
 ## Current status (10 Nov 2026, after the 30-scenario run)
 
-**🟢 203 tested · 🔴 4 failed · ⚪ 4 pending, of 211 steps: 96.2% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥
+**🟢 207 tested · 🔴 0 failed · ⚪ 4 pending, of 211 steps: 98.1% complete** 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜
 
 | Run | Steps | 🟢 Tested | 🔴 Failed | ⚪ Pending | Done |
 |---|---:|---:|---:|---:|---:|
@@ -87,12 +87,13 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 | 9 Nov, after fixes and retests | 188 | 186 | 0 | 2 | 98.9% |
 | 10 Nov, real-phone install (D32) | 190 | 185 | 1 | 4 | 97.4% |
 | 10 Nov, after the date fixes, before the run | 211 | 171 | 1 | 39 | 81.0% |
-| **10 Nov, 30-scenario run on the emulator** | **211** | **203** | **4** | **4** | **96.2%** |
+| 10 Nov, 30-scenario run on the emulator | 211 | 203 | 4 | 4 | 96.2% |
+| **10 Nov, D36–D42 fixes retested on the emulator** | **211** | **207** | **0** | **4** | **98.1%** |
 
 | | |
 |---|---|
 | **Tested (passed)** | 203. The 14 rewritten steps (✅), 14.5, 14.12, 14.13, J16 and 7 of J15 passed on the x86_64 release E2E build with D32–D35. |
-| **Failed** | 4 steps: 15.2 (D37 debug-signed builds can't be updated), 15.5 (D42 reminder up to an hour late in Doze), 15.6 (D41 widget not refreshed at midnight), 15.13 (D40 solve counts disagree). D38 (install-month medal) was closed as by design on 10 Nov: the product owner chose to give the medal in the install month too. |
+| **Failed** | None. 15.2 (D37), 15.5 (D42), 15.6 (D41) and 15.13 (D40) were fixed and retested on 10 Nov; D36 and D39 too. D38 was closed as by design. |
 | **Pending** | 4: 15.3 (real ARM phones), 15.4 (iOS), 12.13 (Gmail not signed in), 14.6 (review prompt, parked). |
 | **Findings, low** | D36 (travel west: wrong "Time traveller" badge, goals reset), D39 ("0 of 1 days"). |
 | **Accepted exception** | D8: cells and keys are ≥ 44 pt tall but narrower than 44 pt, because the line width sets them (13.9). |
@@ -111,11 +112,11 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 |---:|---|---|---|---|---|
 | 1 | Daily crosses midnight on the real date (D32, D34) | Missed | 14.5, 14.12 | 🟢 Tested | Pass (emulator, real date 10–11 Nov 2026): Solved screen shown, "Streak: 1 day", Stats streak 1 + Tuesday dot, Archive 10 Nov solved, new quote next day |
 | 2 | Travelling west: the local date goes back a day | Missed | 15.1 | 🟢 Tested | Pass: playable, no streak credit, streak kept. Found D36: "Time traveller" awarded for a daily played from Home, and the day's goals reset after travelling back |
-| 3 | Updating from the debug-signed APK to a release-key build | Missed | 15.2 | 🔴 Failed | D37: Android refuses the update ("signatures do not match"); testers must uninstall and lose progress |
+| 3 | Updating from the debug-signed APK to a release-key build | Missed | 15.2 | 🟢 Tested | Fixed (D37): release builds are signed with the LetterCrack upload key; a newer build installs over the old one with progress and the widget kept. Testers on the old debug-key APK must uninstall once |
 | 4 | Real ARM phones, including low-end | Missed | 15.3 | ⚪ Pending | Blocked here: needs real ARM phones |
 | 5 | iOS (iCloud sync, prompts, widget) | Missed | 15.4 | ⚪ Pending | Blocked here: needs a Mac and TestFlight |
-| 6 | Reminders on real phones (battery savers, alarm limits) | Missed | 15.5 | 🔴 Failed | D42: reminders are inexact (1-hour window); in Doze the 9:00 reminder had not fired at 9:00:50, it came by 10:00. OEM battery savers not tested |
-| 7 | Widget at midnight on real launchers | Missed | 15.6 | 🔴 Failed | D41: the widget refreshes every 30 min only, so after midnight it shows yesterday's quote until the next refresh (right after a forced update). OEM launchers not tested |
+| 6 | Reminders on real phones (battery savers, alarm limits) | Missed | 15.5 | 🟢 Tested | Fixed (D42): the Settings toggle shows Off while notifications are not allowed (and On again once allowed); the text says "around 9am". Delivery is still inexact (Android, no exact-alarm permission). OEM battery savers need real phones |
+| 7 | Widget at midnight on real launchers | Missed | 15.6 | 🟢 Tested | Fixed (D41): the widget re-renders just after midnight (seen: new quote at 00:10, within the 10-minute window) and on clock or time-zone change. OEM launchers need real phones |
 | 8 | New phone / Google backup restore | Missed | 15.7 | 🟢 Tested | Pass with the local backup transport: wiped and restored, onboarding skipped, letters, streak and badges back. Real Google Drive restore not tested |
 | 9 | Install on any date (archive start, stamp book, daily changes) | Missed | 14.13 | 🟢 Tested | Pass (installs on 2026-11-20, 2027-05-20, 2028-02-29). Found D39: "0 of 1 days stamped" (plural) |
 | 10 | App left open across midnight | Missed | 15.8 | 🟢 Tested | Pass: Home switched to the new day at midnight without a restart |
@@ -123,7 +124,7 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 | 12 | Year end and leap day | Missed | 15.10 | 🟢 Tested | Pass: streak 1→5 across 31 Dec (weekly freeze bridged 2 Jan); 1→4 across 29 Feb 2028 |
 | 13 | Different screens and navigation modes | Missed | 15.11 | 🟢 Tested | Pass: 720×1280 with 3-button nav, and a 1840×2208 foldable shape with gestures; nothing cut off |
 | 14 | Android kills the app mid-puzzle | Missed | 15.12 | 🟢 Tested | Pass: "Don't keep activities" + process kill; "Continue level 1" kept the typed letters |
-| 15 | Numbers agree across Home, Stats, Archive, Solved | Missed | 15.13 | 🔴 Failed | D40: Archive 23 dailies solved vs Stats "Daily quotes solved: 13" (on-day only) vs "12 quotes solved" (per quote; the seed repeats quotes) |
+| 15 | Numbers agree across Home, Stats, Archive, Solved | Missed | 15.13 | 🟢 Tested | Fixed (D40): Home "4 quotes solved", Stats "Puzzles solved 4" and "Daily quotes solved 3", Archive 3 dailies solved (today + 2 archive days + 1 level) |
 | 16 | Archive grid starts on the install day | Impacted by fix | 7.1 | 🟢 Tested | Pass (7.1): starts on 10 Jan |
 | 17 | Archive days before install are gone | Impacted by fix | 7.3–7.6 | 🟢 Tested | Pass (7.3–7.6 on 20 and 31 Jan) |
 | 18 | Full-month medal in the install month (D35 decision) | Impacted by fix | 7.2, 7.8–7.10 | 🟢 Tested | Pass. A late-month install earns "Full month" and the Gold medal after 1–3 days (install 29 Dec, medal 1 Jan). By design: product owner decided 10 Nov that the install month also gives the medal (D38 closed) |
@@ -144,7 +145,7 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 |---|---:|---:|---:|---:|
 | Missed in earlier runs | 15 | 9 | 4 | 2 |
 | Impacted by the date fixes | 15 | 14 | 1 | 0 |
-| **All** | **30** | **24** | **4** | **2** |
+| **All** | **30** | **28** | **0** | **2** |
 
 ---
 
@@ -167,9 +168,9 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 | J12 | Settings, About, notifications | 15 | any | 14 | 0 | 1 | **93.3%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 12.13 not run (Gmail not signed in) |
 | J13 | Accessibility, text size, reduce motion, tablet | 12 | any | 12 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | D8 accepted |
 | J14 | Resilience, deep links, data recovery, review prompt, reinstall | 13 | any | 12 | 0 | 1 | **92.3%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | 14.5, 14.12, 14.13 pass on the real date; 14.6 parked |
-| J15 | Real-world scenarios the emulator runs never covered | 13 | real | 7 | 4 | 2 | **53.8%** | 🟩🟩🟩🟩🟩🟥🟥🟥⬜⬜ | 15.2 D37, 15.5 D42, 15.6 D41, 15.13 D40 failed; 15.3, 15.4 need real devices |
+| J15 | Real-world scenarios the emulator runs never covered | 13 | real | 11 | 0 | 2 | **84.6%** | 🟩🟩🟩🟩🟩🟩🟩🟩⬜⬜ | 15.2, 15.5, 15.6, 15.13 fixed and retested 10 Nov; 15.3, 15.4 need real devices |
 | J16 | Retests for the date fixes (D32–D35) | 8 | any | 8 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
-| **Total** | | **211** | | **203** | **4** | **4** | **96.2%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥 | |
+| **Total** | | **211** | | **207** | **0** | **4** | **98.1%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩⬜ | |
 
 🟢 tested (passed) · 🔴 failed · ⚪ pending (not run yet). **Done** = steps passed ÷ steps. Each progress square is 10%: 🟩 passed, 🟥 failed, ⬜ pending.
 
@@ -495,18 +496,18 @@ Then **uninstall** the app before J1.
 | # | Step | Expected |
 |---|---|---|
 | 15.1 | Travel west across a date line: after solving today's daily, set the time zone so the local date goes back a day; open Home and solve that day's daily. | The daily can be played. Record whether it counts toward the streak (the rewound-clock guard may refuse it: scenario #2). No crash; streak not lost. |
-| 15.2 | Install this debug-signed APK, play, then install a release-key build over it. | Expected today: Android refuses the update, so testers must uninstall (progress lost). Record the result; testers must be told before the first release-key build (#3). |
+| 15.2 | Install this debug-signed APK, play, then install a release-key build over it. | ✅ **Retested 10 Nov (emulator), fixed.** Expected today: Android refuses the update, so testers must uninstall (progress lost). Record the result; testers must be told before the first release-key build (#3). |
 | 15.3 | Real ARM phones (at least one low-end, 2–3 GB RAM): J1–J3 on each. | Same results as on the emulator; no stutter while typing; animations smooth; no crash (#4). |
 | 15.4 | iOS (TestFlight): J1–J3, iCloud sync between two devices, notification prompt. | Same results as Android; sync merges as in the merge rules (#5). |
-| 15.5 | Real phones (Samsung, Xiaomi/Oppo): turn the reminder on, leave the phone idle overnight with battery saver on. | The reminder arrives at the set time, once, and not on a day the daily is already solved (#6). |
-| 15.6 | Widget on a Samsung or Xiaomi launcher, left overnight. | After midnight the widget shows the new daily without opening the app (#7). |
+| 15.5 | Real phones (Samsung, Xiaomi/Oppo): turn the reminder on, leave the phone idle overnight with battery saver on. | ✅ **Retested 10 Nov (emulator), fixed.** The reminder arrives at the set time, once, and not on a day the daily is already solved (#6). |
+| 15.6 | Widget on a Samsung or Xiaomi launcher, left overnight. | ✅ **Retested 10 Nov (emulator), fixed.** After midnight the widget shows the new daily without opening the app (#7). |
 | 15.7 | Google backup: back up, then restore onto a second device or emulator. | Progress, streak, hints and badges are restored, or the loss is known and accepted (#8). |
 | 15.8 | Leave the app open on Home across midnight (no restart). | Home switches to the new daily and the free hints refill; a puzzle open at midnight still counts for its own day (#10). |
 | 15.9 | Come back after a long gap: jump the clock 60 days ahead. | Streak ends (or freezes are spent correctly); the archive lists every day since install; screens open quickly (#11). |
 | 15.10 | Year end and leap day: clock at 31 Dec 23:58 → 1 Jan; and 28 Feb → 29 Feb 2028. | Streak and weekly freeze carry over correctly (ISO weeks); the stamp book starts a new month and year; no gaps (#12). |
 | 15.11 | Screens and navigation: a small 5" phone, a foldable, gesture navigation and 3-button navigation. | Nothing cut off or hidden behind a notch or the navigation bar; Back works the same (#13). |
 | 15.12 | Developer options → "Don't keep activities"; leave the puzzle mid-way and come back. | The puzzle is restored exactly; no double solve or lost letters (#14). |
-| 15.13 | After a mixed day (today's daily, an archive daily, two levels), compare every count. | Home, Stats (streak, week dots, letters, badges, solves), Archive and the Solved screens all agree (#15, the D34 kind of mismatch). |
+| 15.13 | After a mixed day (today's daily, an archive daily, two levels), compare every count. | ✅ **Retested 10 Nov (emulator), fixed.** Home, Stats (streak, week dots, letters, badges, solves), Archive and the Solved screens all agree (#15, the D34 kind of mismatch). |
 
 ---
 
