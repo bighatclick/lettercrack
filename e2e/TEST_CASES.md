@@ -92,7 +92,7 @@ The seed totals **1,463 XP**, so only Rookie and Apprentice can be reached (see 
 | | |
 |---|---|
 | **Tested (passed)** | 203. The 14 rewritten steps (✅), 14.5, 14.12, 14.13, J16 and 7 of J15 passed on the x86_64 release E2E build with D32–D35. |
-| **Failed** | 4 steps: 15.2 (D37 debug-signed builds can't be updated), 15.5 (D42 reminder up to an hour late in Doze), 15.6 (D41 widget not refreshed at midnight), 15.13 (D40 solve counts disagree). Scenario #18 is also red (D38: the install-month medal is too easy) although its steps pass as written. |
+| **Failed** | 4 steps: 15.2 (D37 debug-signed builds can't be updated), 15.5 (D42 reminder up to an hour late in Doze), 15.6 (D41 widget not refreshed at midnight), 15.13 (D40 solve counts disagree). D38 (install-month medal) was closed as by design on 10 Nov: the product owner chose to give the medal in the install month too. |
 | **Pending** | 4: 15.3 (real ARM phones), 15.4 (iOS), 12.13 (Gmail not signed in), 14.6 (review prompt, parked). |
 | **Findings, low** | D36 (travel west: wrong "Time traveller" badge, goals reset), D39 ("0 of 1 days"). |
 | **Accepted exception** | D8: cells and keys are ≥ 44 pt tall but narrower than 44 pt, because the line width sets them (13.9). |
@@ -126,7 +126,7 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 | 15 | Numbers agree across Home, Stats, Archive, Solved | Missed | 15.13 | 🔴 Failed | D40: Archive 23 dailies solved vs Stats "Daily quotes solved: 13" (on-day only) vs "12 quotes solved" (per quote; the seed repeats quotes) |
 | 16 | Archive grid starts on the install day | Impacted by fix | 7.1 | 🟢 Tested | Pass (7.1): starts on 10 Jan |
 | 17 | Archive days before install are gone | Impacted by fix | 7.3–7.6 | 🟢 Tested | Pass (7.3–7.6 on 20 and 31 Jan) |
-| 18 | Full-month medal in the install month (D35 decision) | Impacted by fix | 7.2, 7.8–7.10 | 🔴 Failed | Steps pass as written, but D38: a late-month install earns "Full month" and the Gold medal after 1–3 days (seen: install 29 Dec, medal 1 Jan). Decision needed |
+| 18 | Full-month medal in the install month (D35 decision) | Impacted by fix | 7.2, 7.8–7.10 | 🟢 Tested | Pass. A late-month install earns "Full month" and the Gold medal after 1–3 days (install 29 Dec, medal 1 Jan). By design: product owner decided 10 Nov that the install month also gives the medal (D38 closed) |
 | 19 | Daily number in the share text | Impacted by fix | 2.22, 6.3 | 🟢 Tested | Pass (6.3): "LetterCrack #75 …"; 2.22 uses the same numbering |
 | 20 | Which quote shows on which date | Impacted by fix | 7.11 | 🟢 Tested | Pass (7.11): 11 and 21 Jan show the same quote as separate days; letters counted once |
 | 21 | Sunday specials stay on Sundays | Impacted by fix | 16.1 | 🟢 Tested | Tag on every Sunday (3 checked). The shipped seed has no long quotes, so "long" can't be checked until quotes.v1.json ships |
@@ -144,7 +144,7 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 |---|---:|---:|---:|---:|
 | Missed in earlier runs | 15 | 9 | 4 | 2 |
 | Impacted by the date fixes | 15 | 14 | 1 | 0 |
-| **All** | **30** | **23** | **5** | **2** |
+| **All** | **30** | **24** | **4** | **2** |
 
 ---
 
@@ -159,7 +159,7 @@ Status: 🟢 tested · 🔴 failed · ⚪ pending. "Missed" = not covered by any
 | J4 | Daily goals and the +1 hint reward | 9 | 01-10, 01-11 | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
 | J5 | Hint exhaustion and midnight refill | 6 | 01-10 → 01-11 | 6 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
 | J6 | Streak, milestones, saved freezes, reminder, rewound clock | 16 | 01-11 → 01-24 | 16 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Rerun as 16.2: pass |
-| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | 11 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | All 11 retested (install-day archive). D38 open |
+| J7 | Archive and the monthly stamp book | 11 | 01-24 → 02-01 | 11 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | All 11 retested (install-day archive). D38 closed as by design |
 | J8 | Stats: rank, freezes, badge shelf | 10 | any | 10 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 | Badge rerun as 16.5: pass |
 | J9 | Library and author facts | 9 | any | 9 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |
 | J10 | Inky's wardrobe and time-of-day badges | 13 | any | 13 | 0 | 0 | **100%** | 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩 |  |

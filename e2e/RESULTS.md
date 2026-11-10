@@ -2,13 +2,13 @@
 
 ## 30-scenario run (10 Nov 2026)
 
-Pixel 7 emulator (Android 15), x86_64 release E2E build from commit ab65932 (D32–D35). Clock, time zone, screen size and navigation moved per step with adb (root). Results per scenario are in TEST_CASES.md (scenario tracker): 23 pass, 5 fail, 2 blocked (real ARM phones, iOS).
+Pixel 7 emulator (Android 15), x86_64 release E2E build from commit ab65932 (D32–D35). Clock, time zone, screen size and navigation moved per step with adb (root). Results per scenario are in TEST_CASES.md (scenario tracker): 24 pass, 4 fail, 2 blocked (D38 closed as by design) (real ARM phones, iOS).
 
 | Defect | Severity | What happened | Steps |
 |---|---|---|---|
 | D36 | Low | Travelling west (India → Los Angeles) after solving today's daily: Home offers the previous local day's daily as "Today's quote"; solving it gives no streak credit (expected) but awards **Time traveller** ("from the archive"). Back in India, that day's goals had reset: the daily shows "Solved" but "Solve today's quote" is unticked. | 15.1 |
 | D37 | High (testers) | A build signed with another key can't update this debug-signed APK: `INSTALL_FAILED_UPDATE_INCOMPATIBLE`. Anyone on the debug APK must uninstall (losing progress) before a release-key build. Sign tester builds with the release (upload) key, or tell testers. | 15.2 |
-| D38 | Medium | Since D35 the install month needs only the days from the install day for its medal: install on 29 Dec, solve 3 dailies → **Full month** badge and **Gold medal** outfit on 1 Jan; install on 29 Feb → "0 of 1 days". Too easy. | 7.8, 15.10 |
+| D38 | Closed (by design) | Since D35 the install month needs only the days from the install day for its medal: install on 29 Dec, solve 3 dailies → **Full month** badge and **Gold medal** outfit on 1 Jan; install on 29 Feb → "0 of 1 days". **Decision 10 Nov: by design.** The install month gives the medal too, counting from the install day. | 7.8, 15.10 |
 | D39 | Low | "0 of 1 days stamped" (and "1 of 1 days"): the stamp text isn't pluralised. | 14.13 |
 | D40 | Medium | After a mixed day the counts disagree: Archive 22 + today = 23 dailies solved; Stats "Daily quotes solved: 13" (on-day only, archive solves left out); Home "12 quotes solved" and Stats "Puzzles solved: 12" (one per quote, so repeated seed quotes count once; the weekly bars lose earlier solves of a repeated quote). | 15.13 |
 | D41 | Low | The widget only refreshes on Android's 30-minute update, so after midnight it shows yesterday's quote until then (stayed on Tuesday's at 00:00:35; right after a forced update). | 15.6 |
