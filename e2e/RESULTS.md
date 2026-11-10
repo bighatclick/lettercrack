@@ -1,5 +1,18 @@
 # E2E run results (suite v2)
 
+## Fixes retested (10 Nov 2026)
+
+x86_64 release E2E build of ed8e9e3, signed with the new upload key, on the Pixel 7 emulator. All six open defects pass; D38 closed as by design.
+
+| Defect | Fix | Emulator result |
+|---|---|---|
+| D36 | Goals of a later day are never replaced by an earlier day's; a daily solved on its own date isn't an archive solve | Install 5 Mar (India), solve the daily, switch to Los Angeles (4 Mar), solve Home's daily, back to India: "Solve today's quote: done", Time traveller still locked |
+| D37 | `plugins/withReleaseSigning.js` signs release builds with the upload key in `~/.lettercrack/` (outside the repo; back it up) | APK signer CN=LetterCrack (SHA-256 ef3f32ae…); `adb install -r` of a newer build kept progress and the widget. The old debug-key install had to be removed once |
+| D39 | Plural keyed on the day total | "February 2028: 0 of 1 day stamped", "0 of 1 stamp" |
+| D40 | One count for Home, Stats and Archive (`solvedCounts`) | Home 4 quotes solved, Stats 4 puzzles / 3 dailies, Archive 3 solved |
+| D41 | Alarm just after midnight (exact where allowed, else a 10-min window) + re-render on clock/time-zone change | Widget showed Thursday's quote at 00:10:10 (was up to 30 min) |
+| D42 | Toggle reflects notification permission; "around 9am" | Revoked → Off, granted again → On, setting kept. Delivery stays inexact by design (no exact-alarm permission) |
+
 ## 30-scenario run (10 Nov 2026)
 
 Pixel 7 emulator (Android 15), x86_64 release E2E build from commit ab65932 (D32–D35). Clock, time zone, screen size and navigation moved per step with adb (root). Results per scenario are in TEST_CASES.md (scenario tracker): 24 pass, 4 fail, 2 blocked (D38 closed as by design) (real ARM phones, iOS).
