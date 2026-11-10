@@ -15,6 +15,7 @@ import { archiveMonths, dailyStatus } from '@/game/archive';
 import { isSundaySpecial, library, rankOf, unlockFacts, unseenAwards } from '@/game/awards';
 import { needsOnboarding } from '@/game/onboarding';
 import { dailyKey, nextLevelRef } from '@/game/session';
+import { solvedCounts } from '@/game/stats';
 import { useNow } from '@/game/useNow';
 import { useOutfit } from '@/game/useOutfit';
 import { cipherPreview } from '@/game/widget';
@@ -223,7 +224,7 @@ export default function Home() {
           gradient="sunshine"
           icon="chart"
           title={t('home.stats')}
-          subtitle={t('home.statsSub', { count: Object.keys(root.progress.solved).length })}
+          subtitle={t('home.statsSub', { count: solvedCounts(root, content, date).puzzles })}
           onPress={() => router.push('/stats')}
           testID="home-stats"
           fitFor={tileTitles}

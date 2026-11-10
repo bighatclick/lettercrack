@@ -6,11 +6,11 @@ import type { Content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
 import { awardBadges, type BadgeFacts, type BadgeMoment } from '@/engine/badges';
 import { chaptersDone } from '@/engine/chapters';
-import { addDays, dayNumber, isoWeek, LAUNCH_DATE, type LocalDate } from '@/engine/daily';
+import { addDays, dailyQuoteId, dayNumber, isoWeek, type LocalDate } from '@/engine/daily';
 import { rankFor, ranksReached, type RankView } from '@/engine/rank';
 import { AUTHOR_SETS, type AuthorSet, itemById, type UnlockFacts, unlockedItems } from '@/engine/wardrobe';
 
-import { dailyStatus } from './archive';
+import { dailyStart, dailyStatus } from './archive';
 
 const lettersOf = (text: string) => text.replace(/[^a-z]/gi, '').length;
 
@@ -58,29 +58,33 @@ export const setsDone = (root: Root, content: Content): AuthorSet[] =>
 /** Sundays are Sunday specials: a longer quote with its own badge. */
 export const isSundaySpecial = (date: LocalDate): boolean => new Date(dayNumber(date) * 86_400_000).getUTCDay() === 0;
 
-/** Every daily date (launch … today) whose daily is solved, on the day or later. */
-export function solvedDailyDates(root: Root, content: Content, today: LocalDate, launch = LAUNCH_DATE): LocalDate[] {
-  if (today < launch) return [];
+/** Every daily date (player's first day … today) whose daily is solved, on the day or later. */
+export function solvedDailyDates(root: Root, content: Content, today: LocalDate, start = dailyStart(root)): LocalDate[] {
+  if (today < start) return [];
   const out: LocalDate[] = [];
-  for (let d = launch; d <= today; d = addDays(d, 1)) {
-    if (dailyStatus(root, content, d, launch) === 'solved') out.push(d);
+  for (let d = start; d <= today; d = addDays(d, 1)) {
+    if (dailyStatus(root, content, d) === 'solved') out.push(d);
   }
   return out;
 }
 
 export type StampMonth = { month: string; days: number; stamps: number; medal: boolean };
 
-/** Monthly stamp book: one stamp per solved daily; a medal for a full calendar month. Newest first. */
-export function stampBook(solvedDailies: readonly LocalDate[], today: LocalDate, launch = LAUNCH_DATE): StampMonth[] {
-  if (today < launch) return [];
+/**
+ * Monthly stamp book: one stamp per solved daily; a medal for a full calendar month. Newest first.
+ * The player's first month starts on their first day (`start`), so it can still earn a medal.
+ */
+export function stampBook(solvedDailies: readonly LocalDate[], today: LocalDate, start: LocalDate): StampMonth[] {
+  if (today < start) return [];
   const byMonth = new Map<string, number>();
   for (const d of solvedDailies) byMonth.set(d.slice(0, 7), (byMonth.get(d.slice(0, 7)) ?? 0) + 1);
   const out: StampMonth[] = [];
-  let m = launch.slice(0, 7);
+  let m = start.slice(0, 7);
   const last = today.slice(0, 7);
   while (m <= last) {
     const [y, mo] = m.split('-').map(Number) as [number, number];
-    const days = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+    const inMonth = new Date(Date.UTC(y, mo, 0)).getUTCDate();
+    const days = m === start.slice(0, 7) ? inMonth - Number(start.slice(8)) + 1 : inMonth;
     const stamps = byMonth.get(m) ?? 0;
     out.push({ month: m, days, stamps, medal: stamps >= days });
     m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`;
@@ -99,6 +103,10 @@ function perfectWeeks(solvedOnDay: readonly LocalDate[]): number {
   return [...weeks.values()].filter((s) => s.size >= 7).length;
 }
 
+function solvedOnItsDay(root: Root, content: Content, date: LocalDate): boolean {
+  return root.progress.solved[dailyQuoteId(date, content.dailyOrder)]?.date === date;
+}
+
 export function badgeFacts(root: Root, content: Content, today: LocalDate): BadgeFacts {
   const recs = Object.values(root.progress.solved);
   const dailies = solvedDailyDates(root, content, today);
@@ -111,12 +119,14 @@ export function badgeFacts(root: Root, content: Content, today: LocalDate): Badg
     expertSolves: recs.filter((r) => r.difficulty === 'expert').length,
     bestStreak: root.daily.best,
     dailies: Math.max(dailies.length, onDay.size),
-    archiveSolves: dailies.filter((d) => !onDay.has(d)).length,
+    // From the archive = solved on a later day. A daily solved on its own date without streak
+    // credit (travelling west, a wound-back clock) isn't an archive solve (D36).
+    archiveSolves: dailies.filter((d) => !onDay.has(d) && !solvedOnItsDay(root, content, d)).length,
     perfectWeeks: perfectWeeks(root.daily.solvedDates),
     authors: collectedAuthors(root, content).size,
     setsDone: setsDone(root, content).length,
     chaptersDone: chaptersDone(root.progress.levelIndex),
-    monthMedals: stampBook(dailies, today).filter((m) => m.medal).length,
+    monthMedals: stampBook(dailies, today, dailyStart(root)).filter((m) => m.medal).length,
     sundays: dailies.filter(isSundaySpecial).length,
   };
 }

@@ -219,7 +219,7 @@
     "sound": "Sound effects",
     "haptics": "Haptics",
     "reminder": "Daily reminder",
-    "reminderHint": "A notification at 9am when the day’s quote is ready.",
+    "reminderHint": "A notification around 9am when the day’s quote is ready.",
     "about": "About",
     "aboutQuotes": "About our quotes",
     "feedback": "Send feedback",
@@ -438,9 +438,11 @@
   },
   "stamps": {
     "title": "Stamp book",
-    "count": "{{count}} of {{days}} stamps",
+    "count_one": "{{stamped}} of {{count}} stamp",
+    "count_other": "{{stamped}} of {{count}} stamps",
     "medal": "Full month! Medal earned.",
-    "label": "{{month}}: {{count}} of {{days}} days stamped"
+    "label_one": "{{month}}: {{stamped}} of {{count}} day stamped",
+    "label_other": "{{month}}: {{stamped}} of {{count}} days stamped"
   },
   "widget": {
     "title": "LetterCrack",

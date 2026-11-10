@@ -8,6 +8,11 @@ appId: app.lettercrack
     id: onboarding-skip
 - tapOn:
     id: onboarding-start
+# Goals and rank cards sit above Levels, so scroll to it.
+- scrollUntilVisible:
+    element:
+      id: home-level
+    direction: DOWN
 - tapOn:
     id: home-level
 - assertVisible:
@@ -18,6 +23,10 @@ appId: app.lettercrack
 - assertVisible: ".*guess Q.*"
 - stopApp
 - launchApp
+- scrollUntilVisible:
+    element:
+      id: home-level
+    direction: DOWN
 - tapOn:
     id: home-level
 - assertVisible: ".*guess Q.*"

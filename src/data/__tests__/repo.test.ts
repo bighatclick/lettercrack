@@ -1,5 +1,5 @@
 import { createMemoryKV } from '../kv';
-import { backupKey, load, ROOT_KEY, save } from '../repo';
+import { backupKey, LAST_GOOD_KEY, load, ROOT_KEY, save } from '../repo';
 import { defaultRoot } from '../schema';
 
 const NOW = 1_800_000_000_000;
@@ -107,5 +107,79 @@ describe('repo.load', () => {
     const res = load({ kv, now, report: mkReport() });
     expect(res.status).toBe('unreadable');
     expect(kv.getString(`root.corrupt.${NOW}`)).toContain('"streak":3');
+  });
+});
+
+// E2E 14.7: a damaged or lost main save comes back with all recent progress, from the copy kept in
+// a separate file. The pre-migration backup alone would bring back only the state from the last upgrade.
+describe('latest good copy', () => {
+  const played = () => {
+    const s = defaultRoot(NOW);
+    s.daily.streak = 9;
+    s.daily.best = 14;
+    s.hints.balance = 6;
+    s.progress.seenQuoteIds = [4, 8, 15];
+    s.awards.earned = { firstCrack: '2027-02-01' };
+    s.outfit.hat = 'topHat';
+    s.goals = { date: '2027-02-18', progress: { solveAny: 1 }, rewarded: false };
+    return s;
+  };
+
+  it('save() writes the copy to the backup store, not only the main one', () => {
+    const backup = createMemoryKV();
+    const kv = createMemoryKV({}, backup);
+    save(kv, played(), false);
+    expect(JSON.parse(backup.getString(LAST_GOOD_KEY)!)).toEqual(played());
+  });
+
+  it('a read-only session never writes the copy', () => {
+    const backup = createMemoryKV();
+    expect(save(createMemoryKV({}, backup), played(), true)).toBe(false);
+    expect(backup.getString(LAST_GOOD_KEY)).toBeUndefined();
+  });
+
+  it('restores everything from the copy when the main blob is junk, ahead of an older pre-migration backup', () => {
+    const old = { ...defaultRoot(NOW), schemaVersion: 1, daily: { streak: 2, best: 2, freezeUsedWeek: null, solvedDates: [] } };
+    const backup = createMemoryKV({ [LAST_GOOD_KEY]: JSON.stringify(played()) });
+    const kv = createMemoryKV({ [ROOT_KEY]: '\u0000junk', [backupKey(1)]: JSON.stringify(old) }, backup);
+    const res = load({ kv, now, report: mkReport() });
+    expect(res.status).toBe('recoveredFromBackup');
+    expect(res.state).toEqual(played());
+    expect(JSON.parse(kv.getString(ROOT_KEY)!)).toEqual(played());
+    expect(kv.getString(`root.corrupt.${NOW}`)).toBe('\u0000junk');
+  });
+
+  it('restores from the copy when the main file is gone (MMKV reset it), instead of starting fresh', () => {
+    const backup = createMemoryKV({ [LAST_GOOD_KEY]: JSON.stringify(played()) });
+    const report = mkReport();
+    const res = load({ kv: createMemoryKV({}, backup), now, report });
+    expect(res.status).toBe('recoveredFromBackup');
+    expect(res.state).toEqual(played());
+    expect(report.error).toHaveBeenCalled();
+  });
+
+  it('a true first launch (both stores empty) is still fresh', () => {
+    const backup = createMemoryKV();
+    const res = load({ kv: createMemoryKV({}, backup), now, report: mkReport() });
+    expect(res.status).toBe('fresh');
+    expect(JSON.parse(backup.getString(LAST_GOOD_KEY)!)).toEqual(defaultRoot(NOW));
+  });
+
+  it('falls back to the pre-migration backup when the copy is junk too', () => {
+    const good = { ...defaultRoot(NOW), daily: { streak: 21, best: 30, freezeUsedWeek: null, solvedDates: [] } };
+    const backup = createMemoryKV({ [LAST_GOOD_KEY]: 'junk' });
+    const kv = createMemoryKV({ [ROOT_KEY]: 'garbage', [backupKey(1)]: JSON.stringify(good) }, backup);
+    const res = load({ kv, now, report: mkReport() });
+    expect(res.status).toBe('recoveredFromBackup');
+    expect(res.state.daily.streak).toBe(21);
+  });
+
+  it('with nothing usable, sets the unusable copy aside before it gets replaced', () => {
+    const backup = createMemoryKV({ [LAST_GOOD_KEY]: 'junk copy' });
+    const kv = createMemoryKV({ [ROOT_KEY]: 'garbage' }, backup);
+    const res = load({ kv, now, report: mkReport() });
+    expect(res.status).toBe('unreadable');
+    expect(kv.getString(`root.corrupt.${NOW}`)).toBe('garbage');
+    expect(kv.getString(`root.corrupt.${NOW}.lastGood`)).toBe('junk copy');
   });
 });

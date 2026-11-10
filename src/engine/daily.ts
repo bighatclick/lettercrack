@@ -7,11 +7,14 @@
 export type LocalDate = string;
 
 /**
- * Day 1 of the daily sequence. FROZEN (5 Nov 2026): every player's daily, streak and archive are
- * derived from it forever. Never change it after the first external build. Public release should
- * be on or after this date: before it, every day shows day 1's quote (dailyIndex clamps to 0).
+ * Day 1 of the daily quote order: which quote every player gets on a date, and the daily number.
+ * It is NOT a release date (release can be any day): it only has to be on or before the first day
+ * anyone plays, so it is in the past. FROZEN (10 Nov 2026): never change it after the first
+ * external build. It is a Friday like the builder's slot 0 (tools/quotes/build.mjs DAILY_EPOCH),
+ * so Sunday-special slots land on Sundays. Each player's archive starts on their own first day
+ * (see `dailyStart` in src/game/archive.ts), not here.
  */
-export const LAUNCH_DATE: LocalDate = '2027-01-01';
+export const DAILY_EPOCH: LocalDate = '2026-10-30';
 
 const DAY_MS = 86_400_000;
 const RE = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -59,29 +62,29 @@ export function fromDayNumber(n: number): LocalDate {
 export const addDays = (date: LocalDate, n: number): LocalDate => fromDayNumber(dayNumber(date) + n);
 export const daysBetween = (from: LocalDate, to: LocalDate): number => dayNumber(to) - dayNumber(from);
 
-/** 0 on launch day. Dates before launch clamp to 0 (dev builds, wrong clocks). */
-export function dailyIndex(date: LocalDate, launch: LocalDate = LAUNCH_DATE): number {
-  return Math.max(0, daysBetween(launch, date));
+/** 0 on the epoch. Dates before it clamp to 0 (wrong clocks). */
+export function dailyIndex(date: LocalDate, epoch: LocalDate = DAILY_EPOCH): number {
+  return Math.max(0, daysBetween(epoch, date));
 }
 
 /**
  * The quote for a date. `order` is the fixed daily order shipped in the asset; it is appended to
  * in updates, never reordered. If the order runs out, it wraps (the pool grows long before that).
  */
-export function dailyQuoteId(date: LocalDate, order: readonly number[], launch: LocalDate = LAUNCH_DATE): number {
+export function dailyQuoteId(date: LocalDate, order: readonly number[], epoch: LocalDate = DAILY_EPOCH): number {
   if (order.length === 0) throw new Error('daily order is empty');
-  return order[dailyIndex(date, launch) % order.length] as number;
+  return order[dailyIndex(date, epoch) % order.length] as number;
 }
 
-/** A daily can be played if it is between launch and today. Future dailies never are. */
-export function isPlayableDaily(date: LocalDate, today: LocalDate, launch: LocalDate = LAUNCH_DATE): boolean {
-  return isLocalDate(date) && date >= launch && date <= today;
+/** A daily can be played if it is between the epoch and today. Future dailies never are. */
+export function isPlayableDaily(date: LocalDate, today: LocalDate, epoch: LocalDate = DAILY_EPOCH): boolean {
+  return isLocalDate(date) && date >= epoch && date <= today;
 }
 
-/** Archive dates, newest first, from yesterday back to launch (today's daily is on Home). */
-export function archiveDates(today: LocalDate, launch: LocalDate = LAUNCH_DATE): LocalDate[] {
+/** Archive dates, newest first, from yesterday back to `start` (today's daily is on Home). */
+export function archiveDates(today: LocalDate, start: LocalDate): LocalDate[] {
   const out: LocalDate[] = [];
-  for (let n = dayNumber(today) - 1; n >= dayNumber(launch); n--) out.push(fromDayNumber(n));
+  for (let n = dayNumber(today) - 1; n >= dayNumber(start); n--) out.push(fromDayNumber(n));
   return out;
 }
 

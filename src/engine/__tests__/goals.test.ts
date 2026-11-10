@@ -78,3 +78,13 @@ describe('daily goals', () => {
     for (const v of Object.values(GOAL_TARGETS)) expect(v).toBeGreaterThan(0);
   });
 });
+
+describe('D36: an earlier day never replaces a later day\'s goals', () => {
+  it('keeps the newer goals when the clock is behind them (travel west)', () => {
+    const later = recordGoalSolve(emptyGoals(), DAY, daily).state;
+    const west = recordGoalSolve(later, addDays(DAY, -1), level);
+    expect(west.state).toBe(later);
+    expect(west.rewardNow).toBe(false);
+    expect(goalProgress(west.state, DAY)).toEqual(goalProgress(later, DAY));
+  });
+});

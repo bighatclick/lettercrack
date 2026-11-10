@@ -60,12 +60,22 @@ describe('Sunday specials and the stamp book', () => {
 
   it('stamps solved dailies per month and gives a medal for a full month', () => {
     const jan = Array.from({ length: 31 }, (_, i) => `2027-01-${String(i + 1).padStart(2, '0')}`);
-    const book = stampBook([...jan, '2027-02-01'], '2027-02-10');
+    const book = stampBook([...jan, '2027-02-01'], '2027-02-10', '2027-01-01');
     expect(book).toEqual([
       { month: '2027-02', days: 28, stamps: 1, medal: false },
       { month: '2027-01', days: 31, stamps: 31, medal: true },
     ]);
-    expect(stampBook([], '2026-12-01')).toEqual([]);
+    expect(stampBook([], '2026-12-01', '2027-01-01')).toEqual([]);
+  });
+
+  it('lets the install month earn a medal with the days from the install day', () => {
+    const fromTenth = Array.from({ length: 22 }, (_, i) => `2027-01-${String(i + 10).padStart(2, '0')}`);
+    const [jan] = stampBook(fromTenth, '2027-01-31', '2027-01-10');
+    expect(jan).toEqual({ month: '2027-01', days: 22, stamps: 22, medal: true });
+    const [part] = stampBook(fromTenth.slice(1), '2027-01-31', '2027-01-10');
+    expect(part?.medal).toBe(false);
+    // Later months need every day.
+    expect(stampBook(fromTenth, '2027-02-05', '2027-01-10')[0]).toEqual({ month: '2027-02', days: 28, stamps: 0, medal: false });
   });
 
   it('finds dailies solved on the day or later from the archive', () => {

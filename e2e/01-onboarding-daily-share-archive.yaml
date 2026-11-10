@@ -25,12 +25,37 @@ appId: app.lettercrack
     visible:
       id: solved-quote
     timeout: 5000
+# The awards and wardrobe cards can push Share below the fold.
+- scrollUntilVisible:
+    element:
+      id: solved-share
+    direction: DOWN
 - tapOn:
     id: solved-share
-# Dismiss the system share sheet.
+# Dismiss the system share sheet. Wait for it first: a Back sent while it is still opening is lost.
+- extendedWaitUntil:
+    visible:
+      text: "Sharing.*"
+    timeout: 10000
+    optional: true
 - back
+- runFlow:
+    when:
+      visible:
+        text: "Sharing.*"
+    commands:
+      - back
+- scrollUntilVisible:
+    element:
+      text: Home
+    direction: DOWN
 - tapOn: Home
 # Archive opens (empty on launch day, so only check the screen).
+# Home has goals, rank and level cards above the tiles.
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
 - tapOn:
     id: home-archive
 - assertVisible: Archive

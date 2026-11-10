@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
 import { useAppStore } from '@/data/store';
-import { type ArchiveDay, archiveMonths } from '@/game/archive';
+import { type ArchiveDay, archiveMonths, dailyStart } from '@/game/archive';
 import { solvedDailyDates, stampBook } from '@/game/awards';
 import { dailyKey } from '@/game/session';
 import { today } from '@/game/today';
@@ -21,7 +21,7 @@ export default function ArchiveScreen() {
   const date = today();
   const months = useMemo(() => archiveMonths(root, content, date), [root, date]);
   // Monthly stamp book: each solved daily is a stamp; a full month earns a medal.
-  const stamps = useMemo(() => new Map(stampBook(solvedDailyDates(root, content, date), date).map((m) => [m.month, m])), [root, date]);
+  const stamps = useMemo(() => new Map(stampBook(solvedDailyDates(root, content, date), date, dailyStart(root)).map((m) => [m.month, m])), [root, date]);
   const monthName = (m: string) =>
     new Date(`${m}-15T12:00:00Z`).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric', timeZone: 'UTC' });
   // Monday-first narrow weekday names (2024-01-01 was a Monday).
@@ -73,13 +73,13 @@ export default function ArchiveScreen() {
               {stamps.get(m.month) ? (
                 <View
                   accessible
-                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), count: stamps.get(m.month)!.stamps, days: stamps.get(m.month)!.days })}
+                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days })}
                   testID={`stamps-${m.month}`}
                 >
                   {stamps.get(m.month)!.medal ? (
                     <Tag label={t('stamps.medal')} icon="trophy" bg={hue(1).solid} fg={hue(1).on} />
                   ) : (
-                    <Tag label={t('stamps.count', { count: stamps.get(m.month)!.stamps, days: stamps.get(m.month)!.days })} icon="check" bg={hue(3).tint} fg={hue(3).deep} />
+                    <Tag label={t('stamps.count', { stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days })} icon="check" bg={hue(3).tint} fg={hue(3).deep} />
                   )}
                 </View>
               ) : null}

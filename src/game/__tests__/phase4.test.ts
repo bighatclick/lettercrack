@@ -3,7 +3,9 @@ import { defaultRoot, type Root } from '@/data/schema';
 import { createPuzzle, puzzleReducer } from '@/engine/puzzle';
 import { pickNextQuote } from '@/engine/picker';
 
-import { archiveMonths, dailyStatus, settleLegacyDailies } from '../archive';
+import { DAILY_EPOCH, toLocalDate } from '@/engine/daily';
+
+import { archiveMonths, dailyStart, dailyStatus, settleLegacyDailies } from '../archive';
 import { completeOnboarding, needsOnboarding, ONBOARDING_TEXT, onboardingInit } from '../onboarding';
 import { noteReminderOffered, REMINDER_DAYS_AHEAD, reminderDates, shouldOfferReminder } from '../reminder';
 import { feedbackMailto, reportQuote } from '../report';
@@ -122,6 +124,24 @@ describe('archive (S4)', () => {
 
   it('is empty on launch day', () => {
     expect(archiveMonths(defaultRoot(NOW), content, LAUNCH, LAUNCH)).toEqual([]);
+  });
+
+  // Release can be on any day: each player's archive starts on the day they installed.
+  it("starts on the player's install day, whenever that is", () => {
+    const installed = defaultRoot(new Date(2027, 4, 20, 22).getTime()); // 20 May 2027, local
+    expect(dailyStart(installed)).toBe('2027-05-20');
+    expect(archiveMonths(installed, content, '2027-05-20')).toEqual([]);
+    const days = archiveMonths(installed, content, '2027-05-23').flatMap((m) => m.days.map((d) => d.date));
+    expect(days).toEqual(['2027-05-20', '2027-05-21', '2027-05-22']);
+  });
+
+  it('starts earlier if a daily was solved before the install day (wrong clock), never before the epoch', () => {
+    const r = defaultRoot(new Date(2027, 4, 20, 12).getTime());
+    const solvedEarly = { ...r, daily: { ...r.daily, solvedDates: ['2027-05-18'] } };
+    expect(dailyStart(solvedEarly)).toBe('2027-05-18');
+    const ancient = defaultRoot(new Date(2020, 0, 1, 12).getTime());
+    expect(dailyStart(ancient)).toBe(DAILY_EPOCH);
+    expect(toLocalDate(new Date(NOW))).toBe(dailyStart(defaultRoot(NOW)));
   });
 });
 

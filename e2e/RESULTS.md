@@ -1,5 +1,80 @@
 # E2E run results (suite v2)
 
+## 30-scenario run (10 Nov 2026)
+
+Pixel 7 emulator (Android 15), x86_64 release E2E build from commit ab65932 (D32–D35). Clock, time zone, screen size and navigation moved per step with adb (root). Results per scenario are in TEST_CASES.md (scenario tracker): 24 pass, 4 fail, 2 blocked (D38 closed as by design) (real ARM phones, iOS).
+
+| Defect | Severity | What happened | Steps |
+|---|---|---|---|
+| D36 | Low | Travelling west (India → Los Angeles) after solving today's daily: Home offers the previous local day's daily as "Today's quote"; solving it gives no streak credit (expected) but awards **Time traveller** ("from the archive"). Back in India, that day's goals had reset: the daily shows "Solved" but "Solve today's quote" is unticked. | 15.1 |
+| D37 | High (testers) | A build signed with another key can't update this debug-signed APK: `INSTALL_FAILED_UPDATE_INCOMPATIBLE`. Anyone on the debug APK must uninstall (losing progress) before a release-key build. Sign tester builds with the release (upload) key, or tell testers. | 15.2 |
+| D38 | Closed (by design) | Since D35 the install month needs only the days from the install day for its medal: install on 29 Dec, solve 3 dailies → **Full month** badge and **Gold medal** outfit on 1 Jan; install on 29 Feb → "0 of 1 days". **Decision 10 Nov: by design.** The install month gives the medal too, counting from the install day. | 7.8, 15.10 |
+| D39 | Low | "0 of 1 days stamped" (and "1 of 1 days"): the stamp text isn't pluralised. | 14.13 |
+| D40 | Medium | After a mixed day the counts disagree: Archive 22 + today = 23 dailies solved; Stats "Daily quotes solved: 13" (on-day only, archive solves left out); Home "12 quotes solved" and Stats "Puzzles solved: 12" (one per quote, so repeated seed quotes count once; the weekly bars lose earlier solves of a repeated quote). | 15.13 |
+| D41 | Low | The widget only refreshes on Android's 30-minute update, so after midnight it shows yesterday's quote until then (stayed on Tuesday's at 00:00:35; right after a forced update). | 15.6 |
+| D42 | Low | Reminders use inexact alarms with a 1-hour window. In Doze the 9:00 reminder had not arrived at 9:00:50; it came by 10:00. Settings says "at 9am". Also: a restored save can show the reminder On with nothing scheduled until notification permission is granted and the app reopened. | 15.5 |
+
+Also seen: the app ships the 30-quote seed, so Sunday specials are never long and daily quotes repeat every 10 days (16.1, 7.11). Not reproduced: Home once showed "1-day streak" on 5 Feb after three missed days; a clean relaunch showed none.
+
+## Real-phone install (10 Nov 2026)
+
+First install on a real Android phone (ARM release build, real date 9–10 Nov 2026, no clock change).
+
+| Defect | Severity | What happened | Fix |
+|---|---|---|---|
+| D32 | High | Daily opened before midnight, solved after it: the Solved screen said "This puzzle isn't available." The solve *was* saved, but nothing showed it: before the launch date only today's daily was valid, the archive started at the launch date (so it was empty), and every day before launch used the same quote, so Home offered the just-solved quote again as "today's". | A daily the player has started or solved can always be reopened or shown (`refForPlayer` in `src/game/session.ts`). With D33 fixed, yesterday's daily is a normal archive day. Unit tests. |
+| D33 | High | The app assumed release on 1 Jan 2027 (`LAUNCH_DATE`, a placeholder set in code on 22 Oct and "frozen" on 5 Nov; never decided by the owner). Releasing on any other day breaks dailies: before it, one quote every day and no archive; after it, the archive would start before the app existed. | No release date in the app. `DAILY_EPOCH` (Fri 30 Oct 2026, in the past) only fixes which quote falls on which date; each player's archive, stamp book and daily badges start on their install day (`dailyStart` in `src/game/archive.ts`). The quote file is unchanged: the epoch is 9 weeks before the old date, so Sunday specials stay on Sundays. Pre-v5 saves still map their old solves with the old date. Unit tests. |
+
+**Why testing missed it.** Every E2E run set the emulator clock to dates in January 2027 (the journeys' "clock" column), all after the hard-coded launch date. So 14.5 (midnight during a puzzle) passed, and the period a real phone is in today, before 1 Jan 2027, was never exercised. The unit tests also took the launch date as given: they checked future dates were refused, but nothing checked that the date itself was right, or a release on another day. The launch date was a code assumption that nobody confirmed. New steps 14.12 (real date) and 14.13 (install on any day) cover it; 14.5 is red until it is retested on a device.
+
+| D34 | Medium | Stats didn't add up after D32: streak 0, best 0 and no dot on the week strip, yet 46 letters and the First crack badge. The daily, opened before midnight and finished just after, was filed as a late archive solve, which counts for letters and badges but never for the streak. | A daily started on its own date and finished after midnight now counts for that date, streak included, as long as today's daily isn't solved yet (`recordDailySolve`, `startedOn` in `usePuzzleGame`). A rewound clock at open still gets no credit; a daily opened from the archive is still a late solve. Unit tests. Saves made before the fix keep their late solve (no streak). |
+| D35 | Low | Two side effects of D33: the medal for a full month could never be earned in the install month (days before install can't be played), and a deep link to a date before install opened a daily that isn't in the archive (solving it moved the archive start). | Install month: only the days from the install day count toward the medal ("N of 22 stamps"). Dailies before the install day don't open ("This puzzle isn't available"), unless already started or solved. Unit tests. |
+
+**Scenario review.** 30 scenarios (15 missed by earlier runs, 15 impacted by D32–D35) are in TEST_CASES.md: the scenario tracker, J15, J16, and 14 rewritten steps marked ⟳.
+
+Unit tests: 873 pass; typecheck, lint, quote pipeline tests (29) and `quotes:validate` clean.
+
+
+## Remaining-items round (9 Nov 2026)
+
+Release build: `EXPO_PUBLIC_E2E=1 npm run android:local -- release` (x86_64, signed with the debug key), installed over the debug build on the Pixel 7 emulator and on the Pixel Tablet emulator. 14.7 and U.7 ran on the debug build first. Unit tests: 859 pass; typecheck and lint are clean.
+
+Done in this round:
+- **E2E builds keep endless animations still** (`src/ui/fx/loops.ts`), so Maestro and uiautomator can read the screen. Unit-tested.
+- **14.7 fix:** the save is also kept in a separate MMKV file (`lettercrack.backup`, key `root.lastGood`) and updated on every save, so a damaged or missing main file comes back with the latest progress (before, only the copy from the last upgrade existed). 7 unit tests.
+- **D8:** accepted as an exception (cells and keys ≥ 44 pt tall, width set by the line); 13.9 updated.
+- **Local builds:** `android:local` turns off the Sentry upload (the release build failed on it) and takes `LC_NO_INSTALL=1`.
+- **Jest in a worktree:** the `/.claude/` ignore pattern matched every path when the checkout itself is under `.claude/worktrees/`, so `npm test` found no tests. It is now `<rootDir>/.claude/`.
+- **14.6:** parked by request.
+
+| Item | Build | Result |
+|---|---|---|
+| 14.7 Data recovery | Debug | **Pass.** Solved Level 10 first, so the latest save differed from any older copy (18 solved, Level 11, 976 letters, goals 34/150 and 1/2). Main file overwritten with 64 KB of junk: Home showed "We restored your saved progress from a backup." and every value above. Main file deleted: same result, plus 12 of 18 authors, 6 outfit items and 5 hints. The debug build also shows a "[lettercrack] Error: Main save missing…" toast (console.error in a dev build). |
+| U.7 Streak freeze credit | Debug | **Pass.** v2 save with streak 8 / best 8 (`e2e/state/u7-streak8/`) migrated on launch: Stats shows "1 saved streak freeze", "One week" earned. Current streak reads 0, which is right: that hand-edited save last solved on 16 Jan and the clock was 15 Feb. |
+| Maestro flows | Release | **Pass (2/2) after a flow fix.** Both failed at first because the goals, rank, awards and wardrobe cards now push `home-level`, `home-archive` and `solved-share` below the fold, and `tapOn` doesn’t scroll. The flows now `scrollUntilVisible` first. |
+| 2.6 Word hop | Release | **Pass.** Recorded at 30 fps with the emulator’s host recorder (`adb emu screenrecord`; the in-device `screenrecord` gave 0.8 fps). Erasing L and typing it again: KNOWLEDGED, UNIVERSALLY and SINGLE lift and grow, then settle; the line above doesn’t move. The first tries showed no hop because the emulator had Android animations off (all scales 0 = Reduce Motion), which correctly suppresses it. |
+| D10 | Release | **Was a crash; fixed.** See below. |
+| Maestro flows (after the D31 fix) | Release, phone | **Pass (2/2), twice in a row,** after a flow fix: flow 01 pressed Back while Android's share sheet was still opening, so the sheet stayed up and "Home" was never found. It now waits for the sheet ("Sharing…") and presses Back again if the sheet is still there. Home on the phone looks unchanged. |
+| D31 | Release, tablet | **Reproduced, then fixed.** Before the fix: after rotating, the tag read "TODAY’S" and Inky’s bubble ended "Let’s crack". After the fix (release build, Pixel Tablet): "TODAY’S QUOTE" and "…Let’s crack it!" in full on one line after 1, 2, 4, 5, 8, 9 and 12 rotations, both orientations. |
+
+### D10: release-build crash after a font size change (fixed)
+
+- **What happened:** with the app open, change Android’s font size (or anything else that makes Android recreate the activity), then tap any navigation button, e.g. "Continue level". The release build crashed: `FATAL EXCEPTION … JavascriptException: The imperative router is unavailable before the first render has finished`, thrown from an `onPress`. The crash came 36 s after the recreation, so it was not a startup race: navigation stayed broken until the app restarted.
+- **Cause (expo-router 58.0.25):** `ImperativeRoutingQueueBridge` binds the global `router` when a navigation root mounts and resets it to a stub that throws when a root unmounts. On recreation the new root mounts first, then the old root unmounts and unbinds the router the new root had just bound.
+- **Fix:** `patches/expo-router+58.0.25.patch` (applied by `patch-package` on `postinstall`, so EAS builds get it too): a bridge only unbinds if the router is still bound to it. `src/lib/__tests__/routerRebind.test.tsx` mounts a second bridge, unmounts the first and checks `router.push` still works; it fails without the patch. **When upgrading expo-router, check whether upstream fixed this and drop or redo the patch.**
+- **Retest on the release build:** four font size changes (1.3, 1.0, 1.15, 1.0) with the app open; Android recreated the screen each time (4 × `Running "main"`). After each one, Continue level and Settings opened, the process never restarted, and the log had no crash.
+
+### Still open
+
+- **14.6** parked; **12.13** needs a signed-in mail app.
+- Local emulator files (not committed): `e2e/state/phone-feb18/` (phone save before 14.7) and `e2e/state/u7-streak8/` (v2 save, 8-day streak).
+
+### Notes for the next run
+
+- This laptop came back on a temporary Windows profile (`C:\Users\TEMP`). The SDK, AVDs, Gradle cache, Python and git identity are under `C:\Users\Dell`, so set `ANDROID_HOME`, `ANDROID_AVD_HOME`, `GRADLE_USER_HOME`, `LOCALAPPDATA` (for `e2e/state/lib.sh`) to the Dell paths, or sign in to the normal profile.
+- After a JS-only change, `cd android && gradlew assembleRelease -PreactNativeArchitectures=x86_64` rebuilds the release APK in about 4 minutes; `android:local` regenerates `android/` and takes about 40.
+- The Pixel Tablet’s natural orientation is landscape; `wm user-rotation` didn’t rotate it. `adb emu rotate` with auto-rotate on does.
+
 ## Fix round and retest (9 Nov 2026)
 
 All defects from the v2 run were worked on, then retested on the phone emulator (and the tablet for D31) with the new code. Only JavaScript changed, so the existing dev build was reused, with Metro serving the new code. Unit tests: 849 pass; typecheck and lint are clean.
@@ -13,7 +88,7 @@ All defects from the v2 run were worked on, then retested on the phone emulator 
 | D26 | Medium | **Fixed** | New `FitText`: text scales with the size settings but never breaks inside a word. Home tile titles share one size. | Pass at the largest text: "Inky's wardrobe" whole, no clipped lines. |
 | D28 | Medium | **Fixed** | Author circles grow with the text size, and the initials are sized to the circle. | Pass at the largest text. |
 | D29 | Medium | **Fixed** | Badge columns widen with the text size; names use `FitText` with one shared size. | Pass at the largest text on Stats; also used on the Solved awards card. |
-| D31 | Medium | **Not fixed** | Investigated, see below. | Fails only after rotating. A fresh launch is fine in both orientations. |
+| D31 | Medium | **Fixed** (remaining-items round) | `src/ui/relayout.ts`, `src/ui/primitives/Text.tsx`: text is measured again once the window size settles. See below. | Verified on the release build on the tablet, 1–12 rotations. |
 | D14 | Low | **Fixed** | Closing the sheet without restarting forgets the pick. | Pass for Cancel and for tapping outside; Restart still works. |
 | D11 | Low | **Fixed** | `useNow` re-renders on foreground and every hour. Home reads the date from it, because the React Compiler memoises a bare `today()`. | Pass: afternoon → evening → next morning, date and daily card updated. |
 | D18 | Low | **Fixed** | Same mechanism in the puzzle hook. | Pass: "No hints left" → "5 hints left" after midnight without reopening. |
@@ -29,7 +104,7 @@ All defects from the v2 run were worked on, then retested on the phone emulator 
 | D12 | Cosmetic | **Fixed** | A backdrop fills the status-bar area once a page scrolls (Screen and Solved). | Pass on Home, Stats and Solved. |
 | D22 | Cosmetic | **Fixed** | Archive title shows "February 3, 2027". | Pass. |
 | D19 | Low | **Fixed (likely cause)** | Reminder scheduling runs one call at a time, and each day's reminder has a fixed ID, so a repeat replaces it. | Pass: 7 alarms after 3 quick foregrounds, one per day; exactly 1 notification at 09:00. The original was seen once, so this can't prove the race is gone. |
-| D10 | Low | **Partly** | No code change. | The 3 "imperative router" errors no longer appear. W1 ("linking configured in multiple places") still shows in the dev build when a font-size change recreates the screen; it's a dev warning, and the app recovers. Recheck on a release build. |
+| D10 | **High** | **Fixed (remaining-items round)** | expo-router patch, see above. | On the release build this was a crash, not a warning. Fixed and retested on the release build. |
 | D8 | Low | **Open (design)** | Not changed. | Cells are 44+ tall and keys 52 tall, but their width is set by fitting about 15 cells and 10 keys across a phone, and they touch, so the hit area can't grow sideways. Needs a design decision. |
 
 New issues found while retesting, all fixed and retested:
@@ -41,8 +116,10 @@ New issues found while retesting, all fixed and retested:
 
 - It happens **only after rotating** the tablet. A fresh launch shows "TODAY'S QUOTE" and "…Let's crack it!" in full, in portrait and in landscape.
 - React Native measures the same bounds before and after the rotation. Android then draws the glyphs about 1.5% wider, so the text wraps inside a box sized for one line, and the second line is hidden.
-- Remounting the text on a size change didn't help (tried, then reverted). The cause is below the app's code.
-- Next step: check on a real tablet and a release build before changing the layout. If it reproduces, give these one-line labels spare width.
+- Cause: React Native's text measure cache (`TextMeasureCache`, keyed on the text and its style) keeps returning the width measured before the rotation. A fresh process has an empty cache, which is why a fresh launch is fine.
+- What didn't work: remounting the text (same cache key); applying the OS text size in JS with `allowFontScaling={false}`; a new `maxFontSizeMultiplier` alone (cache misses, but the label wraps onto two lines at the old width); a font-size nudge that alternates back to 0 (the original size picks up the stale width again).
+- Fix: 500 ms after the window size stops changing, `Text` gets a `maxFontSizeMultiplier` it has never had (1000+, never caps a real text size) and a font size 0.006–0.06 pt larger that changes every time and never returns to the original. Both are invisible. Unit tests in `src/ui/__tests__/relayout.test.tsx`.
+- Freeing disk space for the rebuilds: E: was full, so 4.2 GB of debug-variant build output under this worktree's `node_modules/*/android/build` was deleted. The next debug build regenerates it and takes longer.
 
 ### Steps that weren't run last time
 
@@ -52,8 +129,8 @@ New issues found while retesting, all fixed and retested:
 | 7.7 Archive count | **Pass**: "13 to play" → "11 to play" after two archive solves; streak unchanged. |
 | 11.5 Widget after midnight | **Pass**: the next day's cipher, "Tap to crack today's quote", and "1-day streak" still shown (bridgeable). The launcher needed a restart to redraw, which the step allows. |
 | U0 again (v2 save → v5) | **Pass**: loads, badges awarded, archive days kept. |
-| 2.6 Word hop | **Not verifiable** on the debug build: with animations on, typed letters arrived more than 10 s late, past the recording. The code path is unchanged; check on a release build. |
-| 12.13, 14.6, 14.7 | Still can't run here: no signed-in mail, no Play Store, and MMKV keeps its backup in the same file. |
+| 2.6 Word hop | **Not verifiable** on the debug build. Passed later on the release build (remaining-items round). |
+| 12.13, 14.6, 14.7 | 12.13 and 14.6 still can't run here (no signed-in mail, no Play Store). 14.7 passed later (remaining-items round). |
 
 Test-case corrections from the v2 run (2.1, 3.17, 3.21, 10.2, 10.7, 13.5, 13.6) are now applied in `TEST_CASES.md`.
 

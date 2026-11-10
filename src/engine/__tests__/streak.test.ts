@@ -67,6 +67,29 @@ describe('streak', () => {
   });
 });
 
+describe('a daily finished after midnight', () => {
+  it('counts for its own day when it was started on that day', () => {
+    const s = play([day(0)]);
+    const r = recordDailySolve(s, day(1), day(2), true); // Tue's daily, opened Tue, solved 00:15 Wed
+    expect(r.credited).toBe(true);
+    expect(r.state.solvedDates).toEqual([day(0), day(1)]);
+    expect(r.state.streak).toBe(2);
+    expect(r.state.best).toBe(2);
+    expect(r.state.highestDateSeen).toBe(day(2));
+    // Wednesday's own daily still counts the same day.
+    expect(recordDailySolve(r.state, day(2), day(2)).state.streak).toBe(3);
+  });
+
+  it('gets no credit when it was not started on its day, is older, or today is already solved', () => {
+    const s = play([day(0)]);
+    expect(recordDailySolve(s, day(1), day(2)).credited).toBe(false); // opened from the archive
+    expect(recordDailySolve(s, day(0), day(2), true).credited).toBe(false); // two days back
+    const todayDone = recordDailySolve(s, day(2), day(2)).state;
+    expect(recordDailySolve(todayDone, day(1), day(2), true).credited).toBe(false);
+    expect(recordDailySolve(s, day(0), day(1), true).credited).toBe(false); // already solved
+  });
+});
+
 describe('streak milestones and saved freezes', () => {
   const run = (n: number, start: StreakState = emptyStreak()) => play(Array.from({ length: n }, (_, i) => day(i)), start);
 

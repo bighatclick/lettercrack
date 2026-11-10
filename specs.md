@@ -94,7 +94,7 @@ Author card after every solve: name, life dates, one-line who-they-were (written
 | Completion | When every cell is filled correctly: reveal animation, author card, share button, next. If filled but wrong, the wrong letters are highlighted gently; no penalty |
 | Timer | Hidden by default; Settings › "Show solve time" turns on a stat (never a countdown) |
 | Hints | "Reveal a letter" (fills one cipher letter everywhere) and "Check" (marks wrong letters). 2 free hints per day + rewarded ad (+1 per ad, cap 5/day) + hint packs |
-| Daily | Date-seeded from the reserved daily pool (deterministic order from day 1 = launch date); works offline; never "missing"; past dailies playable in a free archive; the streak counts dailies solved on their own date; 1 free streak freeze per week; never charge to restore a streak |
+| Daily | Date-seeded from the reserved daily pool (deterministic order from a fixed past date, `DAILY_EPOCH`; no release date in the app, so it can ship on any day); works offline; never "missing"; past dailies playable in a free archive, which starts on the player's install day; the streak counts dailies solved on their own date, or started on it and finished after midnight (before today's is solved); 1 free streak freeze per week; never charge to restore a streak |
 | No repeats | Track `seenQuoteIds` (synced). Level play picks unseen quotes first; only after the pool is exhausted does it repeat, oldest-seen first |
 
 ---

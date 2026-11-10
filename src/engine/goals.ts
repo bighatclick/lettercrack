@@ -99,6 +99,9 @@ export type GoalsResult = {
 
 /** Counts a solve toward today's goals. */
 export function recordGoalSolve(g: GoalsState, today: LocalDate, ev: SolveEvent): GoalsResult {
+  // The clock is behind the saved goals' day (travelling west, or a wound-back clock): leave the
+  // newer day's goals alone instead of replacing them with an earlier day's (D36).
+  if (g.date !== null && today < g.date) return { state: g, completed: [], rewardNow: false };
   const s = current(g, today);
   const ids = goalsFor(today);
   const progress = { ...s.progress };

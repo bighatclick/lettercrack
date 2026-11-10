@@ -11,7 +11,7 @@ import { E2E } from '@/config/e2e';
 import { content } from '@/content/quotes';
 import { useAppStore } from '@/data/store';
 import { reportQuote } from '@/game/report';
-import { nextLevelRef, type PuzzleRef, refFromKey } from '@/game/session';
+import { nextLevelRef, type PuzzleRef, refForPlayer } from '@/game/session';
 import { today } from '@/game/today';
 import { type Completion, usePuzzleGame } from '@/game/usePuzzleGame';
 import { Button, Chip, Icon, type IconName, PressScale, ProgressRing, radius, Screen, softShadow, space, Text, useTheme } from '@/ui';
@@ -23,7 +23,7 @@ import { motion, typeScale } from '@/ui/tokens';
 export default function PuzzleScreen() {
   const { t } = useTranslation();
   const { key } = useLocalSearchParams<{ key: string }>();
-  const ref = useMemo(() => (key ? refFromKey(key, content, today()) : null), [key]);
+  const ref = useMemo(() => (key ? refForPlayer(key, useAppStore.getState().root!, content, today()) : null), [key]);
 
   if (!ref) {
     return (
