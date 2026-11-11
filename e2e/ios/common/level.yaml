@@ -1,0 +1,14 @@
+# From Home: opens the next level.
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      id: home-level
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: home-level
+- extendedWaitUntil:
+    visible:
+      id: board
+    timeout: 10000

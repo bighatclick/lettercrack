@@ -1,0 +1,15 @@
+# Opens a lettercrack://e2e?… set-up link (app/e2e.tsx) and waits until it is applied.
+# env: QUERY (the part after "?", e.g. "at=2027-01-10T10:00:00")
+appId: app.lettercrack
+---
+- openLink: "lettercrack://e2e?${QUERY}"
+# iOS may ask before opening a custom-scheme link.
+- runFlow:
+    when:
+      visible: "Open"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible:
+      id: e2e-ok
+    timeout: 15000

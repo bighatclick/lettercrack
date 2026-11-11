@@ -1,5 +1,6 @@
-# iOS simulator E2E build tested with Maestro on macOS. Unit checks live in ci.yml.
-# Public repo: macOS minutes are free. Android stays local-only (CLAUDE.md), so nothing here builds it.
+# iOS end-to-end tests: one simulator build, then the Maestro suites in e2e/ios on three devices.
+# Unit checks live in ci.yml. Public repo: macOS minutes are free. Android stays local-only
+# (CLAUDE.md), so nothing here builds it. Test plan: e2e/ios/TEST_CASES_IOS.md.
 name: iOS
 
 on:
@@ -7,6 +8,10 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      suites:
+        description: 'Suites to run (JSON list): full, tablet, small'
+        default: '["full", "tablet", "small"]'
 
 concurrency:
   group: ios-${{ github.ref }}
@@ -20,24 +25,18 @@ env:
   SENTRY_DISABLE_AUTO_UPLOAD: 'true'
 
 jobs:
-  ios-e2e:
-    name: iOS simulator build + Maestro
+  build:
+    name: Build simulator app (E2E)
     runs-on: macos-latest
-    timeout-minutes: 90
+    timeout-minutes: 75
     env:
       EXPO_PUBLIC_E2E: '1'
-      MAESTRO_CLI_NO_ANALYTICS: '1'
-      MAESTRO_DRIVER_STARTUP_TIMEOUT: '240000'
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
       - name: Toolchain
         run: |
           sw_vers
@@ -78,25 +77,86 @@ jobs:
           tail -5 "$RUNNER_TEMP/xcodebuild.log"
           test -d build/Build/Products/Release-iphonesimulator/LetterCrack.app
 
+      - name: Package app
+        run: ditto -c -k --keepParent ios/build/Build/Products/Release-iphonesimulator/LetterCrack.app "$RUNNER_TEMP/LetterCrack.app.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-sim-app
+          path: ${{ runner.temp }}/LetterCrack.app.zip
+          retention-days: 7
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: ${{ runner.temp }}/xcodebuild.log
+          retention-days: 14
+
+  e2e:
+    name: E2E ${{ matrix.suite }} (${{ matrix.device }})
+    needs: build
+    runs-on: macos-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: full
+            device: iphone
+          - suite: tablet
+            device: ipad
+          - suite: small
+            device: small
+    env:
+      MAESTRO_CLI_NO_ANALYTICS: '1'
+      MAESTRO_DRIVER_STARTUP_TIMEOUT: '240000'
+    steps:
+      - name: Skip suites not asked for
+        id: want
+        run: |
+          SUITES='${{ github.event.inputs.suites || '["full", "tablet", "small"]' }}'
+          if echo "$SUITES" | grep -q '"${{ matrix.suite }}"'; then echo "run=1" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v5
+        if: steps.want.outputs.run
+      - uses: actions/setup-java@v4
+        if: steps.want.outputs.run
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        if: steps.want.outputs.run
+        with:
+          name: ios-sim-app
+          path: ${{ runner.temp }}/app
+      - name: Unpack app
+        if: steps.want.outputs.run
+        run: |
+          ditto -x -k "$RUNNER_TEMP/app/LetterCrack.app.zip" "$RUNNER_TEMP/app"
+          echo "APP_PATH=$RUNNER_TEMP/app/LetterCrack.app" >> "$GITHUB_ENV"
+
       - name: Install Maestro
+        if: steps.want.outputs.run
         run: |
           curl -fsSL "https://get.maestro.mobile.dev" | bash
           echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
 
       - name: Boot simulator and install app
-        run: .github/scripts/boot-simulator.sh ios/build/Build/Products/Release-iphonesimulator/LetterCrack.app
+        if: steps.want.outputs.run
+        run: .github/scripts/boot-simulator.sh ${{ matrix.device }} "$APP_PATH"
 
-      - name: Maestro flows
-        run: maestro test e2e/ --format junit --output "$RUNNER_TEMP/maestro-report.xml" --debug-output "$RUNNER_TEMP/maestro-debug"
+      - name: Maestro suite (${{ matrix.suite }})
+        if: steps.want.outputs.run
+        run: |
+          echo "Device: $SIM_NAME"
+          bash e2e/ios/run.sh ${{ matrix.suite }} "$RUNNER_TEMP/e2e-out"
 
-      - name: Upload test artifacts
-        if: always()
+      - name: Upload results
+        if: always() && steps.want.outputs.run
         uses: actions/upload-artifact@v4
         with:
-          name: ios-e2e-${{ github.run_attempt }}
-          path: |
-            ${{ runner.temp }}/maestro-report.xml
-            ${{ runner.temp }}/maestro-debug
-            ${{ runner.temp }}/xcodebuild.log
+          name: ios-e2e-${{ matrix.suite }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/e2e-out
           if-no-files-found: ignore
           retention-days: 14

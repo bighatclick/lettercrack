@@ -1,0 +1,10 @@
+# From Home: opens today's daily (it must be unsolved).
+appId: app.lettercrack
+---
+- runFlow: top.yaml
+- tapOn:
+    id: home-daily
+- extendedWaitUntil:
+    visible:
+      id: board
+    timeout: 10000

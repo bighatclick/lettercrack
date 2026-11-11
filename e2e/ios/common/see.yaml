@@ -1,0 +1,10 @@
+# Asserts TEXT (a regex, full match) is on the current screen, scrolling down to it if needed.
+# env: TEXT
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      text: ${TEXT}
+    direction: DOWN
+    timeout: 20000
+    visibilityPercentage: 50

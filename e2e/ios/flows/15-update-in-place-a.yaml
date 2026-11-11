@@ -1,0 +1,34 @@
+# J15 15.2 (part 1): play, so there is progress for the update. The runner then installs the build
+# over this one (an App Store update), and part 2 checks nothing was lost.
+appId: app.lettercrack
+tags: [update]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow: ../common/solve-level.yaml
+- runFlow: ../common/level.yaml
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- tapOn:
+    id: hint-reveal
+- assertVisible: "4 hints left"
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Starry sky\\. Wear"
+- tapOn:
+    id: wardrobe-stars
+- assertVisible: "Starry sky\\. Wearing"

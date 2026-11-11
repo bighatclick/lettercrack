@@ -1,0 +1,131 @@
+# J10 10.1–10.10, 10.13: the wardrobe: sections, locked and unlocked items, "New" markers, wearing
+# items, locked items can't be worn, and the outfit is kept.
+appId: app.lettercrack
+tags: [wardrobe]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# A clean solve unlocks Starry sky (Clean solve badge).
+- runFlow: ../common/solve-daily.yaml
+# 10.1: the Home tile has a "New" mark.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Inky's wardrobe\\. 2 items unlocked\\. New"
+- tapOn:
+    id: home-wardrobe
+- assertVisible: "Inky's wardrobe"
+- assertVisible: "Earn outfits by playing: ranks, badges and full Library shelves\\. Nothing here is for sale\\."
+# 10.2: four sections; every one but Glasses starts with "None".
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Hats"
+- assertVisible:
+    id: wardrobe-hat-none
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Glasses"
+- assertNotVisible:
+    id: wardrobe-face-none
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Neckwear"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Backdrops"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "None\\. Wearing"
+# 10.3 + 10.13: locked items say how to earn them.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Detective cap\\. Locked: Reach the Sleuth rank"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Mortarboard\\. Locked: Collect every author in Thinkers"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Cosy scarf\\. Locked: Earn the One month badge"
+# 10.4: the monocle is always yours, and worn by default.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Brass monocle\\. Wearing"
+# 10.5: "New" on the unlocked item; seen after about 1.5 s on screen.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Starry sky\\. Wear"
+- assertVisible: "New"
+- extendedWaitUntil:
+    visible: "never-there"
+    timeout: 2500
+    optional: true
+- runFlow: ../common/back.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Inky's wardrobe\\. 2 items unlocked"
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Starry sky\\. Wear"
+- assertNotVisible: "New"
+# 10.6: wear it: Inky wears it at once; the "None" backdrop goes back to "Wear".
+- tapOn:
+    id: wardrobe-stars
+- assertVisible: "Starry sky\\. Wearing"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "None\\. Wear"
+- takeScreenshot: 10-wardrobe-starry-sky
+# 10.8: a locked item can't be worn.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Crown\\. Locked: .*"
+- tapOn:
+    id: wardrobe-crown
+- assertVisible: "Crown\\. Locked: .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "None\\. Wearing"
+# 10.9: Home's Inky wears the same outfit (screenshots for review).
+- runFlow: ../common/back.yaml
+- takeScreenshot: 10-home-outfit
+- runFlow: ../common/solve-level.yaml
+# 10.10: kill and relaunch: the outfit is kept.
+- runFlow: ../common/restart.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Starry sky\\. Wearing"
+# Back to no backdrop.
+- tapOn:
+    id: wardrobe-bg-none
+- assertVisible: "Starry sky\\. Wear"

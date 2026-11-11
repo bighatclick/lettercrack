@@ -1,0 +1,77 @@
+# J3 3.12–3.14 and J4 4.1: all three goals earn +1 hint (once); reporting a quote hides it.
+appId: app.lettercrack
+tags: [levels, goals]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# 10 Jan goals: daily, clean, long. A clean daily ticks two at once.
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve one with no hints or checks: done"
+- runFlow: ../common/home.yaml
+# 3.12: solve levels until one with 60+ letters finishes the third goal (by the big quote at level 10).
+- runFlow: ../common/levels-until-reward.yaml
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "All done today\\. You earned \\+1 hint!"
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Goal getter\\. .* Earned .*"
+- runFlow: ../common/back.yaml
+# The reward: 5 free hints + 1.
+- runFlow: ../common/level.yaml
+- assertVisible: "6 hints left"
+# 4.1: another level the same day earns no second hint.
+- runFlow: ../common/solve.yaml
+- evalScript: ${output.reward = false}
+- runFlow: ../common/goals-reward-check.yaml
+- assertTrue: ${!output.reward}
+- scrollUntilVisible:
+    element:
+      id: solved-next
+    direction: DOWN
+- tapOn:
+    id: solved-next
+- extendedWaitUntil:
+    visible:
+      id: board
+    timeout: 10000
+- assertVisible: "6 hints left"
+# 3.13: the report dialog.
+- copyTextFrom: "Level \\d+"
+- evalScript: ${output.level = maestro.copiedText}
+- tapOn:
+    id: puzzle-menu
+- assertVisible: "Report this quote\\?"
+- assertVisible: "It will be hidden on this device and listed in your next feedback email\\. Nothing is sent now\\."
+- assertVisible: "Cancel"
+- assertVisible: "Report and hide"
+# 3.14: Cancel changes nothing; "Report and hide" jumps to a new quote, one level on.
+- tapOn: "Cancel"
+- assertVisible: "${output.level}"
+- tapOn:
+    id: puzzle-menu
+- tapOn: "Report and hide"
+- extendedWaitUntil:
+    visible:
+      id: board
+    timeout: 10000
+- copyTextFrom: "Level \\d+"
+- assertTrue: ${maestro.copiedText != output.level}
+- runFlow: ../common/back.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Continue level \\d+"

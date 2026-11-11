@@ -1,0 +1,74 @@
+# J16 16.1, 16.3, 16.7: Sunday specials only on Sundays; a rewound clock plus midnight gives no
+# streak credit; a daily started one day and reopened from the archive the next keeps its letters.
+appId: app.lettercrack
+tags: [dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+# 16.1: Sundays (10, 17, 24 Jan) have the tag; a weekday doesn't.
+- assertVisible: "Sunday special"
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-11T10:00:00"
+- assertNotVisible: "Sunday special"
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-17T10:00:00"
+- assertVisible: "Sunday special"
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-24T10:00:00"
+- assertVisible: "Sunday special"
+# 16.3: the clock wound back to 23 Jan at 23:59 (behind 24 Jan, already seen), the daily opened,
+# solved after midnight: no streak credit, kept as solved.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-23T23:59:20"
+- runFlow: ../common/daily.yaml
+- extendedWaitUntil:
+    visible: "never-there"
+    timeout: 45000
+    optional: true
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertNotVisible: "Streak: .*"
+- runFlow: ../common/home.yaml
+# 16.7: start 25 Jan's daily, quit; on 26 Jan reopen it from the archive: the letters are back,
+# and it solves to the Solved screen (never "This puzzle isn't available.").
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-25T10:00:00"
+- runFlow: ../common/daily.yaml
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- runFlow: ../common/restart.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-26T10:00:00"
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "(25 January|January 25), in progress"
+- tapOn:
+    id: archive-2027-01-25
+- assertVisible: ".*guess Q.*"
+- runFlow: ../common/solve.yaml
+- assertNotVisible: "This puzzle isn.t available\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Back to archive"

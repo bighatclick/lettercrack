@@ -1,0 +1,14 @@
+# Skips the tutorial and picks a default difficulty. Ends on Home.
+# env: DIFF (easy | medium | hard | expert)
+appId: app.lettercrack
+---
+- tapOn:
+    id: onboarding-skip
+- tapOn:
+    id: onboarding-${DIFF}
+- tapOn:
+    id: onboarding-start
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 15000

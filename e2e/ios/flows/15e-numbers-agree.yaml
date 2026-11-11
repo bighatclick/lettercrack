@@ -1,0 +1,55 @@
+# J15 15.13: after a mixed day (today's daily, an archive daily, two levels) every count agrees:
+# Home, Stats, Archive and the Solved screens.
+appId: app.lettercrack
+tags: [stats]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-12T10:00:00"
+- runFlow: ../common/solve-daily.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- tapOn:
+    id: archive-2027-01-11
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Back to archive"
+- tapOn: "Back to archive"
+- assertVisible: "1 solved"
+- assertVisible: "1 to play"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/solve-level.yaml
+- runFlow: ../common/solve-level.yaml
+# Home.
+- assertVisible: "1-day streak"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. 1 to play"
+- assertVisible: "Stats\\. 4 quotes solved"
+# Stats.
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: 1 day\\. Best streak: 1 day.*"
+- assertVisible: "Puzzles solved: 4.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Daily quotes solved: 2"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved per week, oldest first: .*4"

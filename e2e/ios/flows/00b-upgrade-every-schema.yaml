@@ -1,0 +1,54 @@
+# Hard rule 3: every schema version ever shipped (v1 to v5 fixtures) opens on Home after an update,
+# with no onboarding and no recovery note.
+appId: app.lettercrack
+tags: [upgrade]
+---
+- clearState
+- launchApp:
+    permissions:
+      notifications: unset
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v1&at=2027-01-10T10:00:00"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 20000
+- assertNotVisible: 'We restored your saved progress from a backup\.'
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v3"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 20000
+- assertNotVisible: 'We restored your saved progress from a backup\.'
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v4"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 20000
+- assertNotVisible: 'We restored your saved progress from a backup\.'
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v5"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 20000
+- assertNotVisible: 'We restored your saved progress from a backup\.'
+- assertNotVisible:
+    id: onboarding-skip
+# And the migrated save is playable.
+- runFlow: ../common/level.yaml
+- runFlow: ../common/solve.yaml

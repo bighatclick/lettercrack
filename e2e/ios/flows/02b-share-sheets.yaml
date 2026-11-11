@@ -1,0 +1,50 @@
+# J2 2.22–2.23: "Share result" (a spoiler-free line) and "Share" (an image card) open the iOS
+# share sheet, which closes without a crash. (The share text itself is pinned by unit tests.)
+appId: app.lettercrack
+tags: [daily]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+# 2.22: Share result.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Share result"
+- tapOn:
+    id: solved-share-result
+- extendedWaitUntil:
+    visible: "(?i)(copy|messages|mail|notes|reminders|save to files|airdrop)"
+    timeout: 15000
+- takeScreenshot: 02b-share-result-sheet
+# The sheet previews the text: today's number and the difficulty, and no quote words.
+- assertVisible:
+    text: "(?s).*LetterCrack #73: I cracked today's quote on Hard.*"
+    optional: true
+- runFlow: ../common/dismiss-share.yaml
+- assertVisible:
+    id: solved-quote
+# 2.23: Share (the image card).
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Share"
+- tapOn:
+    id: solved-share
+- extendedWaitUntil:
+    visible: "(?i)(copy|save image|messages|mail|notes|reminders|save to files|airdrop|Sharing isn.t available right now\\.)"
+    timeout: 15000
+- takeScreenshot: 02b-share-card-sheet
+- runFlow:
+    when:
+      visible: "Sharing isn.t available right now\\."
+    commands:
+      - tapOn: "OK"
+- runFlow: ../common/dismiss-share.yaml
+- assertVisible:
+    id: solved-quote

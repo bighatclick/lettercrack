@@ -1,0 +1,92 @@
+# J4 4.2–4.7, 4.9: goals reset each day, the saved +1 hint carries over, progress counts up.
+# (4.1 is in 03b; 4.8, an archive daily never counts for "Solve today's quote", is in 07.)
+appId: app.lettercrack
+tags: [goals]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# Earn the 10 Jan reward: clean daily, then levels until a long one.
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/home.yaml
+- runFlow: ../common/levels-until-reward.yaml
+- runFlow: ../common/home.yaml
+# 4.2: 11 Jan: new goals (daily, levels2, long), all at 0. No penalty, no carry-over.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-11T10:00:00"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+- assertVisible: "Solve 2 levels: 0 of 2"
+- assertVisible: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
+- assertVisible: "0/3"
+- assertVisible: "Finish all three for \\+1 hint"
+# 4.3: 5 free hints for the new day plus the saved bonus (it never expires).
+- runFlow: ../common/level.yaml
+- assertVisible: "6 hints left"
+# 4.4 + 4.5: one level: "Solve 2 levels" reads 1 of 2 (the VoiceOver label), not done yet.
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve 2 levels: 1 of 2"
+- runFlow: ../common/home.yaml
+# 4.6: the 11 Jan daily.
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: done"
+- runFlow: ../common/home.yaml
+# 4.7: a second level: "Solve 2 levels" done; then levels until a long one fires the reward.
+- runFlow: ../common/level.yaml
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve 2 levels: done"
+- evalScript: ${output.reward = false}
+- runFlow: ../common/goals-reward-check.yaml
+- repeat:
+    while:
+      true: ${!output.reward}
+    times: 11
+    commands:
+      - runFlow: ../common/next.yaml
+      - runFlow: ../common/goals-reward-check.yaml
+- assertTrue: ${output.reward}
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "All done today\\. You earned \\+1 hint!"
+- runFlow: ../common/level.yaml
+- assertVisible: "7 hints left"
+- runFlow: ../common/back.yaml
+# 4.9: rewind to 10 Jan: no reward is granted twice for a day.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-10T15:00:00"
+- assertVisible:
+    id: home-settings
+- runFlow: ../common/level.yaml
+- runFlow: ../common/solve.yaml
+- evalScript: ${output.reward = false}
+- runFlow: ../common/goals-reward-check.yaml
+- assertTrue: ${!output.reward}
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-11T16:00:00"
+- runFlow: ../common/level.yaml
+- assertVisible: "7 hints left"

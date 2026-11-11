@@ -1,0 +1,70 @@
+# J12 12.12–12.14: About our quotes, Send feedback, Privacy policy, Terms of use.
+appId: app.lettercrack
+tags: [settings]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- tapOn:
+    id: home-settings
+# 12.12: About our quotes: the hero and four paragraphs; back works.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About our quotes"
+- tapOn:
+    id: settings-about
+- assertVisible: "About our quotes"
+- assertVisible: "Every quote in LetterCrack is in the public domain\\..*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Our main source is John Bartlett.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "An editor reviews every quote before it ships\\..*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "The short author notes are written by us\\."
+- runFlow: ../common/back.yaml
+- assertVisible: "Settings"
+# 12.13: Send feedback. The simulator has no Mail account, so nothing opens; nothing may crash.
+# (The mail body with version, DB version and reported quotes is checked by unit tests.)
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Send feedback"
+- tapOn: "Send feedback"
+- runFlow:
+    when:
+      visible: "(?i)(cancel|ok|close)"
+    commands:
+      - tapOn: "(?i)(cancel|ok|close)"
+- launchApp
+- assertVisible: "Settings"
+# 12.14: Privacy policy and Terms of use open the browser; coming back finds Settings.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Privacy policy"
+- tapOn: "Privacy policy"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 12-privacy-policy
+- launchApp
+- assertVisible: "Settings"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Terms of use"
+- tapOn: "Terms of use"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 12-terms
+- launchApp
+- assertVisible: "Settings"

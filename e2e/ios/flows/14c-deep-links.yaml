@@ -1,0 +1,93 @@
+# J14 14.8–14.10: deep links to puzzles, dates and screens; bad links never crash.
+appId: app.lettercrack
+tags: [links]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-24T10:00:00"
+# 14.8: unknown or unplayable puzzles.
+- openLink: "lettercrack://puzzle/garbage"
+- extendedWaitUntil:
+    visible: "This puzzle isn.t available\\."
+    timeout: 10000
+- tapOn: "Go home"
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+- openLink: "lettercrack://puzzle/daily%3A2099-01-01"
+- extendedWaitUntil:
+    visible: "This puzzle isn.t available\\."
+    timeout: 10000
+- tapOn: "Go home"
+- openLink: "lettercrack://puzzle/level%3A1"
+- extendedWaitUntil:
+    visible: "This puzzle isn.t available\\."
+    timeout: 10000
+- tapOn: "Go home"
+- openLink: "lettercrack://solved?key=level%3A1"
+- extendedWaitUntil:
+    visible: "This puzzle isn.t available\\."
+    timeout: 10000
+- tapOn: "Home"
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+# 14.9: an archive day after the install day opens; a day before it is refused (D35).
+- openLink: "lettercrack://puzzle/daily%3A2027-01-12"
+- extendedWaitUntil:
+    visible:
+      id: board
+    timeout: 10000
+- assertVisible: "Daily quote · (12 January 2027|January 12, 2027)"
+- runFlow: ../common/back.yaml
+- openLink: "lettercrack://puzzle/daily%3A2027-01-05"
+- extendedWaitUntil:
+    visible: "This puzzle isn.t available\\."
+    timeout: 10000
+- tapOn: "Go home"
+- openLink: "lettercrack://solved?key=daily%3A2027-01-05"
+- extendedWaitUntil:
+    visible: "This puzzle isn.t available\\."
+    timeout: 10000
+- tapOn: "Home"
+# Today's daily by link.
+- openLink: "lettercrack://puzzle/daily%3A2027-01-24"
+- extendedWaitUntil:
+    visible: "Daily quote"
+    timeout: 10000
+- runFlow: ../common/back.yaml
+# 14.10: screens by link; Back returns.
+- openLink: "lettercrack://wardrobe"
+- extendedWaitUntil:
+    visible: "Inky's wardrobe"
+    timeout: 10000
+- runFlow: ../common/back.yaml
+- openLink: "lettercrack://library"
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 10000
+- runFlow: ../common/back.yaml
+- openLink: "lettercrack://stats"
+- extendedWaitUntil:
+    visible: "Stats"
+    timeout: 10000
+# The same link twice doesn't stack a second copy (one Back returns Home).
+- openLink: "lettercrack://stats"
+- runFlow: ../common/back.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000
+# A link while the app isn't running.
+- stopApp
+- openLink: "lettercrack://library"
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 20000

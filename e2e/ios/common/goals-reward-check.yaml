@@ -1,0 +1,15 @@
+# On a Solved screen: scrolls to the goals card and sets output.reward if this solve finished all
+# of today's goals ("All of today's goals done! +1 hint").
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      id: solved-goals
+    direction: DOWN
+    timeout: 20000
+    visibilityPercentage: 100
+- runFlow:
+    when:
+      visible: "All of today's goals done! \\+1 hint"
+    commands:
+      - evalScript: ${output.reward = true}

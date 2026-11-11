@@ -1,0 +1,19 @@
+# A fresh install with the test clock at AT. Ends on onboarding.
+# env: AT ("2027-01-10T10:00:00"), NOTIFY (allow | deny | unset: the notification permission)
+appId: app.lettercrack
+---
+- clearState
+- launchApp:
+    permissions:
+      notifications: ${NOTIFY}
+# The first launch already loaded an empty save on the real date: wipe it, set the clock, relaunch,
+# so the install day (archive start, stamp book) is the test date.
+- runFlow:
+    file: e2e-link.yaml
+    env:
+      QUERY: "fresh=1&at=${AT}"
+- runFlow: restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: onboarding-skip
+    timeout: 20000

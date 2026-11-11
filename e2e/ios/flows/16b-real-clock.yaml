@@ -1,0 +1,37 @@
+# J14 14.12 (the part a simulator can do): the real clock, no test offset. A fresh install on
+# today's real date: the daily opens and solves (never "This puzzle isn't available."), the archive
+# starts tomorrow, and Stats counts the solve.
+appId: app.lettercrack
+tags: [dates, smoke]
+---
+- clearState
+- launchApp:
+    permissions:
+      notifications: unset
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "fresh=1&real=1"
+- runFlow: ../common/restart.yaml
+- runFlow:
+    file: ../common/onboard.yaml
+    env:
+      DIFF: medium
+- assertVisible: "Crack it"
+- runFlow: ../common/daily.yaml
+- assertVisible: "Daily quote"
+- runFlow: ../common/solve.yaml
+- assertNotVisible: "This puzzle isn.t available\\."
+- assertVisible: "Streak: 1 day"
+- runFlow: ../common/home.yaml
+- assertVisible: "1-day streak"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. Every past daily quote"
+- tapOn:
+    id: home-archive
+- assertVisible: "Past daily quotes will appear here from tomorrow\\."
+- runFlow: ../common/back.yaml
+- runFlow: ../common/stats.yaml
+- assertVisible: "Puzzles solved: 1.*"

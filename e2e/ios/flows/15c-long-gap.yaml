@@ -1,0 +1,51 @@
+# J15 15.9: back after 60 days: the streak has ended (best kept), the archive lists every day since
+# install and opens quickly.
+appId: app.lettercrack
+tags: [dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-11T10:00:00"
+- runFlow: ../common/home.yaml
+- assertVisible: "2-day streak"
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-03-12T10:00:00"
+- assertNotVisible: ".*-day streak"
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: 0 days\\. Best streak: 2 days.*"
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- extendedWaitUntil:
+    visible: "January 2027"
+    timeout: 3000
+- assertVisible:
+    id: archive-2027-01-10
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "February 2027"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "March 2027"
+- scrollUntilVisible:
+    element:
+      id: archive-2027-03-11
+    direction: DOWN
+- assertNotVisible:
+    id: archive-2027-03-12

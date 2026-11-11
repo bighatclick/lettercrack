@@ -1,0 +1,66 @@
+# J6 6.2 and J12 12.10: the reminder offer after the second daily, the real iOS permission prompt
+# (allowed), the Settings toggle, and the offer never coming back.
+appId: app.lettercrack
+tags: [reminder]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-11T10:00:00"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Want a nudge tomorrow\\?"
+- assertVisible: "We can remind you each morning when a new quote is ready\\..*"
+- tapOn: "Remind me"
+# The system prompt: allow.
+- extendedWaitUntil:
+    visible: "(?i).*would like to send you notifications.*"
+    timeout: 10000
+- tapOn: "Allow"
+- assertNotVisible: "Want a nudge tomorrow\\?"
+- runFlow: ../common/home.yaml
+- tapOn:
+    id: home-settings
+- assertVisible:
+    id: setting-reminder
+    checked: true
+- assertVisible: "A notification around 9am when the day.s quote is ready\\."
+- runFlow: ../common/back.yaml
+# The offer doesn't come back on later dailies.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-12T10:00:00"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Home"
+- assertNotVisible: "Want a nudge tomorrow\\?"
+# 12.10: turning it off and on again needs no new prompt; it stays on after a restart.
+- runFlow: ../common/home.yaml
+- tapOn:
+    id: home-settings
+- tapOn:
+    id: setting-reminder
+- assertVisible:
+    id: setting-reminder
+    checked: false
+- tapOn:
+    id: setting-reminder
+- assertVisible:
+    id: setting-reminder
+    checked: true
+- runFlow: ../common/restart.yaml
+- tapOn:
+    id: home-settings
+- assertVisible:
+    id: setting-reminder
+    checked: true

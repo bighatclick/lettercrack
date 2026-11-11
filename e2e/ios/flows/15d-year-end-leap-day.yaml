@@ -1,0 +1,83 @@
+# J15 15.10: the streak across the year end (the weekly freeze bridging 2 Jan) and across a leap
+# day; the stamp book starts a new month and year with no gaps.
+appId: app.lettercrack
+tags: [dates, streak]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-12-29T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-12-30T10:00:00"
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-12-31T23:58:00"
+- assertVisible: "Streak: 3 days"
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2028-01-01T10:00:00"
+- assertVisible: "Streak: 4 days"
+- runFlow: ../common/home.yaml
+# 2 Jan missed: the weekly freeze covers it.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2028-01-03T10:00:00"
+- assertVisible: "Streak: 5 days"
+- assertVisible: "A streak freeze covered a missed day, so your streak is safe\\."
+- runFlow: ../common/home.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "December 2027"
+- assertVisible: "December 2027: 3 of 3 days stamped"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "January 2028"
+- assertVisible: "(2 January|January 2), not solved yet"
+# The leap day.
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2028-02-27T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2028-02-28T10:00:00"
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2028-02-29T10:00:00"
+- assertVisible: "Streak: 3 days"
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2028-03-01T10:00:00"
+- assertVisible: "Streak: 4 days"
+- runFlow: ../common/home.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "February 2028: 3 of 3 days stamped"
+- assertVisible: "(29 February|February 29), solved"

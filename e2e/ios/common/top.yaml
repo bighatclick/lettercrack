@@ -1,0 +1,9 @@
+# Scrolls the current screen back to the top.
+appId: app.lettercrack
+---
+- repeat:
+    times: 4
+    commands:
+      - swipe:
+          direction: DOWN
+          duration: 250

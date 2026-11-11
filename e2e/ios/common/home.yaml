@@ -1,0 +1,13 @@
+# From the Solved screen (or any screen with a "Home" button): back to Home.
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      text: "Home"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "Home"
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000

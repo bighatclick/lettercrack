@@ -1,0 +1,6 @@
+# From Home: solves today's daily cleanly and returns Home.
+appId: app.lettercrack
+---
+- runFlow: daily.yaml
+- runFlow: solve.yaml
+- runFlow: home.yaml

@@ -1,0 +1,47 @@
+# J15 15.4 / 15.7 (best-effort on a simulator): progress written to the iCloud key-value store comes
+# back after a reinstall, merged without losing anything. A simulator with no Apple ID keeps the
+# store only locally, so this may not pass there; real two-device sync is a manual TestFlight check.
+appId: app.lettercrack
+tags: [best-effort]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "cloud=on"
+- runFlow: ../common/restart.yaml
+- runFlow: ../common/solve-daily.yaml
+- runFlow: ../common/solve-level.yaml
+# Give the 3 s write delay time to push.
+- extendedWaitUntil:
+    visible: "never-there"
+    timeout: 6000
+    optional: true
+# Reinstall with sync on from the first launch.
+- clearState
+- launchApp
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "fresh=1&at=2027-01-10T12:00:00&cloud=on"
+- runFlow: ../common/restart.yaml
+- runFlow:
+    when:
+      visible:
+        id: onboarding-skip
+    commands:
+      - runFlow:
+          file: ../common/onboard.yaml
+          env:
+            DIFF: medium
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 2 quotes solved"
+- runFlow: ../common/top.yaml
+- assertVisible: "1-day streak"

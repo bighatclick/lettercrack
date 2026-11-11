@@ -1,0 +1,28 @@
+# J15 15.8: the app left open on Home across midnight switches to the new day without a restart,
+# and the free hints refill.
+appId: app.lettercrack
+tags: [dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T23:59:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/level.yaml
+- tapOn:
+    id: hint-reveal
+- assertVisible: "4 hints left"
+- runFlow: ../common/back.yaml
+- assertVisible: "Sunday, (10 January|January 10)"
+- assertVisible: "Sunday special"
+# Stay on Home past midnight.
+- extendedWaitUntil:
+    visible: "Monday, (11 January|January 11)"
+    timeout: 90000
+- assertVisible: "Good morning, codebreaker!"
+- assertNotVisible: "Sunday special"
+- assertVisible: "Crack it"
+- assertVisible: "46 letters"
+- runFlow: ../common/level.yaml
+- assertVisible: "5 hints left"

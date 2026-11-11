@@ -1,0 +1,46 @@
+# J14 14.11: uninstall and reinstall: onboarding again, with a clean state.
+appId: app.lettercrack
+tags: [resilience]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- assertVisible: "1-day streak"
+# Reinstall: clearState deletes the app's data, like an uninstall.
+- runFlow:
+    file: ../common/fresh.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      NOTIFY: unset
+- assertVisible: "Welcome to LetterCrack"
+- runFlow:
+    file: ../common/onboard.yaml
+    env:
+      DIFF: hard
+- assertNotVisible: ".*-day streak"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: Rookie\\. 0 letters decoded\\..*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 0 quotes solved"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Library\\. 0 of \\d+ authors"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Inky's wardrobe\\. 1 item unlocked"
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "First crack\\. Locked: .*"

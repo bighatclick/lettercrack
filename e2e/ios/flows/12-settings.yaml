@@ -1,0 +1,153 @@
+# J12 12.1–12.10, 12.15: every setting does what it says and is kept after a restart.
+appId: app.lettercrack
+tags: [settings]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: expert
+      NOTIFY: allow
+# 12.1: hero, sections, no "Restore purchases", the version.
+- tapOn:
+    id: home-settings
+- assertVisible: "Settings"
+- assertVisible: "Make LetterCrack yours\\."
+- assertVisible: "(?i)play"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "(?i)look and feel"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Version 1\\.0\\.0"
+- runFlow: ../common/no-sales.yaml
+- takeScreenshot: 12-settings
+# 12.2 and 12.3: "Fill every matching letter" and "Highlight conflicts" off.
+- runFlow: ../common/top.yaml
+- tapOn:
+    id: setting-autofill
+- tapOn: "Highlight conflicts"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/level.yaml
+# Note the first empty cell's cipher letter ("cipher K, empty" → K), type Q into it.
+- copyTextFrom: "cipher ., empty"
+- evalScript: ${output.cipher = maestro.copiedText.substring(7, 8)}
+- tapOn: "cipher ${output.cipher}, empty"
+- tapOn:
+    id: key-Q
+- assertVisible: "cipher ${output.cipher}, guess Q"
+# 12.2: if that cipher letter appears more than once, its other cells stay empty.
+- runFlow:
+    when:
+      visible:
+        text: "cipher ${output.cipher}, .*"
+        index: 1
+    commands:
+      - assertVisible: "cipher ${output.cipher}, empty"
+# 12.3: Q for a second cipher letter: no conflict flag while the setting is off.
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- assertNotVisible: ".*, conflict"
+- runFlow: ../common/back.yaml
+# Both back on: conflicts show at once (12.3), typing fills every match again (12.2).
+- tapOn:
+    id: home-settings
+- tapOn:
+    id: setting-autofill
+- tapOn: "Highlight conflicts"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: ".*, conflict"
+- copyTextFrom: "cipher ., empty"
+- evalScript: ${output.cipher2 = maestro.copiedText.substring(7, 8)}
+- tapOn: "cipher ${output.cipher2}, empty"
+- tapOn:
+    id: key-Z
+- assertNotVisible: "cipher ${output.cipher2}, empty"
+- runFlow: ../common/back.yaml
+# 12.4: default difficulty Easy: Home's Today tag shows it, and a new level has givens.
+- tapOn:
+    id: home-settings
+- tapOn: "Easy"
+- runFlow: ../common/back.yaml
+- assertVisible: "Easy"
+- runFlow: ../common/level.yaml
+# (The open level keeps its own difficulty; solve it to get a new one.)
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/home.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: "Easy"
+- assertVisible: ".*, given.*"
+- runFlow: ../common/back.yaml
+# 12.6: text size 1–4. Screenshots for review; nothing may crash, and the keyboard keeps its height.
+- tapOn:
+    id: home-settings
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Size 1"
+- tapOn:
+    id: setting-textsize-0
+- takeScreenshot: 12-text-size-1
+- tapOn:
+    id: setting-textsize-3
+- takeScreenshot: 12-text-size-4
+- runFlow: ../common/back.yaml
+- takeScreenshot: 12-home-text-size-4
+- runFlow: ../common/level.yaml
+- assertVisible:
+    id: keyboard
+- assertVisible:
+    id: key-Q
+- takeScreenshot: 12-puzzle-text-size-4
+- runFlow: ../common/back.yaml
+- tapOn:
+    id: home-settings
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Size 2"
+- tapOn:
+    id: setting-textsize-1
+# 12.7: Appearance Dark, Light, Device: applied at once (screenshots).
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Dark"
+- tapOn: "Dark"
+- takeScreenshot: 12-appearance-dark
+- tapOn: "Light"
+- takeScreenshot: 12-appearance-light
+- tapOn: "Device"
+# 12.8: High contrast on (screenshot), then off.
+- tapOn: "High contrast"
+- takeScreenshot: 12-high-contrast
+- tapOn: "High contrast"
+# 12.9: Sound effects and Haptics toggle without error.
+- tapOn: "Sound effects"
+- tapOn: "Sound effects"
+- tapOn: "Haptics"
+- tapOn: "Haptics"
+# 12.10: Daily reminder on (notifications allowed for this flow), then off.
+- runFlow: ../common/top.yaml
+- tapOn:
+    id: setting-reminder
+- assertVisible:
+    id: setting-reminder
+    checked: true
+- tapOn:
+    id: setting-reminder
+- assertVisible:
+    id: setting-reminder
+    checked: false
+# 8.10 / 12.5: Show solve time on (checked again after the restart).
+- tapOn: "Show solve time"
+# 12.15: kill and relaunch: every setting is kept.
+- runFlow: ../common/restart.yaml
+- assertVisible: "Easy"
+- runFlow: ../common/level.yaml
+- assertVisible: "Easy"
+- assertVisible: "Time .*"

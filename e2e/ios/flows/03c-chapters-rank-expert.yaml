@@ -1,0 +1,130 @@
+# J3 3.15–3.21, 3.23: the rank-up to Apprentice, the big quote at level 10, chapter stamps,
+# Expert levels 11–20 and their badges, and what happens once every level quote is used.
+appId: app.lettercrack
+tags: [levels, long]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- evalScript: ${output.rankUp = false}
+# Levels 1–9. Watch each Solved screen for the rank-up (3.15): it brings the Painter's beret.
+- repeat:
+    times: 9
+    commands:
+      - runFlow: ../common/level.yaml
+      - runFlow: ../common/solve.yaml
+      - runFlow:
+          when:
+            visible: "New rank: Apprentice!"
+          commands:
+            - runFlow:
+                file: ../common/see.yaml
+                env:
+                  TEXT: ".*Painter's beret.*"
+            - evalScript: ${output.rankUp = true}
+      - runFlow: ../common/home.yaml
+# 3.16: Home at level 10.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Big quote level"
+- assertVisible: "Continue level 10"
+# 3.17: level 10 is a long quote (Expert length band), whatever the default difficulty.
+- runFlow: ../common/level.yaml
+- copyTextFrom: "\\d+ of \\d+ letters filled"
+- assertTrue: ${parseInt(maestro.copiedText.split(' of ')[1]) >= 60}
+# 3.18: solving it stamps chapter 1.
+- runFlow: ../common/solve.yaml
+- assertVisible: "Chapter 1 stamped!"
+- runFlow:
+    when:
+      visible: "New rank: Apprentice!"
+    commands:
+      - evalScript: ${output.rankUp = true}
+- runFlow: ../common/home.yaml
+# 3.19: chapter 2 in new colours; the path restarts.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Chapter 2 · Lantern Lane"
+- assertVisible: "Level 1 of 10"
+- assertVisible: "Level 11"
+# 3.20: default difficulty Expert; levels 11–20 start with no givens.
+- runFlow: ../common/top.yaml
+- tapOn:
+    id: home-settings
+- tapOn: "Expert"
+- runFlow: ../common/back.yaml
+- repeat:
+    times: 10
+    commands:
+      - runFlow: ../common/level.yaml
+      - assertVisible: "Expert"
+      - assertNotVisible: ".*, given.*"
+      - runFlow: ../common/solve.yaml
+      - runFlow:
+          when:
+            visible: "New rank: Apprentice!"
+          commands:
+            - evalScript: ${output.rankUp = true}
+      - runFlow: ../common/home.yaml
+# Level 20 was a big quote too: chapter 2 is stamped (seen on Home as chapter 3).
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Chapter 3 · .*"
+# 3.15: the rank-up was celebrated on a Solved screen, and Home shows Apprentice.
+- assertTrue: ${output.rankUp}
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: Apprentice\\. .* letters to Sleuth.*"
+# The badges of 3.18 and 3.20.
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "First chapter\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Expert cracker\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Master of keys\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "1,000 letters\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Bookworm\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Ten down\\. .* Earned .*"
+- runFlow: ../common/back.yaml
+# 3.21: every level quote is used; the next level repeats the oldest one (no crash, no dead end).
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Continue level 21"
+- assertNotVisible: "You've decoded every quote\\. New ones arrive with updates\\."
+- runFlow: ../common/level.yaml
+- assertVisible: "Level 21"
+- runFlow: ../common/back.yaml
+# 3.23: default difficulty back to Hard.
+- runFlow: ../common/top.yaml
+- tapOn:
+    id: home-settings
+- tapOn: "Hard"
+- runFlow: ../common/back.yaml
+- assertVisible: "Hard"
+- runFlow: ../common/no-sales.yaml

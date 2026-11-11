@@ -1,0 +1,10 @@
+# Moves the test clock to a device-local time, then restarts so every screen reads the new "now"
+# (the Android runs set the clock with adb, then brought the app to the foreground).
+# env: AT ("2027-01-11T10:00:00")
+appId: app.lettercrack
+---
+- runFlow:
+    file: e2e-link.yaml
+    env:
+      QUERY: "at=${AT}"
+- runFlow: restart.yaml

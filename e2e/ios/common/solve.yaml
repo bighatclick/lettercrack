@@ -1,0 +1,9 @@
+# On a puzzle: types the answer (the E2E "e2e solve" hook, a clean solve) and waits for Solved.
+appId: app.lettercrack
+---
+- tapOn:
+    id: e2e-solve
+- extendedWaitUntil:
+    visible:
+      id: solved-quote
+    timeout: 15000

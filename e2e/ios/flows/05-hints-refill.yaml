@@ -1,0 +1,70 @@
+# J5: using every hint, the "no hints" state, persistence, the midnight refill, "Type some letters first".
+appId: app.lettercrack
+tags: [hints]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: expert
+      NOTIFY: unset
+- runFlow: ../common/level.yaml
+# 5.5 (first half): Check is disabled until a letter is typed.
+- tapOn:
+    id: hint-check
+- assertVisible: "5 hints left"
+# 5.1: Reveal until the counter reaches 0.
+- tapOn:
+    id: hint-reveal
+- assertVisible: "4 hints left"
+- tapOn:
+    id: hint-reveal
+- assertVisible: "3 hints left"
+- tapOn:
+    id: hint-reveal
+- assertVisible: "2 hints left"
+- tapOn:
+    id: hint-reveal
+- assertVisible: "1 hint left"
+- tapOn:
+    id: hint-reveal
+- assertVisible: 'No hints left today\. Free hints refill at midnight\.'
+- assertVisible:
+    id: hint-reveal
+    enabled: false
+- assertVisible:
+    id: hint-check
+    enabled: false
+# 5.2: the disabled buttons do nothing, and there is no rewarded-ad offer.
+- tapOn:
+    id: hint-reveal
+- tapOn:
+    id: hint-check
+- assertVisible: 'No hints left today\. Free hints refill at midnight\.'
+- runFlow: ../common/no-sales.yaml
+# Revealed letters are locked everywhere.
+- assertVisible: ".*, given.*"
+# 5.3: kill, relaunch, reopen: still 0.
+- runFlow: ../common/restart.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: 'No hints left today\. Free hints refill at midnight\.'
+# 5.4: the next day: 5 free hints again.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-11T10:00:00"
+- runFlow: ../common/level.yaml
+- assertVisible: "5 hints left"
+# 5.5: type a letter, erase it: Check is disabled again, nothing is charged.
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- assertVisible:
+    id: hint-check
+    enabled: true
+- tapOn: ".*guess Q.*"
+- tapOn:
+    id: key-delete
+- tapOn:
+    id: hint-check
+- assertVisible: "5 hints left"

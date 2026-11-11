@@ -1,0 +1,141 @@
+# J3 3.1–3.11 and 3.22: levels, the difficulty sheet, persistence, a clean level solve, Next.
+appId: app.lettercrack
+tags: [levels]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# 3.1: Level 1, Hard, one given, all free hints, not the daily.
+- runFlow: ../common/level.yaml
+- assertVisible: "Level 1"
+- assertVisible: "Hard"
+- assertNotVisible: "Daily quote"
+- assertVisible: ".*, given.*"
+- assertVisible: "5 hints left"
+# 3.2: the difficulty sheet. Restart is disabled on the current difficulty.
+- tapOn: "Hard"
+- assertVisible: "Difficulty"
+- assertVisible: 'Changing the difficulty restarts this puzzle\.'
+- assertVisible: "Cancel"
+- assertVisible:
+    text: "Restart"
+    enabled: false
+# 3.3: pick Medium, then Cancel: no change.
+- tapOn:
+    text: "Medium"
+- tapOn:
+    text: "Cancel"
+    index: 0
+- assertNotVisible: 'Changing the difficulty restarts this puzzle\.'
+- assertVisible: "Hard"
+- assertVisible: ".*, given.*"
+# 3.4: tap outside the card: it closes, no change.
+- tapOn: "Hard"
+- assertVisible: 'Changing the difficulty restarts this puzzle\.'
+- tapOn:
+    point: "50%,8%"
+- assertNotVisible: 'Changing the difficulty restarts this puzzle\.'
+- assertVisible: "Hard"
+# 3.5: type two letters, then Expert + Restart: same quote, no givens, letters gone.
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Z
+- assertVisible: ".*guess Q.*"
+- tapOn: "Hard"
+- tapOn:
+    text: "Expert"
+    index: 0
+- tapOn: "Restart"
+- assertVisible: "Expert"
+- assertNotVisible: ".*guess .*"
+- assertNotVisible: ".*, given.*"
+- assertVisible: '0 of \d+ letters filled'
+# 3.6: Easy + Restart: several givens.
+- tapOn: "Expert"
+- tapOn:
+    text: "Easy"
+    index: 0
+- tapOn: "Restart"
+- assertVisible: "Easy"
+- assertVisible: ".*, given.*"
+# 3.7: the chosen difficulty is kept for this puzzle.
+- runFlow: ../common/back.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: "Easy"
+# 3.8: type three letters, kill, relaunch: same entries and difficulty (F4).
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-X
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-J
+- runFlow: ../common/restart.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: "Easy"
+- assertVisible: ".*guess Q.*"
+- assertVisible: ".*guess X.*"
+- assertVisible: ".*guess J.*"
+- assertVisible: "5 hints left"
+# 3.9: a clean level solve (no Reveal, no Check).
+- runFlow: ../common/solve.yaml
+- assertVisible: "Cracked it!"
+- assertVisible: "Clean solve: no hints, no checks"
+- assertVisible: "New author for your Library!"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Clean solve\. Solve a quote with no hints or checks\.'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*Starry sky.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve one with no hints or checks: done"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Next puzzle"
+- assertNotVisible: "Share result"
+- assertNotVisible: "Tomorrow's quote"
+- assertNotVisible: 'Want a nudge tomorrow\?'
+# 3.10 + 3.22: Next (tapped twice quickly) opens Level 2 once, back at the default difficulty.
+- tapOn:
+    id: solved-next
+    repeat: 2
+    delay: 50
+- extendedWaitUntil:
+    visible: "Level 2"
+    timeout: 10000
+- assertVisible: "Hard"
+# One navigation only: Back goes straight Home, not to another Level 2.
+- runFlow: ../common/back.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000
+# 3.11: Home shows level 2 and one solve.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Level 2 of 10"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Continue level 2"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Stats\. 1 quote solved'
+# 3.24: no ad, interstitial or "watch to earn" anywhere.
+- runFlow: ../common/no-sales.yaml

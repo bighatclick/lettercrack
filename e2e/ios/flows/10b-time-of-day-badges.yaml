@@ -1,0 +1,90 @@
+# J10 10.7, 10.11–10.12: Early bird (5–7 am, not 4:30) and Night owl (after 10 pm), their outfits,
+# and wearing items from three slots at once.
+appId: app.lettercrack
+tags: [wardrobe, dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T04:30:00"
+      DIFF: easy
+      NOTIFY: unset
+# 04:30: neither badge.
+- runFlow: ../common/level.yaml
+- runFlow: ../common/solve.yaml
+- assertNotVisible: "Early bird\\..*"
+- assertNotVisible: "Night owl\\..*"
+- runFlow: ../common/home.yaml
+# 10.12: 05:30: Early bird and the Sunrise backdrop.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-10T05:30:00"
+- runFlow: ../common/level.yaml
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Early bird\\. Solve a quote between 5 and 7 am\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*Sunrise.*"
+- runFlow: ../common/home.yaml
+# 10.11: 22:30: Night owl and Star shades.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-10T22:30:00"
+- runFlow: ../common/level.yaml
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Night owl\\. Solve a quote after 10 pm\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*Star shades.*"
+# 10.7: from the Solved card's button: wear Star shades (instead of the monocle) and Sunrise.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Open the wardrobe"
+- tapOn:
+    id: solved-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Star shades\\. Wear"
+- tapOn:
+    id: wardrobe-shades
+- assertVisible: "Star shades\\. Wearing"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Brass monocle\\. Wear"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Sunrise\\. Wear"
+- tapOn:
+    id: wardrobe-sunrise
+- assertVisible: "Sunrise\\. Wearing"
+- takeScreenshot: 10b-wardrobe-shades-sunrise
+# Kept after a restart.
+- runFlow: ../common/restart.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Star shades\\. Wearing"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Sunrise\\. Wearing"

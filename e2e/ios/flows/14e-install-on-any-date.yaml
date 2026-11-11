@@ -1,0 +1,87 @@
+# J14 14.13: installs on any date (before the first January, mid-year, a leap day): the archive and
+# the stamp book start on the install day, with no "missed" days before it.
+appId: app.lettercrack
+tags: [dates]
+---
+# 20 Nov 2026.
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2026-11-20T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- assertVisible: "Friday, (20 November|November 20)"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. Every past daily quote"
+- tapOn:
+    id: home-archive
+- assertVisible: "Past daily quotes will appear here from tomorrow\\."
+- runFlow: ../common/back.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2026-11-21T10:00:00"
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "November 2026"
+- assertVisible:
+    id: archive-2026-11-20
+- assertNotVisible:
+    id: archive-2026-11-19
+- assertVisible: "0 of 11 stamps"
+# 20 May 2027.
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-05-20T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-05-22T10:00:00"
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "May 2027"
+- assertVisible:
+    id: archive-2027-05-20
+- assertVisible:
+    id: archive-2027-05-21
+- assertNotVisible:
+    id: archive-2027-05-19
+- assertVisible: "0 of 12 stamps"
+# 29 Feb 2028.
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2028-02-29T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- assertVisible: "Tuesday, (29 February|February 29)"
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2028-03-01T10:00:00"
+- assertVisible: "2-day streak"
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "February 2028"
+- assertVisible: "(29 February|February 29), solved"
+- assertNotVisible:
+    id: archive-2028-02-28
+- assertVisible: "February 2028: 1 of 1 day stamped"

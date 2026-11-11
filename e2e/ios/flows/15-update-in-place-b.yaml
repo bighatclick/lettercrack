@@ -1,0 +1,34 @@
+# J15 15.2 (part 2): after the update, everything from part 1 is still there.
+appId: app.lettercrack
+tags: [update]
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 20000
+- assertNotVisible:
+    id: onboarding-skip
+- assertNotVisible: "We restored your saved progress from a backup\\."
+- assertVisible: "1-day streak"
+- assertVisible: "Solved\\. A new quote arrives tomorrow\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 2 quotes solved"
+- runFlow: ../common/top.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: "Level 2"
+- assertVisible: ".*guess Q.*"
+- assertVisible: "4 hints left"
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Starry sky\\. Wearing"
