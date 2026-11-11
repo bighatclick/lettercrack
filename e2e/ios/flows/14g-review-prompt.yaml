@@ -17,7 +17,9 @@ tags: [best-effort]
       AT: "2027-01-12T10:00:00"
 - runFlow: ../common/solve-level.yaml
 - runFlow: ../common/level.yaml
-- runFlow: ../common/solve.yaml
+# Not common/solve.yaml: that one dismisses the prompt this flow is checking.
+- tapOn:
+    id: e2e-solve
 - extendedWaitUntil:
     visible: "(?i)(enjoying .*|not now|rate .*)"
     timeout: 6000

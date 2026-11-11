@@ -72,7 +72,7 @@ tags: [a11y]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve today's quote: done"
+      TEXT: "Solve today's quote: done.*"
 - runFlow: ../common/home.yaml
 - runFlow:
     file: ../common/see.yaml

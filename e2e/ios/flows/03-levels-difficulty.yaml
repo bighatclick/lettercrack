@@ -101,7 +101,7 @@ tags: [levels]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve one with no hints or checks: done"
+      TEXT: "Solve one with no hints or checks: done.*"
 - runFlow:
     file: ../common/see.yaml
     env:

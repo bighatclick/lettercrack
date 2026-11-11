@@ -28,7 +28,8 @@ jobs:
   build:
     name: Build simulator app (E2E)
     runs-on: macos-latest
-    timeout-minutes: 75
+    # GitHub's ceiling for a hosted job (6 h): effectively no stop of our own.
+    timeout-minutes: 360
     env:
       EXPO_PUBLIC_E2E: '1'
     steps:
@@ -98,16 +99,27 @@ jobs:
     name: E2E ${{ matrix.suite }} (${{ matrix.device }})
     needs: build
     runs-on: macos-latest
-    timeout-minutes: 150
+    timeout-minutes: 360
     strategy:
       fail-fast: false
+      # The iPhone suite is split in three so the run takes ~1.5 h, not ~4. Five jobs is the free
+      # plan's macOS concurrency limit. `group` is the name the workflow_dispatch input uses.
       matrix:
         include:
-          - suite: full
+          - suite: full-1
+            group: full
+            device: iphone
+          - suite: full-2
+            group: full
+            device: iphone
+          - suite: full-3
+            group: full
             device: iphone
           - suite: tablet
+            group: tablet
             device: ipad
           - suite: small
+            group: small
             device: small
     env:
       MAESTRO_CLI_NO_ANALYTICS: '1'
@@ -117,7 +129,7 @@ jobs:
         id: want
         run: |
           SUITES='${{ github.event.inputs.suites || '["full", "tablet", "small"]' }}'
-          if echo "$SUITES" | grep -q '"${{ matrix.suite }}"'; then echo "run=1" >> "$GITHUB_OUTPUT"; fi
+          if echo "$SUITES" | grep -q '"${{ matrix.group }}"'; then echo "run=1" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/checkout@v5
         if: steps.want.outputs.run
       - uses: actions/setup-java@v4

@@ -187,7 +187,8 @@ function Tile({
   return (
     <PressScale
       accessibilityRole="button"
-      accessibilityLabel={`${label}. ${state}`}
+      // The "New" tag is inside this one accessibility element, so the label says it too.
+      accessibilityLabel={isNew ? `${label}. ${state}. ${t('home.newBadge')}` : `${label}. ${state}`}
       accessibilityState={{ selected, disabled: !!disabled }}
       disabled={disabled}
       onPress={onPress}

@@ -7,6 +7,8 @@ appId: app.lettercrack
     direction: DOWN
     timeout: 20000
 - tapOn: "Home"
+# Home keeps its scroll position: the settings button is at the top.
+- runFlow: top.yaml
 - extendedWaitUntil:
     visible:
       id: home-settings

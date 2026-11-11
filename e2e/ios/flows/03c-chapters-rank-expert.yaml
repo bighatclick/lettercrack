@@ -7,7 +7,9 @@ tags: [levels, long]
     file: ../common/start.yaml
     env:
       AT: "2027-01-10T10:00:00"
-      DIFF: hard
+      # Medium, not Hard: the seed has only two Expert-length level quotes, and Hard's band uses
+      # both in levels 1–9, which leaves no 60+ letter quote for level 10 (3.17).
+      DIFF: medium
       NOTIFY: unset
 - evalScript: ${output.rankUp = false}
 # Levels 1–9. Watch each Solved screen for the rank-up (3.15): it brings the Painter's beret.

@@ -37,7 +37,6 @@ tags: [archive, dates]
 - assertVisible: "(10 January|January 10), solved"
 - assertVisible: "(20 January|January 20), not solved yet"
 # 7.2: the stamp book counts the install month from the install day: 10–31 Jan = 22 days.
-- assertVisible: "1 of 22 stamps"
 - assertVisible: "January 2027: 1 of 22 days stamped"
 # 7.3: start 20 Jan, type a letter, back: in progress, "1 started".
 - tapOn:
@@ -85,7 +84,7 @@ tags: [archive, dates]
       TEXT: "Solve today's quote: 0 of 1"
 - tapOn: "Back to archive"
 - assertVisible: "(20 January|January 20), solved"
-- assertVisible: "2 of 22 stamps"
+- assertVisible: "January 2027: 2 of 22 days stamped"
 # 7.5: a solved day reopens read-only.
 - tapOn:
     id: archive-2027-01-20

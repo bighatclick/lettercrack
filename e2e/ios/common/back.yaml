@@ -3,3 +3,5 @@ appId: app.lettercrack
 ---
 - runFlow: top.yaml
 - tapOn: "Back"
+# The screen underneath keeps its scroll position: start each check from its top.
+- runFlow: top.yaml

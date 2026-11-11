@@ -18,12 +18,21 @@ tags: [reminder]
     file: ../common/see.yaml
     env:
       TEXT: "Remind me"
+# iOS's own permission alert vanished before Maestro could tap it on CI, so the answer is set
+# ahead (the app then gets it at once, as after a tap). If the alert still shows, answer it.
+- setPermissions:
+    permissions:
+      notifications: deny
 - tapOn: "Remind me"
-# The system prompt: deny.
 - extendedWaitUntil:
     visible: "(?i).*would like to send you notifications.*"
-    timeout: 10000
-- tapOn: "Don.t Allow"
+    timeout: 4000
+    optional: true
+- runFlow:
+    when:
+      visible: "(?i).*would like to send you notifications.*"
+    commands:
+      - tapOn: "Don.t Allow"
 - extendedWaitUntil:
     visible: "Notifications are off for LetterCrack\\. You can turn them on in your device settings\\."
     timeout: 5000

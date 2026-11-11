@@ -29,7 +29,11 @@ tags: [stats]
 - assertVisible: "Current streak: 1 day\\. Best streak: 1 day.*"
 - assertNotVisible: "\\d+ saved streak freezes?"
 # 8.2: tiles and rows; no average time while the timer is off.
-- assertVisible: "Puzzles solved: 3.*"
+# Below the badge shelf on iOS: scroll to it.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 3.*"
 - runFlow:
     file: ../common/see.yaml
     env:

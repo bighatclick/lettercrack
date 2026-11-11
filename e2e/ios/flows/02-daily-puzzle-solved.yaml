@@ -131,7 +131,7 @@ tags: [smoke, daily]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve today's quote: done"
+      TEXT: "Solve today's quote: done.*"
 - assertVisible: "Done!"
 - assertVisible: "Solve one with no hints or checks: 0 of 1"
 - assertVisible: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
@@ -160,7 +160,7 @@ tags: [smoke, daily]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve today's quote: done"
+      TEXT: "Solve today's quote: done.*"
 - assertVisible: "1/3"
 - runFlow:
     file: ../common/see.yaml

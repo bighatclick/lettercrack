@@ -14,7 +14,7 @@ tags: [levels, goals]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve one with no hints or checks: done"
+      TEXT: "Solve one with no hints or checks: done.*"
 - runFlow: ../common/home.yaml
 # 3.12: solve levels until one with 60+ letters finishes the third goal (by the big quote at level 10).
 - runFlow: ../common/levels-until-reward.yaml

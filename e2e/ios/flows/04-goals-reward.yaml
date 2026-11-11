@@ -44,7 +44,7 @@ tags: [goals]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve today's quote: done"
+      TEXT: "Solve today's quote: done.*"
 - runFlow: ../common/home.yaml
 # 4.7: a second level: "Solve 2 levels" done; then levels until a long one fires the reward.
 - runFlow: ../common/level.yaml
@@ -52,7 +52,7 @@ tags: [goals]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve 2 levels: done"
+      TEXT: "Solve 2 levels: done.*"
 - evalScript: ${output.reward = false}
 - runFlow: ../common/goals-reward-check.yaml
 - repeat:

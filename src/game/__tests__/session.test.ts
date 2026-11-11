@@ -262,4 +262,17 @@ describe('session glue', () => {
     expect(seedContent.quote(ref.quoteId)).toBeDefined();
     expect(seedContent.levelPool.some((p) => seedContent.dailySet.has(p.id))).toBe(false);
   });
+
+  it('gives the big level (10) the longest unseen quote once earlier levels used the long band', () => {
+    // Play levels 1–9 at Hard: its band (60–160) takes the seed's only Expert-length quotes.
+    let r: Root = root;
+    for (let i = 0; i < 9; i++) {
+      const ref = nextLevelRef(r, seedContent, 'hard')!;
+      r = { ...r, progress: { ...r.progress, levelIndex: i + 1, seenQuoteIds: [...r.progress.seenQuoteIds, ref.quoteId] } };
+    }
+    const seen = new Set(r.progress.seenQuoteIds);
+    const unseen = seedContent.levelPool.filter((q) => !seen.has(q.id));
+    const big = nextLevelRef(r, seedContent, 'hard')!;
+    expect(seedContent.levelPool.find((q) => q.id === big.quoteId)!.length).toBe(Math.max(...unseen.map((q) => q.length)));
+  });
 });

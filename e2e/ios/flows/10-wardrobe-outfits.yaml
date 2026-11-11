@@ -69,8 +69,7 @@ tags: [wardrobe]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Starry sky\\. Wear"
-- assertVisible: "New"
+      TEXT: "Starry sky\\. Wear\\. New"
 - extendedWaitUntil:
     visible: "never-there"
     timeout: 2500

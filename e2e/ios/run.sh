@@ -2,7 +2,7 @@
 # Runs the iOS Maestro suite on a booted simulator, one flow at a time.
 #
 #   e2e/ios/run.sh <suite> <out-dir>
-#   suite:   full (iPhone, every journey) | tablet (iPad) | small (smallest iPhone)
+#   suite:   full (iPhone, every journey) | full-1 | full-2 | full-3 | tablet (iPad) | small (smallest iPhone)
 #   needs:   SIM_UDID (the booted simulator), APP_PATH (the .app, for the update-in-place flow)
 #
 # Each flow starts from its own fresh install (common/start.yaml), so a failure never cascades.
@@ -18,6 +18,8 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 mkdir -p "$OUT/junit" "$OUT/hierarchy"
 
 case "$SUITE" in
+  # The iPhone suite in three contiguous parts (CI runs them in parallel); 15-update-in-place-a
+  # and -b must stay together and in order. `full` runs all of them in one go.
   full)
     FLOWS=(
       00-upgrade-v2-save
@@ -43,6 +45,65 @@ case "$SUITE" in
       12-settings
       12b-settings-links
       13-accessibility-labels
+      13b-largest-text
+      13c-dark-high-contrast
+      13d-reduce-motion
+      13e-touch-targets-home
+      13f-touch-targets-puzzle
+      14-resilience
+      14b-midnight-during-puzzle
+      14c-deep-links
+      14d-data-recovery
+      14e-install-on-any-date
+      14f-reinstall-clean
+      14g-review-prompt
+      15-update-in-place-a
+      15-update-in-place-b
+      15b-open-across-midnight
+      15c-long-gap
+      15d-year-end-leap-day
+      15e-numbers-agree
+      16-sundays-rewound-reopen
+      16b-real-clock
+      17-icloud-restore
+    )
+    ;;
+  full-1)
+    # J0–J4
+    FLOWS=(
+      00-upgrade-v2-save
+      00b-upgrade-every-schema
+      01-onboarding-home
+      01b-greetings-relaunch
+      02-daily-puzzle-solved
+      02b-share-sheets
+      03-levels-difficulty
+      03b-levels-goals-report
+      03c-chapters-rank-expert
+      04-goals-reward
+    )
+    ;;
+  full-2)
+    # J5–J13a
+    FLOWS=(
+      05-hints-refill
+      06-streak-milestones-freezes
+      06b-reminder-offer-allowed
+      06c-reminder-offer-denied
+      07-archive-stamps
+      07b-archive-full-month
+      08-stats-badges-timer
+      09-library-facts
+      10-wardrobe-outfits
+      10b-time-of-day-badges
+      12-settings
+      12b-settings-links
+      13-accessibility-labels
+    )
+    ;;
+  full-3)
+    # J13b–J17
+    FLOWS=(
       13b-largest-text
       13c-dark-high-contrast
       13d-reduce-motion

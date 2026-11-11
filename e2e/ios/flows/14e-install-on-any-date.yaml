@@ -34,7 +34,7 @@ tags: [dates]
     id: archive-2026-11-20
 - assertNotVisible:
     id: archive-2026-11-19
-- assertVisible: "0 of 11 stamps"
+- assertVisible: ".*: 0 of 11 days stamped"
 # 20 May 2027.
 - runFlow:
     file: ../common/start.yaml
@@ -59,7 +59,7 @@ tags: [dates]
     id: archive-2027-05-21
 - assertNotVisible:
     id: archive-2027-05-19
-- assertVisible: "0 of 12 stamps"
+- assertVisible: ".*: 0 of 12 days stamped"
 # 29 Feb 2028.
 - runFlow:
     file: ../common/start.yaml

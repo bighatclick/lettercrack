@@ -17,7 +17,8 @@ tags: [upgrade]
 - extendedWaitUntil:
     visible:
       id: home-settings
-    timeout: 20000
+    # The first launch after an update backs up the save and migrates it: slower on CI.
+    timeout: 60000
 - assertNotVisible:
     id: onboarding-skip
 - assertNotVisible: 'We restored your saved progress from a backup\.'
