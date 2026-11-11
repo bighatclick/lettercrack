@@ -1,5 +1,5 @@
 # Spec §14: onboarding → solve the daily → share → archive.
-# Needs an E2E build (EXPO_PUBLIC_E2E=1, eas build --profile e2e) so the "e2e-solve" hook exists.
+# Needs an E2E build (EXPO_PUBLIC_E2E=1) so the "e2e-solve" hook exists. Runs on Android and iOS (CI: .github/workflows/ios.yml).
 appId: app.lettercrack
 ---
 - clearState
@@ -33,18 +33,42 @@ appId: app.lettercrack
 - tapOn:
     id: solved-share
 # Dismiss the system share sheet. Wait for it first: a Back sent while it is still opening is lost.
-- extendedWaitUntil:
-    visible:
-      text: "Sharing.*"
-    timeout: 10000
-    optional: true
-- back
 - runFlow:
     when:
-      visible:
-        text: "Sharing.*"
+      platform: Android
     commands:
+      - extendedWaitUntil:
+          visible:
+            text: "Sharing.*"
+          timeout: 10000
+          optional: true
       - back
+      - runFlow:
+          when:
+            visible:
+              text: "Sharing.*"
+          commands:
+            - back
+# iOS has no Back: close the share sheet with its Close button, or swipe it down.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible:
+            text: "Close"
+          timeout: 10000
+          optional: true
+      - tapOn:
+          text: "Close"
+          optional: true
+      - runFlow:
+          when:
+            visible:
+              text: "Close"
+          commands:
+            - swipe:
+                direction: DOWN
 - scrollUntilVisible:
     element:
       text: Home
