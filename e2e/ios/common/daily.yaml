@@ -2,6 +2,13 @@
 appId: app.lettercrack
 ---
 - runFlow: top.yaml
+# Very long Home screens (largest text, small iPhone) can still be below the card after top.yaml.
+- scrollUntilVisible:
+    element:
+      id: home-daily
+    direction: UP
+    timeout: 20000
+    optional: true
 # At the largest text sizes the Today card's button is below the fold.
 - scrollUntilVisible:
     element:

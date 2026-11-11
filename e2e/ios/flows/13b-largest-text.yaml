@@ -75,6 +75,11 @@ tags: [a11y, smoke]
       TEXT: "Share result"
 - takeScreenshot: 13b-solved-bottom
 # The share card (rendered at the current text size).
+- scrollUntilVisible:
+    element:
+      id: solved-share
+    direction: DOWN
+    timeout: 20000
 - tapOn:
     id: solved-share
 - waitForAnimationToEnd:

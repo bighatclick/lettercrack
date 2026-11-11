@@ -4,6 +4,7 @@ appId: app.lettercrack
 ---
 - tapOn:
     id: onboarding-skip
+    retryTapIfNoChange: true
 # At the largest text sizes the picker scrolls.
 - scrollUntilVisible:
     element:

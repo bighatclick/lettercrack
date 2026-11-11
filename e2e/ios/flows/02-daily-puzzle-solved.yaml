@@ -129,8 +129,14 @@ tags: [smoke, daily]
     file: ../common/see.yaml
     env:
       TEXT: "Solve today's quote: done just now"
-- assertVisible: "Solve one with no hints or checks: 0 of 1"
-- assertVisible: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve one with no hints or checks: 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
 # 2.20: tomorrow's teaser, with no words of the quote.
 - runFlow:
     file: ../common/see.yaml
