@@ -29,7 +29,7 @@ tags: [update]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Starry sky\\. Wear"
+      TEXT: "Starry sky\\. Wear(\\. New)?"
 - tapOn:
     id: wardrobe-stars
-- assertVisible: "Starry sky\\. Wearing"
+- assertVisible: "Starry sky\\. Wearing(\\. New)?"

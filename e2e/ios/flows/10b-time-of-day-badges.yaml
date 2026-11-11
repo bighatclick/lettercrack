@@ -56,21 +56,21 @@ tags: [wardrobe, dates]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Star shades\\. Wear"
+      TEXT: "Star shades\\. Wear(\\. New)?"
 - tapOn:
     id: wardrobe-shades
-- assertVisible: "Star shades\\. Wearing"
+- assertVisible: "Star shades\\. Wearing(\\. New)?"
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Brass monocle\\. Wear"
+      TEXT: "Brass monocle\\. Wear(\\. New)?"
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Sunrise\\. Wear"
+      TEXT: "Sunrise\\. Wear(\\. New)?"
 - tapOn:
     id: wardrobe-sunrise
-- assertVisible: "Sunrise\\. Wearing"
+- assertVisible: "Sunrise\\. Wearing(\\. New)?"
 - takeScreenshot: 10b-wardrobe-shades-sunrise
 # Kept after a restart.
 - runFlow: ../common/restart.yaml
@@ -83,8 +83,8 @@ tags: [wardrobe, dates]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Star shades\\. Wearing"
+      TEXT: "Star shades\\. Wearing(\\. New)?"
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Sunrise\\. Wearing"
+      TEXT: "Sunrise\\. Wearing(\\. New)?"

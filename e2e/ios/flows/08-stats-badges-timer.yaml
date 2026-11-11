@@ -66,7 +66,8 @@ tags: [stats]
     file: ../common/see.yaml
     env:
       TEXT: ".*: \\d quotes?"
-# 8.5: the same rank as Home.
+# 8.5: the same rank as Home (the rank card is above the authors).
+- runFlow: ../common/top.yaml
 - runFlow:
     file: ../common/see.yaml
     env:

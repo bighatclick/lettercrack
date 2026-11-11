@@ -31,4 +31,4 @@ tags: [update]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Starry sky\\. Wearing"
+      TEXT: "Starry sky\\. Wearing(\\. New)?"

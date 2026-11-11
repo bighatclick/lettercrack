@@ -76,7 +76,7 @@ export default function ArchiveScreen() {
                   // The medal tag is inside this one accessibility element, so the label says it too.
                   accessibilityLabel={
                     t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days }) +
-                    (stamps.get(m.month)!.medal ? ` ${t('stamps.medal')}` : '')
+                    (stamps.get(m.month)!.medal ? `. ${t('stamps.medal')}` : '')
                   }
                   testID={`stamps-${m.month}`}
                 >

@@ -32,7 +32,10 @@ tags: [settings]
     env:
       TEXT: "The short author notes are written by us\\."
 - runFlow: ../common/back.yaml
-- assertVisible: "Settings"
+- extendedWaitUntil:
+    # Back on Settings, which may still be scrolled to the links.
+    visible: "(Settings|About our quotes|Send feedback|Privacy policy|Terms of use)"
+    timeout: 15000
 # 12.13: Send feedback. The simulator has no Mail account, so nothing opens; nothing may crash.
 # (The mail body with version, DB version and reported quotes is checked by unit tests.)
 - runFlow:
@@ -48,7 +51,10 @@ tags: [settings]
 # Back from the mail composer or browser, without killing the app (a plain launchApp does).
 - launchApp:
     stopApp: false
-- assertVisible: "Settings"
+- extendedWaitUntil:
+    # Back on Settings, which may still be scrolled to the links.
+    visible: "(Settings|About our quotes|Send feedback|Privacy policy|Terms of use)"
+    timeout: 15000
 # 12.14: Privacy policy and Terms of use open the browser; coming back finds Settings.
 - runFlow:
     file: ../common/see.yaml
@@ -61,7 +67,10 @@ tags: [settings]
 # Back from the mail composer or browser, without killing the app (a plain launchApp does).
 - launchApp:
     stopApp: false
-- assertVisible: "Settings"
+- extendedWaitUntil:
+    # Back on Settings, which may still be scrolled to the links.
+    visible: "(Settings|About our quotes|Send feedback|Privacy policy|Terms of use)"
+    timeout: 15000
 - runFlow:
     file: ../common/see.yaml
     env:
@@ -73,4 +82,7 @@ tags: [settings]
 # Back from the mail composer or browser, without killing the app (a plain launchApp does).
 - launchApp:
     stopApp: false
-- assertVisible: "Settings"
+- extendedWaitUntil:
+    # Back on Settings, which may still be scrolled to the links.
+    visible: "(Settings|About our quotes|Send feedback|Privacy policy|Terms of use)"
+    timeout: 15000
