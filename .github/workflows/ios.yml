@@ -1,4 +1,4 @@
-# Unit checks on Linux, then an iOS simulator E2E build tested with Maestro on macOS.
+# iOS simulator E2E build tested with Maestro on macOS. Unit checks live in ci.yml.
 # Public repo: macOS minutes are free. Android stays local-only (CLAUDE.md), so nothing here builds it.
 name: iOS
 
@@ -20,26 +20,8 @@ env:
   SENTRY_DISABLE_AUTO_UPLOAD: 'true'
 
 jobs:
-  checks:
-    name: Unit tests, typecheck, lint, quote DB
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm test -- --ci
-      - run: npm run quotes:validate
-      - run: npm run quotes:test
-
   ios-e2e:
     name: iOS simulator build + Maestro
-    needs: checks
     runs-on: macos-latest
     timeout-minutes: 90
     env:
@@ -47,8 +29,8 @@ jobs:
       MAESTRO_CLI_NO_ANALYTICS: '1'
       MAESTRO_DRIVER_STARTUP_TIMEOUT: '240000'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
