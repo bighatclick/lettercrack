@@ -55,7 +55,8 @@ tags: [levels, goals]
 - copyTextFrom: "\\d+ of \\d+ letters filled"
 - evalScript: ${output.quote = maestro.copiedText.split(' of ')[1]}
 - copyTextFrom:
-    id: cell-0
+    # The first letter cell (index 0 can be punctuation, which has no cell).
+    id: "cell-\\d+"
 - evalScript: ${output.quote = output.quote + '|' + maestro.copiedText}
 - tapOn:
     id: puzzle-menu
@@ -78,7 +79,8 @@ tags: [levels, goals]
 - copyTextFrom: "\\d+ of \\d+ letters filled"
 - evalScript: ${output.after = maestro.copiedText.split(' of ')[1]}
 - copyTextFrom:
-    id: cell-0
+    # The first letter cell (index 0 can be punctuation, which has no cell).
+    id: "cell-\\d+"
 - assertTrue: ${output.after + '|' + maestro.copiedText != output.quote}
 - runFlow: ../common/back.yaml
 - runFlow:
