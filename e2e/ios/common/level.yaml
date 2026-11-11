@@ -9,6 +9,7 @@ appId: app.lettercrack
 - tapOn:
     id: home-level
 - extendedWaitUntil:
+    # At the largest text on a small iPhone the board can sit above the fold; the hint bar shows.
     visible:
-      id: board
+      id: "(board|hint-reveal)"
     timeout: 10000
