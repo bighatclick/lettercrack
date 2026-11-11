@@ -12,22 +12,28 @@ tags: [hints]
 # 5.5 (first half): Check is disabled until a letter is typed.
 - tapOn:
     id: hint-check
+    retryTapIfNoChange: true
 - assertVisible: "5 hints left"
 # 5.1: Reveal until the counter reaches 0.
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "4 hints left"
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "3 hints left"
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "2 hints left"
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "1 hint left"
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: 'No hints left today\. Free hints refill at midnight\.'
 - assertVisible:
     id: hint-reveal
@@ -38,8 +44,10 @@ tags: [hints]
 # 5.2: the disabled buttons do nothing, and there is no rewarded-ad offer.
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - tapOn:
     id: hint-check
+    retryTapIfNoChange: true
 - assertVisible: 'No hints left today\. Free hints refill at midnight\.'
 - runFlow: ../common/no-sales.yaml
 # Revealed letters are locked everywhere.
@@ -67,4 +75,5 @@ tags: [hints]
     id: key-delete
 - tapOn:
     id: hint-check
+    retryTapIfNoChange: true
 - assertVisible: "5 hints left"

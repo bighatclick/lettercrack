@@ -151,7 +151,7 @@ Franklin. The iOS expectations use the current calendar.
 | 3.11 | Home after | ✅ | 03 |
 | 3.12 | All goals → +1 hint, Goal getter | ✅ | 03b |
 | 3.13 | Report dialog | ✅ | 03b |
-| 3.14 | Cancel; Report and hide | ✅ New quote, level moves on | 03b |
+| 3.14 | Cancel; Report and hide | ✅ New quote at the same level | 03b |
 | 3.15 | Rank-up to Apprentice, beret | ✅ | 03c |
 | 3.16 | Big quote level on Home | ✅ | 03c |
 | 3.17 | Level 10 is long | ✅ 60+ letters | 03c |

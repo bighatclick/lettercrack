@@ -14,6 +14,7 @@ tags: [resilience]
 - runFlow: ../common/level.yaml
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "4 hints left"
 - runFlow: ../common/back.yaml
 - assertVisible: "1-day streak"

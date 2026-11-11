@@ -24,7 +24,10 @@ tags: [a11y]
 - takeScreenshot: 13d-solved
 - runFlow: ../common/home.yaml
 - runFlow: ../common/stats.yaml
-- assertVisible: "Puzzles solved: 1.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 1.*"
 - runFlow:
     file: ../common/see.yaml
     env:

@@ -17,6 +17,7 @@ tags: [update]
     id: key-Q
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "4 hints left"
 - runFlow: ../common/back.yaml
 - scrollUntilVisible:

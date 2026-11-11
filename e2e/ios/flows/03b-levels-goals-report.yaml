@@ -52,13 +52,19 @@ tags: [levels, goals]
 # 3.13: the report dialog.
 - copyTextFrom: "Level \\d+"
 - evalScript: ${output.level = maestro.copiedText}
+- copyTextFrom: "\\d+ of \\d+ letters filled"
+- evalScript: ${output.quote = maestro.copiedText.split(' of ')[1]}
+- copyTextFrom:
+    id: cell-0
+- evalScript: ${output.quote = output.quote + '|' + maestro.copiedText}
 - tapOn:
     id: puzzle-menu
 - assertVisible: "Report this quote\\?"
 - assertVisible: "It will be hidden on this device and listed in your next feedback email\\. Nothing is sent now\\."
 - assertVisible: "Cancel"
 - assertVisible: "Report and hide"
-# 3.14: Cancel changes nothing; "Report and hide" jumps to a new quote, one level on.
+# 3.14: Cancel changes nothing; "Report and hide" opens a new quote at the same level (the
+# reported one wasn't solved, so the level number stays).
 - tapOn: "Cancel"
 - assertVisible: "${output.level}"
 - tapOn:
@@ -68,8 +74,12 @@ tags: [levels, goals]
     visible:
       id: board
     timeout: 10000
-- copyTextFrom: "Level \\d+"
-- assertTrue: ${maestro.copiedText != output.level}
+- assertVisible: "${output.level}"
+- copyTextFrom: "\\d+ of \\d+ letters filled"
+- evalScript: ${output.after = maestro.copiedText.split(' of ')[1]}
+- copyTextFrom:
+    id: cell-0
+- assertTrue: ${output.after + '|' + maestro.copiedText != output.quote}
 - runFlow: ../common/back.yaml
 - runFlow:
     file: ../common/see.yaml

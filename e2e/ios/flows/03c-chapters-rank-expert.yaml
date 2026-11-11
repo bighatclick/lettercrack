@@ -88,10 +88,15 @@ tags: [levels, long]
 # The badges of 3.18 and 3.20.
 - runFlow: ../common/top.yaml
 - runFlow: ../common/stats.yaml
+# In page order (Solving, Skill, Collecting): see.yaml only scrolls down.
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "First chapter\\. .* Earned .*"
+      TEXT: "Ten down\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "1,000 letters\\. .* Earned .*"
 - runFlow:
     file: ../common/see.yaml
     env:
@@ -103,15 +108,11 @@ tags: [levels, long]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "1,000 letters\\. .* Earned .*"
+      TEXT: "First chapter\\. .* Earned .*"
 - runFlow:
     file: ../common/see.yaml
     env:
       TEXT: "Bookworm\\. .* Earned .*"
-- runFlow:
-    file: ../common/see.yaml
-    env:
-      TEXT: "Ten down\\. .* Earned .*"
 - runFlow: ../common/back.yaml
 # 3.21: every level quote is used; the next level repeats the oldest one (no crash, no dead end).
 - runFlow:

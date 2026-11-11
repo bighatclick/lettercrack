@@ -33,6 +33,7 @@ tags: [a11y]
     id: e2e-wrong
 - tapOn:
     id: hint-check
+    retryTapIfNoChange: true
 - assertVisible: ".*, marked wrong"
 - assertVisible: ".*, given.*"
 - takeScreenshot: 13c-puzzle-states-dark-hc

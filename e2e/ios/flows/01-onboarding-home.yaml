@@ -48,6 +48,7 @@ tags: [smoke, onboarding]
     id: onboarding-hard
 - tapOn:
     id: onboarding-start
+    retryTapIfNoChange: true
 - extendedWaitUntil:
     visible:
       id: home-settings

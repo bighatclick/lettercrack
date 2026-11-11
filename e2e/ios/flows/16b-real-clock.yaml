@@ -34,4 +34,7 @@ tags: [dates, smoke]
 - assertVisible: "Past daily quotes will appear here from tomorrow\\."
 - runFlow: ../common/back.yaml
 - runFlow: ../common/stats.yaml
-- assertVisible: "Puzzles solved: 1.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 1.*"

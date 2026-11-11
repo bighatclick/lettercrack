@@ -14,6 +14,7 @@ tags: [stats]
 - runFlow: ../common/level.yaml
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - runFlow: ../common/solve.yaml
 - runFlow: ../common/home.yaml
 - runFlow: ../common/solve-level.yaml

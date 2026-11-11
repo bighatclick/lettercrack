@@ -33,8 +33,12 @@ tags: [dates]
 - extendedWaitUntil:
     visible: "January 2027"
     timeout: 3000
-- assertVisible:
-    id: archive-2027-01-10
+# Newest month first: January is further down.
+- scrollUntilVisible:
+    element:
+      id: archive-2027-01-10
+    direction: DOWN
+    timeout: 45000
 - runFlow:
     file: ../common/see.yaml
     env:

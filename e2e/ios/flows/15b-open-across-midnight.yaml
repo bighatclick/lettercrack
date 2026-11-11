@@ -6,12 +6,14 @@ tags: [dates]
 - runFlow:
     file: ../common/start.yaml
     env:
-      AT: "2027-01-10T23:59:00"
+      # Three minutes before midnight: the steps before the Sunday check take over a minute on CI.
+      AT: "2027-01-10T23:57:00"
       DIFF: medium
       NOTIFY: unset
 - runFlow: ../common/level.yaml
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "4 hints left"
 - runFlow: ../common/back.yaml
 - assertVisible: "Sunday, (10 January|January 10)"
@@ -19,7 +21,7 @@ tags: [dates]
 # Stay on Home past midnight.
 - extendedWaitUntil:
     visible: "Monday, (11 January|January 11)"
-    timeout: 90000
+    timeout: 240000
 - assertVisible: "Good morning, codebreaker!"
 - assertNotVisible: "Sunday special"
 - assertVisible: "Crack it"

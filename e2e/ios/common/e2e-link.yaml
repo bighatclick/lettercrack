@@ -13,3 +13,20 @@ appId: app.lettercrack
     visible:
       id: e2e-ok
     timeout: 15000
+    optional: true
+# Right after a wipe the app may still be starting and miss the link (seen on CI): send it again.
+- runFlow:
+    when:
+      notVisible:
+        id: e2e-ok
+    commands:
+      - openLink: "lettercrack://e2e?${QUERY}"
+      - runFlow:
+          when:
+            visible: "Open"
+          commands:
+            - tapOn: "Open"
+- extendedWaitUntil:
+    visible:
+      id: e2e-ok
+    timeout: 30000

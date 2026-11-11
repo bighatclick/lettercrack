@@ -73,7 +73,8 @@ tags: [dates]
     file: ../common/clock.yaml
     env:
       AT: "2028-03-01T10:00:00"
-- assertVisible: "2-day streak"
+# One daily solved (29 Feb): on 1 March the streak is still alive at 1 day.
+- assertVisible: "1-day streak"
 - scrollUntilVisible:
     element:
       id: home-archive

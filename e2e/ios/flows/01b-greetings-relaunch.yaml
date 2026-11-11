@@ -23,11 +23,12 @@ tags: [onboarding]
 - runFlow:
     file: ../common/clock.yaml
     env:
-      AT: "2027-01-10T17:59:40"
+      # 90 s before 6pm: setting the clock restarts the app, which can take 30 s or more on CI.
+      AT: "2027-01-10T17:58:30"
 - assertVisible: "Good afternoon, codebreaker!"
 - extendedWaitUntil:
     visible: "Good evening, codebreaker!"
-    timeout: 45000
+    timeout: 120000
 # 1.11: kill and relaunch: straight to Home, no onboarding.
 - runFlow:
     file: ../common/clock.yaml

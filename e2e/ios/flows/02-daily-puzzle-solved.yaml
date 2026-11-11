@@ -58,6 +58,7 @@ tags: [smoke, daily]
     id: e2e-wrong
 - tapOn:
     id: hint-check
+    retryTapIfNoChange: true
 - assertVisible: ".*, marked wrong"
 - assertVisible: "4 hints left"
 # 2.10: the right letter over it: the flag clears.
@@ -67,6 +68,7 @@ tags: [smoke, daily]
 # 2.11: Reveal fills one letter everywhere and locks it.
 - tapOn:
     id: hint-reveal
+    retryTapIfNoChange: true
 - assertVisible: "3 hints left"
 # 2.12: the board full with one letter wrong: a gentle note, no charge, no fail state.
 - tapOn:

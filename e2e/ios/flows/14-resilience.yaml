@@ -22,7 +22,9 @@ tags: [resilience]
 - pressKey: home
 - waitForAnimationToEnd:
     timeout: 15000
-- launchApp
+# Back to the app as a tap on its icon would: Maestro's plain launchApp kills it first.
+- launchApp:
+    stopApp: false
 - assertVisible: ".*guess Q.*"
 - assertVisible: "Time .*"
 - copyTextFrom: "Time .*"
@@ -65,7 +67,8 @@ tags: [resilience]
 - tapOn:
     id: e2e-solve
 - pressKey: home
-- launchApp
+- launchApp:
+    stopApp: false
 - extendedWaitUntil:
     visible: "(Cracked it!|.*codebreaker!)"
     timeout: 15000
@@ -80,7 +83,10 @@ tags: [resilience]
       TEXT: "Stats\\. 1 quote solved"
 - runFlow: ../common/top.yaml
 - runFlow: ../common/stats.yaml
-- assertVisible: "Puzzles solved: 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 1"
 - runFlow: ../common/back.yaml
 # No double hint either: still the 5 free hints.
 - runFlow: ../common/level.yaml

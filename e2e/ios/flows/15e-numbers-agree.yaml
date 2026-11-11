@@ -44,7 +44,10 @@ tags: [stats]
 - runFlow: ../common/top.yaml
 - runFlow: ../common/stats.yaml
 - assertVisible: "Current streak: 1 day\\. Best streak: 1 day.*"
-- assertVisible: "Puzzles solved: 4.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 4.*"
 - runFlow:
     file: ../common/see.yaml
     env:

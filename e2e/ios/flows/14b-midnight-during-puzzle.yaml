@@ -5,7 +5,8 @@ tags: [dates]
 - runFlow:
     file: ../common/start.yaml
     env:
-      AT: "2027-01-10T23:59:20"
+      # Onboarding takes up to a minute on CI: start early enough to open the daily before midnight.
+      AT: "2027-01-10T23:58:00"
       DIFF: medium
       NOTIFY: unset
 - runFlow: ../common/daily.yaml
@@ -13,7 +14,7 @@ tags: [dates]
 # Wait past midnight with the puzzle open (the test clock keeps ticking).
 - extendedWaitUntil:
     visible: "never-there"
-    timeout: 45000
+    timeout: 150000
     optional: true
 - runFlow: ../common/solve.yaml
 # The Solved screen shows the quote (never "This puzzle isn't available."), with the streak credited.

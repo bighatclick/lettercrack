@@ -19,6 +19,7 @@ appId: app.lettercrack
     timeout: 20000
 - tapOn:
     id: onboarding-start
+    retryTapIfNoChange: true
 - extendedWaitUntil:
     visible:
       id: home-settings

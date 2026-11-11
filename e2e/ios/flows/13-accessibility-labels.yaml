@@ -55,6 +55,7 @@ tags: [a11y]
     id: e2e-wrong
 - tapOn:
     id: hint-check
+    retryTapIfNoChange: true
 - assertVisible: "cipher [A-Z], guess [A-Z], marked wrong"
 - assertVisible: "4 hints left"
 # The Difficulty chip reads its name.
