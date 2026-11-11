@@ -15,7 +15,7 @@ appId: app.lettercrack
       visible: "(?i)not now"
     commands:
       - tapOn: "(?i)not now"
+# The header, not the quote: at the largest text sizes the quote starts below the fold.
 - extendedWaitUntil:
-    visible:
-      id: solved-quote
+    visible: "Cracked it!"
     timeout: 15000

@@ -123,7 +123,7 @@ Franklin. The iOS expectations use the current calendar.
 | 2.12 | Full but wrong | ✅ "Almost!…", 47 of 47, no charge, not solved | 02 |
 | 2.13 | Back: Home in progress | ✅ | 02 |
 | 2.14 | Continue | ✅ Same hints and state | 02 |
-| 2.15 | Solve; back doesn't return | ✅ Back swipe stays on Solved | 02 |
+| 2.15 | Solve; back doesn't return | ✅ Back swipe goes Home, never to the puzzle | 02 |
 | 2.16 | Solved header and tags | ✅ Not clean (a Check and a Reveal were used) | 02 |
 | 2.17 | Awards card | ✅ "New badges!" and "and 1 more"; all four on the shelf | 02 |
 | 2.18 | Quote and author card with fact | ✅ | 02 |

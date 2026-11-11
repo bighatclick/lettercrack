@@ -6,5 +6,6 @@ appId: app.lettercrack
     element:
       text: ${TEXT}
     direction: DOWN
-    timeout: 20000
+    # Long screens at the largest text sizes take many slow scrolls on the CI simulator.
+    timeout: 45000
     visibilityPercentage: 50

@@ -89,18 +89,13 @@ tags: [smoke, daily]
 - runFlow: ../common/daily.yaml
 - assertVisible: "3 hints left"
 - assertVisible: "Almost! The highlighted letters aren.t right yet\\."
-# 2.15: correct the last letter: Solved replaces the puzzle (a back swipe doesn't return to it).
+# 2.15: correct the last letter: Solved replaces the puzzle. (The back swipe is checked at 2.24.)
 - tapOn:
     id: e2e-right
 - extendedWaitUntil:
     visible:
       id: solved-quote
     timeout: 15000
-- swipe:
-    start: "2%,50%"
-    end: "90%,50%"
-- assertVisible:
-    id: solved-quote
 - assertNotVisible:
     id: board
 # 2.16: the header and tags. Not clean (a Check and a Reveal were used).
@@ -131,8 +126,7 @@ tags: [smoke, daily]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "Solve today's quote: done.*"
-- assertVisible: "Done!"
+      TEXT: "Solve today's quote: done just now"
 - assertVisible: "Solve one with no hints or checks: 0 of 1"
 - assertVisible: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
 # 2.20: tomorrow's teaser, with no words of the quote.
@@ -152,8 +146,20 @@ tags: [smoke, daily]
 - assertVisible: "Home"
 - assertNotVisible: "Want a nudge tomorrow\\?"
 - runFlow: ../common/no-sales.yaml
-# 2.24: Home after the solve.
-- runFlow: ../common/home.yaml
+# 2.15 + 2.24: a back swipe from Solved goes Home (iOS's normal gesture), never back to the puzzle.
+- runFlow: ../common/top.yaml
+- swipe:
+    start: "2%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd:
+    timeout: 3000
+- runFlow: ../common/top.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000
+- assertNotVisible:
+    id: board
 - assertVisible: "1-day streak"
 - assertVisible: "Nice work today! A new quote arrives tomorrow\\."
 - assertVisible: "Solved\\. A new quote arrives tomorrow\\."
