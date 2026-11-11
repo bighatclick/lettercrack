@@ -53,7 +53,10 @@ tags: [stats]
     file: ../common/see.yaml
     env:
       TEXT: "Puzzles solved per week, oldest first: .*3"
-- assertVisible: "Puzzles solved in each of the last 6 weeks\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved in each of the last 6 weeks\\."
 # 8.4: favourite authors.
 - runFlow:
     file: ../common/see.yaml

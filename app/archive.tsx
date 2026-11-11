@@ -73,7 +73,11 @@ export default function ArchiveScreen() {
               {stamps.get(m.month) ? (
                 <View
                   accessible
-                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days })}
+                  // The medal tag is inside this one accessibility element, so the label says it too.
+                  accessibilityLabel={
+                    t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days }) +
+                    (stamps.get(m.month)!.medal ? ` ${t('stamps.medal')}` : '')
+                  }
                   testID={`stamps-${m.month}`}
                 >
                   {stamps.get(m.month)!.medal ? (

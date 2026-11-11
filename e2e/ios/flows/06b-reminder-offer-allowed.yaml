@@ -41,7 +41,9 @@ tags: [reminder]
 - assertVisible:
     id: setting-reminder
     checked: true
-- assertVisible: "A notification around 9am when the day.s quote is ready\\."
+# The row's description is the switch's VoiceOver hint, which iOS doesn't expose to Maestro.
+- assertVisible:
+    id: setting-reminder
 - runFlow: ../common/back.yaml
 # The offer doesn't come back on later dailies.
 - runFlow:

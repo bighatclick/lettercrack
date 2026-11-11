@@ -42,7 +42,7 @@ tags: [dates, streak]
 - tapOn:
     id: home-archive
 - assertVisible: "December 2027"
-- assertVisible: "December 2027: 3 of 3 days stamped"
+- assertVisible: "December 2027: 3 of 3 days stamped.*"
 - runFlow:
     file: ../common/see.yaml
     env:
@@ -79,5 +79,5 @@ tags: [dates, streak]
     direction: DOWN
 - tapOn:
     id: home-archive
-- assertVisible: "February 2028: 3 of 3 days stamped"
+- assertVisible: "February 2028: 3 of 3 days stamped.*"
 - assertVisible: "(29 February|February 29), solved"

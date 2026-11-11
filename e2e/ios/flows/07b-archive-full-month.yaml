@@ -66,8 +66,7 @@ tags: [archive, dates, long]
       - evalScript: ${output.day = output.day + 1}
 # 7.9 + 7.10: the January header shows the medal; its label reads 22 of 22.
 - runFlow: ../common/top.yaml
-- assertVisible: "Full month! Medal earned\\."
-- assertVisible: "January 2027: 22 of 22 days stamped"
+- assertVisible: "January 2027: 22 of 22 days stamped\\. Full month! Medal earned\\."
 - assertVisible: "22 solved"
 - runFlow: ../common/back.yaml
 # The badges are on the shelf whether or not they fit on the Solved card.
