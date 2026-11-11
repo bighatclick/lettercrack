@@ -12,10 +12,11 @@ tags: [resilience]
 - runFlow: ../common/solve-daily.yaml
 - runFlow: ../common/solve-level.yaml
 - runFlow: ../common/level.yaml
+# Solving the daily and a 60+ letter level completes all three goals: +1 hint (6), then the reveal: 5.
 - tapOn:
     id: hint-reveal
     retryTapIfNoChange: true
-- assertVisible: "4 hints left"
+- assertVisible: "5 hints left"
 - runFlow: ../common/back.yaml
 - assertVisible: "1-day streak"
 # The main save overwritten with junk; the backup file is kept.
@@ -35,7 +36,7 @@ tags: [resilience]
     env:
       TEXT: "Stats\\. 2 quotes solved"
 - runFlow: ../common/level.yaml
-- assertVisible: "4 hints left"
+- assertVisible: "5 hints left"
 - assertVisible: ".*, given.*"
 - runFlow: ../common/back.yaml
 # The main save deleted; the backup file is kept.

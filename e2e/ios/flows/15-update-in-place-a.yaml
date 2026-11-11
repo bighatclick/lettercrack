@@ -18,7 +18,8 @@ tags: [update]
 - tapOn:
     id: hint-reveal
     retryTapIfNoChange: true
-- assertVisible: "4 hints left"
+# Solving the daily and a 60+ letter level completes all three goals: +1 hint (6), then the reveal: 5.
+- assertVisible: "5 hints left"
 - runFlow: ../common/back.yaml
 - scrollUntilVisible:
     element:

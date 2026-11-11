@@ -20,7 +20,7 @@ tags: [update]
 - runFlow: ../common/level.yaml
 - assertVisible: "Level 2"
 - assertVisible: ".*guess Q.*"
-- assertVisible: "4 hints left"
+- assertVisible: "5 hints left"
 - runFlow: ../common/back.yaml
 - scrollUntilVisible:
     element:

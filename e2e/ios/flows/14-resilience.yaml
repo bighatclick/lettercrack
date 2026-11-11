@@ -38,7 +38,9 @@ tags: [resilience]
 - swipe:
     start: "50%,95%"
     end: "50%,10%"
-- launchApp
+# Back without killing the app (a plain launchApp kills it).
+- launchApp:
+    stopApp: false
 - assertVisible: ".*guess Q.*"
 # 14.3: ten keys fast: one letter per tap, no dropped or doubled input.
 - tapOn:

@@ -39,14 +39,17 @@ tags: [dates]
       id: archive-2027-01-10
     direction: DOWN
     timeout: 45000
-- runFlow:
-    file: ../common/see.yaml
-    env:
-      TEXT: "February 2027"
+# Newest month first: back to the top for March, then February below it.
+- runFlow: ../common/top.yaml
 - runFlow:
     file: ../common/see.yaml
     env:
       TEXT: "March 2027"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "February 2027"
+- runFlow: ../common/top.yaml
 - scrollUntilVisible:
     element:
       id: archive-2027-03-11
