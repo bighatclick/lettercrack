@@ -16,4 +16,5 @@ appId: app.lettercrack
 - extendedWaitUntil:
     visible:
       id: onboarding-skip
-    timeout: 20000
+    # The iPad simulator renders in software on CI; its first launch after a wipe can take ~50 s.
+    timeout: 90000

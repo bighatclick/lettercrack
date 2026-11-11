@@ -2,6 +2,12 @@
 appId: app.lettercrack
 ---
 - runFlow: top.yaml
+# At the largest text sizes the Today card's button is below the fold.
+- scrollUntilVisible:
+    element:
+      id: home-daily
+    direction: DOWN
+    timeout: 20000
 - tapOn:
     id: home-daily
 - extendedWaitUntil:

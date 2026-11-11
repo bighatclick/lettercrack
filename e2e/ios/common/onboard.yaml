@@ -4,8 +4,19 @@ appId: app.lettercrack
 ---
 - tapOn:
     id: onboarding-skip
+# At the largest text sizes the picker scrolls.
+- scrollUntilVisible:
+    element:
+      id: onboarding-${DIFF}
+    direction: DOWN
+    timeout: 20000
 - tapOn:
     id: onboarding-${DIFF}
+- scrollUntilVisible:
+    element:
+      id: onboarding-start
+    direction: DOWN
+    timeout: 20000
 - tapOn:
     id: onboarding-start
 - extendedWaitUntil:

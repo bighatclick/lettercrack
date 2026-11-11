@@ -233,7 +233,10 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
     const open = e2eOpen(s);
     const last = open[open.length - 1];
     if (last === undefined) return;
-    for (const i of open) if (s.entries[i] !== s.plain[i]) s = e2eType(s, i, s.plain[i]!);
+    // Leave the last letter's cells alone: filling them right would solve the puzzle, and a
+    // solved puzzle ignores the wrong letter typed after it.
+    const held = s.plain[last];
+    for (const i of open) if (s.plain[i] !== held && s.entries[i] !== s.plain[i]) s = e2eType(s, i, s.plain[i]!);
     commit(e2eType(s, last, e2eWrongLetter(s, last)));
   };
 
