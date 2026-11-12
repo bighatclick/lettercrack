@@ -200,6 +200,15 @@ for name in "${FLOWS[@]}"; do
   maestro --device "$SIM_UDID" test "$(file_for "$name")" \
     --format junit --output "$OUT/junit/$name.xml" \
     --test-output-dir "$OUT/$name" --debug-output "$OUT/$name/debug" || ok=0
+  # Maestro's iOS driver sometimes loses the simulator ("Device became unreachable"): not the
+  # app. Every flow starts from a fresh install, so it's run once more from the start.
+  if [ $ok = 0 ] && grep -q "DeviceUnreachableException" "$OUT/junit/$name.xml" 2>/dev/null; then
+    echo "::warning title=$name::simulator driver lost; running the flow again"
+    ok=1
+    maestro --device "$SIM_UDID" test "$(file_for "$name")" \
+      --format junit --output "$OUT/junit/$name.xml" \
+      --test-output-dir "$OUT/$name-retry" --debug-output "$OUT/$name-retry/debug" || ok=0
+  fi
   after "$name" || ok=0
   echo "::endgroup::"
   if [ $ok = 1 ]; then
