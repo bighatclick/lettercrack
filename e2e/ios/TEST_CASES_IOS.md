@@ -65,7 +65,8 @@ midnight (14b, 15b) to cover the no-restart path.
 | J15 Real-world scenarios | 13 | 7 | 3 | 1 | 2 | 15, 15b–15e, 17, 14 |
 | J16 Retests for the date fixes | 8 | 7 | 0 | 0 | 1 | 16, 06, 07b, 00, 14b |
 | J18 iOS regressions (double taps) | 2 | 2 | 0 | 0 | 0 | 18 |
-| **Total** | **213** | **181** | **16** | **4** | **12** | 46 flow files |
+| J19 A month of play | 31 | 31 | 0 | 0 | 0 | 19 |
+| **Total** | **244** | **212** | **16** | **4** | **12** | 47 flow files |
 
 The four manual steps are 6.15 and 6.16 (reminder delivery), 13.11 (hardware keyboard) and 15.3
 (real phones). Parts of partly automated steps are manual too, such as 15.4's two-device iCloud
@@ -373,6 +374,48 @@ Added after the iOS runs found them. Also run on the smallest iPhone.
 |---|---|---|---|
 | 18.1 | Double tap the daily and the next level on Home | ✅ Opens the puzzle once; one Back is Home (Home's tiles had no tap guard) | 18 |
 | 18.2 | Double tap Settings, Archive, Stats, Library, wardrobe | ✅ Same: one screen, one Back | 18 |
+
+## J19: A month of play (one person, 1 Feb – 1 Mar 2027)
+
+One flow (`19-month-of-play`, in `flows/month/w1–w4`) plays the app as one person for a month,
+in its own CI job (`month`, budget 1.5 h, about 2 min per day). The test clock moves day by day at
+different times of day; nothing is reset between days, so every day builds on the last. The
+numbers are worked out from the rules (one weekly freeze per ISO week, a saved freeze at 7 days,
+archive replays stamp the day but don't add to the streak).
+
+| # | Day | What the player does | Checked |
+|---|---|---|---|
+| 19.1 | Mon 1 Feb 08:15 | Installs, onboarding, daily, a level | Streak 1 |
+| 19.2 | Tue 2 Feb 21:40 | One Reveal on the daily | Exactly one hint spent; streak 2 |
+| 19.3 | Wed 3 Feb 07:05 | Daily | Streak 3, 3-day milestone card |
+| 19.4 | Thu 4 Feb 12:30 | Two letters, app killed, back | Letters kept; streak 4 |
+| 19.5 | Fri 5 Feb | Missed | |
+| 19.6 | Sat 6 Feb 10:00 | Opens, daily | Home still "4-day streak"; streak 5; weekly freeze message |
+| 19.7 | Sun 7 Feb 18:00 | Sunday special; Fri 5 from the archive | Streak 6, Sunday special |
+| 19.8 | Mon 8 Feb 08:00 | Daily, then levels until the goals reward | Streak 7, 7-day card, saved freeze; +1 hint |
+| 19.9 | Tue 9 Feb 22:00 | Daily, Stats | Streak 8; 1 saved freeze |
+| 19.10 | Wed 10, Thu 11 Feb | Missed | |
+| 19.11 | Fri 12 Feb 09:00 | Daily | "8-day streak" kept; streak 9; weekly + saved freeze used, none left |
+| 19.12 | Sat 13 Feb 14:00 | Turns on the solve timer, daily | Time on the puzzle and Solved; streak 10 |
+| 19.13 | Sun 14 Feb 11:00 | Sunday special; 10 and 11 Feb from the archive | Streak 11 |
+| 19.14 | Mon 15 Feb 07:30 | Daily | Streak 12 |
+| 19.15 | Tue 16 Feb 20:00 | Spends every hint | 0 hints left; streak 13 |
+| 19.16 | Wed 17 Feb 12:00 | Daily, a level | Streak 14, 14-day card; 5 hints again |
+| 19.17 | Thu 18 Feb 23:50 | Daily, Library | Streak 15 |
+| 19.18 | Fri 19 Feb 06:45 | Daily, wardrobe | Streak 16 |
+| 19.19 | Sat 20 Feb 16:00 | Daily | Streak 17 |
+| 19.20 | Sun 21 Feb 10:00 | Sunday special, Stats | Streak 18 (best 18); 21 dailies solved |
+| 19.21 | Mon 22 Feb 08:00 | Daily, two levels | Streak 19 |
+| 19.22 | Tue 23 Feb 13:00 | A letter, app killed, back | Letter kept; streak 20 |
+| 19.23 | Wed 24 Feb 19:00 | A letter, Home button, back | Puzzle as it was; streak 21 |
+| 19.24 | Thu 25 Feb 09:00 | Default difficulty Hard, daily, a level | Streak 22; the level is Hard |
+| 19.25 | Fri 26 Feb 21:00 | Daily | Streak 23 |
+| 19.26 | Sat 27 Feb 08:30 | Daily | Streak 24 |
+| 19.27 | Sun 28 Feb 18:00 | Sunday special | Streak 25 |
+| 19.28 | Sun 28 Feb | Archive | "February 2027: 28 of 28 days stamped. Full month! Medal earned." |
+| 19.29 | Sun 28 Feb | Stats | Current and best 25; 28 dailies; Full month, Sunday regular, One week earned |
+| 19.30 | Mon 1 Mar 08:00 | Opens | Home "25-day streak" |
+| 19.31 | Mon 1 Mar | Daily | Streak 26 |
 
 ---
 

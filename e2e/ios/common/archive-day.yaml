@@ -1,0 +1,37 @@
+# From Home: opens the archive, solves the day DAY (YYYY-MM-DD) and goes back Home.
+# env: DAY
+appId: app.lettercrack
+---
+- runFlow: top.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+    timeout: 45000
+- tapOn:
+    id: home-archive
+- extendedWaitUntil:
+    visible: "Archive"
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: "archive-${DAY}"
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    id: "archive-${DAY}"
+- extendedWaitUntil:
+    visible:
+      id: "(board|hint-reveal)"
+    timeout: 10000
+- runFlow: solve.yaml
+- runFlow:
+    file: see.yaml
+    env:
+      TEXT: "Back to archive"
+- tapOn: "Back to archive"
+- runFlow: back.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000

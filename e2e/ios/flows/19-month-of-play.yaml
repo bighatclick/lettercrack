@@ -1,0 +1,10 @@
+# J19: a month of real use, played as one person from install (Mon 1 Feb 2027) to Mon 1 Mar.
+# The test clock moves day by day at varied times of day. Runs in its own CI job ("month"),
+# budget 1.5 h. Plan and expected numbers: e2e/ios/TEST_CASES_IOS.md, J19.
+appId: app.lettercrack
+tags: [month, long]
+---
+- runFlow: month/w1.yaml
+- runFlow: month/w2.yaml
+- runFlow: month/w3.yaml
+- runFlow: month/w4.yaml

@@ -1,0 +1,11 @@
+# One ordinary day of the month: the clock moves to AT, the player solves the daily, sees STREAK
+# on Solved, and goes back Home.
+# env: AT, STREAK (regex, e.g. "Streak: 12 days")
+appId: app.lettercrack
+---
+- runFlow:
+    file: daily-on.yaml
+    env:
+      AT: ${AT}
+- assertVisible: ${STREAK}
+- runFlow: home.yaml

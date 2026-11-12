@@ -1,0 +1,93 @@
+# Month of play, week 1 (Mon 1 – Sun 7 Feb 2027): install, first streak, a hint, a kill
+# mid-puzzle, a missed day the weekly freeze covers, the first Sunday special, an archive replay.
+appId: app.lettercrack
+---
+# Mon 1 Feb, 08:15: install, onboarding, the first daily and a level before work.
+- runFlow:
+    file: ../../common/start.yaml
+    env:
+      AT: "2027-02-01T08:15:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../../common/daily.yaml
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 1 day"
+- runFlow: ../../common/home.yaml
+- runFlow: ../../common/solve-level.yaml
+# Tue 2 Feb, 21:40: one Reveal on the daily costs exactly one hint.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-02T21:40:00"
+- runFlow: ../../common/daily.yaml
+- copyTextFrom: "\\d+ hints? left"
+- evalScript: ${output.hints = parseInt(maestro.copiedText)}
+- tapOn:
+    id: hint-reveal
+    retryTapIfNoChange: true
+- copyTextFrom: "\\d+ hints? left"
+- assertTrue: ${parseInt(maestro.copiedText) == output.hints - 1}
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 2 days"
+- runFlow: ../../common/home.yaml
+# Wed 3 Feb, 07:05: the 3-day milestone.
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-03T07:05:00"
+- assertVisible: "Streak: 3 days"
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "3-day streak!"
+- runFlow: ../../common/home.yaml
+# Thu 4 Feb, 12:30: two letters in at lunch, the app is killed, the letters are still there.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-04T12:30:00"
+- runFlow: ../../common/daily.yaml
+- tapOn:
+    id: e2e-right
+- tapOn:
+    id: e2e-right
+- copyTextFrom: "\\d+ of \\d+ letters filled"
+- evalScript: ${output.filled = maestro.copiedText}
+- runFlow: ../../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 15000
+- runFlow: ../../common/daily.yaml
+- assertVisible: ${output.filled}
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 4 days"
+- runFlow: ../../common/home.yaml
+# Fri 5 Feb: missed.
+# Sat 6 Feb, 10:00: Home still shows the streak; the weekly freeze covers Friday.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-06T10:00:00"
+- assertVisible: "4-day streak"
+- runFlow: ../../common/daily.yaml
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 5 days"
+- assertVisible: "A streak freeze covered a missed day, so your streak is safe\\."
+- runFlow: ../../common/home.yaml
+# Sun 7 Feb, 18:00: the Sunday special, then Friday's quote from the archive.
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-07T18:00:00"
+- assertVisible: "Streak: 6 days"
+- assertVisible: "Sunday special"
+- runFlow: ../../common/home.yaml
+- runFlow:
+    file: ../../common/archive-day.yaml
+    env:
+      DAY: "2027-02-05"

@@ -1,0 +1,77 @@
+# Month of play, week 2 (Mon 8 – Sun 14 Feb): the 7-day milestone and its saved freeze, a long
+# level session for the goals reward, two missed days (weekly + saved freeze), the solve timer,
+# and two archive replays.
+appId: app.lettercrack
+---
+# Mon 8 Feb, 08:00: 7 days, a saved freeze; then levels until all three goals give +1 hint.
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-08T08:00:00"
+- assertVisible: "Streak: 7 days"
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "7-day streak!"
+- assertVisible: "Inky gave you a streak freeze\\. It covers a missed day when the weekly one is used up\\."
+- runFlow: ../../common/home.yaml
+- runFlow: ../../common/levels-until-reward.yaml
+- runFlow: ../../common/home.yaml
+# Tue 9 Feb, 22:00: late-night daily; Stats shows the saved freeze.
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-09T22:00:00"
+      STREAK: "Streak: 8 days"
+- runFlow: ../../common/stats.yaml
+- assertVisible: "Current streak: 8 days\\. Best streak: 8 days.*"
+- assertVisible: "1 saved streak freeze"
+- runFlow: ../../common/back.yaml
+# Wed 10 and Thu 11 Feb: missed.
+# Fri 12 Feb, 09:00: the weekly freeze covers one day and the saved one the other.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-12T09:00:00"
+- assertVisible: "8-day streak"
+- runFlow: ../../common/daily.yaml
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 9 days"
+- assertVisible: "A streak freeze covered a missed day, so your streak is safe\\."
+- runFlow: ../../common/home.yaml
+- runFlow: ../../common/stats.yaml
+- assertNotVisible: "\\d+ saved streak freezes?"
+- runFlow: ../../common/back.yaml
+# Sat 13 Feb, 14:00: turns on the solve timer; the puzzle and Solved show times.
+- tapOn:
+    id: home-settings
+- tapOn: "Show solve time"
+- runFlow: ../../common/back.yaml
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-13T14:00:00"
+- runFlow: ../../common/daily.yaml
+- assertVisible: "Time \\d+:\\d\\d"
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 10 days"
+- assertVisible: "Solved in \\d+:\\d\\d"
+- runFlow: ../../common/home.yaml
+# Sun 14 Feb, 11:00: the Sunday special, then the two missed days from the archive.
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-14T11:00:00"
+- assertVisible: "Streak: 11 days"
+- assertVisible: "Sunday special"
+- runFlow: ../../common/home.yaml
+- runFlow:
+    file: ../../common/archive-day.yaml
+    env:
+      DAY: "2027-02-10"
+- runFlow:
+    file: ../../common/archive-day.yaml
+    env:
+      DAY: "2027-02-11"

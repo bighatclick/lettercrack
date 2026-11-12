@@ -1,0 +1,137 @@
+# Month of play, week 4 (Mon 22 – Sun 28 Feb) and 1 Mar: levels, a kill and a background
+# mid-puzzle, a new default difficulty, the full month (medal, badges, counts) and the next day.
+appId: app.lettercrack
+---
+# Mon 22 Feb, 08:00: daily and two levels on the commute.
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-22T08:00:00"
+      STREAK: "Streak: 19 days"
+- runFlow: ../../common/solve-level.yaml
+- runFlow: ../../common/solve-level.yaml
+# Tue 23 Feb, 13:00: a letter in, the app is killed, the letter is kept.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-23T13:00:00"
+- runFlow: ../../common/daily.yaml
+- tapOn:
+    id: e2e-right
+- copyTextFrom: "\\d+ of \\d+ letters filled"
+- evalScript: ${output.filled = maestro.copiedText}
+- runFlow: ../../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 15000
+- runFlow: ../../common/daily.yaml
+- assertVisible: ${output.filled}
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 20 days"
+- runFlow: ../../common/home.yaml
+# Wed 24 Feb, 19:00: a letter in, then the Home button and back: the puzzle is as it was.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-24T19:00:00"
+- runFlow: ../../common/daily.yaml
+- tapOn:
+    id: e2e-right
+- copyTextFrom: "\\d+ of \\d+ letters filled"
+- evalScript: ${output.filled = maestro.copiedText}
+- pressKey: home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: ${output.filled}
+    timeout: 15000
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 21 days"
+- runFlow: ../../common/home.yaml
+# Thu 25 Feb, 09:00: the default difficulty goes to Hard; the next level uses it.
+- tapOn:
+    id: home-settings
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "Hard"
+- tapOn: "Hard"
+- runFlow: ../../common/back.yaml
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-25T09:00:00"
+      STREAK: "Streak: 22 days"
+- runFlow: ../../common/level.yaml
+- assertVisible: "Hard"
+- runFlow: ../../common/back.yaml
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-26T21:00:00"
+      STREAK: "Streak: 23 days"
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-27T08:30:00"
+      STREAK: "Streak: 24 days"
+# Sun 28 Feb, 18:00: the last day of the month.
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-28T18:00:00"
+- assertVisible: "Streak: 25 days"
+- assertVisible: "Sunday special"
+- runFlow: ../../common/home.yaml
+# The archive: every February day stamped, the medal on the month.
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+    timeout: 45000
+- tapOn:
+    id: home-archive
+- extendedWaitUntil:
+    visible: "Archive"
+    timeout: 10000
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "February 2027: 28 of 28 days stamped\\. Full month! Medal earned\\."
+- runFlow: ../../common/back.yaml
+# Stats: the streak, every daily, the month's badges.
+- runFlow: ../../common/stats.yaml
+- assertVisible: "Current streak: 25 days\\. Best streak: 25 days.*"
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "Daily quotes solved: 28"
+- runFlow: ../../common/top.yaml
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "Full month\\. .* Earned .*"
+- runFlow: ../../common/top.yaml
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "Sunday regular\\. .* Earned .*"
+- runFlow: ../../common/top.yaml
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "One week\\. .* Earned .*"
+- runFlow: ../../common/back.yaml
+# Mon 1 Mar, 08:00: a new month; the streak carries on.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-03-01T08:00:00"
+- assertVisible: "25-day streak"
+- runFlow: ../../common/daily.yaml
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 26 days"

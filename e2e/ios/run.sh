@@ -2,7 +2,7 @@
 # Runs the iOS Maestro suite on a booted simulator, one flow at a time.
 #
 #   e2e/ios/run.sh <suite> <out-dir>
-#   suite:   full (iPhone, every journey) | full-1 | full-2 | full-3 | tablet (iPad) | small (smallest iPhone)
+#   suite:   full (iPhone, every journey) | full-1 | full-2 | full-3 | month (a month of play) | tablet (iPad) | small (smallest iPhone)
 #   needs:   SIM_UDID (the booted simulator), APP_PATH (the .app, for the update-in-place flow)
 #
 # Each flow starts from its own fresh install (common/start.yaml), so a failure never cascades.
@@ -128,6 +128,10 @@ case "$SUITE" in
       16b-real-clock
       17-icloud-restore
     )
+    ;;
+  month)
+    # J19: one person's month of play (~1.5 h), in its own job.
+    FLOWS=(19-month-of-play)
     ;;
   tablet)
     FLOWS=(01-onboarding-home 02-daily-puzzle-solved 13g-tablet-rotation 13b-largest-text 13e-touch-targets-home)

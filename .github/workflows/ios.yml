@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
     inputs:
       suites:
-        description: 'Suites to run (JSON list): full, tablet, small'
-        default: '["full", "tablet", "small"]'
+        description: 'Suites to run (JSON list): full, month, tablet, small'
+        default: '["full", "month", "tablet", "small"]'
 
 concurrency:
   group: ios-${{ github.ref }}
@@ -115,6 +115,10 @@ jobs:
           - suite: full-3
             group: full
             device: iphone
+          # J19: a month of play as one person (~1.5 h). The sixth job waits for a free slot.
+          - suite: month
+            group: month
+            device: iphone
           - suite: tablet
             group: tablet
             device: ipad
@@ -128,7 +132,7 @@ jobs:
       - name: Skip suites not asked for
         id: want
         run: |
-          SUITES='${{ github.event.inputs.suites || '["full", "tablet", "small"]' }}'
+          SUITES='${{ github.event.inputs.suites || '["full", "month", "tablet", "small"]' }}'
           if echo "$SUITES" | grep -q '"${{ matrix.group }}"'; then echo "run=1" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/checkout@v5
         if: steps.want.outputs.run

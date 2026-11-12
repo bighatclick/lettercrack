@@ -1,0 +1,99 @@
+# Month of play, week 3 (Mon 15 – Sun 21 Feb): a daily every day at different times, all hints
+# spent and refilled next day, the 14-day milestone, Library and wardrobe visits, a Stats check.
+appId: app.lettercrack
+---
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-15T07:30:00"
+      STREAK: "Streak: 12 days"
+# Tue 16 Feb, 20:00: every hint spent on the daily.
+- runFlow:
+    file: ../../common/clock.yaml
+    env:
+      AT: "2027-02-16T20:00:00"
+- runFlow: ../../common/daily.yaml
+- repeat:
+    times: 8
+    while:
+      notVisible: "0 hints left"
+    commands:
+      - tapOn:
+          id: hint-reveal
+      - waitForAnimationToEnd:
+          timeout: 2000
+- assertVisible: "0 hints left"
+- runFlow: ../../common/solve.yaml
+- runFlow: ../../common/top.yaml
+- assertVisible: "Streak: 13 days"
+- runFlow: ../../common/home.yaml
+# Wed 17 Feb, 12:00: 14 days; the hints are back after midnight.
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-17T12:00:00"
+- assertVisible: "Streak: 14 days"
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "14-day streak!"
+- runFlow: ../../common/home.yaml
+- runFlow: ../../common/level.yaml
+- assertVisible: "5 hints left"
+- runFlow: ../../common/back.yaml
+# Thu 18 Feb, 23:50: a last-minute daily, then a look at the Library.
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-18T23:50:00"
+      STREAK: "Streak: 15 days"
+- runFlow: ../../common/top.yaml
+- scrollUntilVisible:
+    element:
+      id: home-library
+    direction: DOWN
+    timeout: 45000
+- tapOn:
+    id: home-library
+- extendedWaitUntil:
+    visible: "Library"
+    timeout: 10000
+- runFlow: ../../common/back.yaml
+# Fri 19 Feb, 06:45: early daily, then the wardrobe.
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-19T06:45:00"
+      STREAK: "Streak: 16 days"
+- runFlow: ../../common/top.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+    timeout: 45000
+- tapOn:
+    id: home-wardrobe
+- extendedWaitUntil:
+    visible: "Inky's wardrobe"
+    timeout: 10000
+- runFlow: ../../common/back.yaml
+- runFlow:
+    file: ../../common/month-day.yaml
+    env:
+      AT: "2027-02-20T16:00:00"
+      STREAK: "Streak: 17 days"
+# Sun 21 Feb, 10:00: Sunday special; Stats counts all 21 dailies (archive replays included).
+- runFlow:
+    file: ../../common/daily-on.yaml
+    env:
+      AT: "2027-02-21T10:00:00"
+- assertVisible: "Streak: 18 days"
+- assertVisible: "Sunday special"
+- runFlow: ../../common/home.yaml
+- runFlow: ../../common/stats.yaml
+- assertVisible: "Current streak: 18 days\\. Best streak: 18 days.*"
+- runFlow:
+    file: ../../common/see.yaml
+    env:
+      TEXT: "Daily quotes solved: 21"
+- runFlow: ../../common/back.yaml
