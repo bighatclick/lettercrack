@@ -1,6 +1,13 @@
 # From Home: opens the next level.
 appId: app.lettercrack
 ---
+# Home may be scrolled below the Levels card.
+- scrollUntilVisible:
+    element:
+      id: home-level
+    direction: UP
+    timeout: 20000
+    optional: true
 - scrollUntilVisible:
     element:
       id: home-level

@@ -85,4 +85,5 @@ tags: [dates]
 - assertVisible: "(29 February|February 29), solved"
 - assertNotVisible:
     id: archive-2028-02-28
-- assertVisible: "February 2028: 1 of 1 day stamped"
+# D35: the install month counts from the install day, so 1 of 1 earns the medal.
+- assertVisible: "February 2028: 1 of 1 day stamped\\. Full month! Medal earned\\."

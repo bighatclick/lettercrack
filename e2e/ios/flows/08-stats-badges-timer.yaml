@@ -116,14 +116,14 @@ tags: [stats]
 - runFlow:
     file: ../common/see.yaml
     env:
-      TEXT: "New"
+      TEXT: ".* Earned .*\\. New"
 - runFlow: ../common/back.yaml
 - runFlow: ../common/stats.yaml
 - runFlow:
     file: ../common/see.yaml
     env:
       TEXT: "Moments"
-- assertNotVisible: "New"
+- assertNotVisible: ".* Earned .*\\. New"
 - runFlow: ../common/back.yaml
 # 8.10: the timer on: the puzzle shows it, Solved shows the time, Stats the average.
 - tapOn:

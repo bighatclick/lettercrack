@@ -33,7 +33,10 @@ tags: [reminder]
     when:
       visible: "(?i).*would like to send you notifications.*"
     commands:
-      - tapOn: "Allow"
+      # The alert can close on its own (the answer is already set) between the check and the tap.
+      - tapOn:
+          text: "Allow"
+          optional: true
 - assertNotVisible: "Want a nudge tomorrow\\?"
 - runFlow: ../common/home.yaml
 - tapOn:
