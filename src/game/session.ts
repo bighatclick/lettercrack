@@ -11,7 +11,7 @@ import { dailySeed, levelSeed } from '@/engine/cipher';
 import { DAILY_EPOCH, dailyQuoteId, isLocalDate, isPlayableDaily, type LocalDate, noteSeenDate, toLocalDate } from '@/engine/daily';
 import { GOALS_REWARD_HINTS, type GoalsResult, recordGoalSolve } from '@/engine/goals';
 import { hintsAvailable, spendHint } from '@/engine/hints';
-import { markSeen, pickNextQuote } from '@/engine/picker';
+import { fitsDifficulty, markSeen, pickNextQuote } from '@/engine/picker';
 import {
   createPuzzle,
   type Difficulty,
@@ -89,12 +89,19 @@ export function nextLevelRef(root: Root, content: Content, difficulty: Difficult
   if (open) return { key: open[0], mode: 'level', quoteId: open[1].quoteId, dailyDate: null };
   // The last level of each chapter is a big quote: prefer the long (Expert-length) band.
   const big = isBigQuoteLevel(root.progress.levelIndex + 1);
-  const id = pickNextQuote({
+  let id = pickNextQuote({
     pool: content.levelPool,
     seen: root.progress.seenQuoteIds,
     exclude: reported,
     difficulty: big ? 'expert' : difficulty,
   });
+  // No unseen quote left in that band (earlier levels used them): the longest unseen one, so the
+  // big level is still the biggest on offer rather than whichever quote comes first.
+  if (big && id !== null && !content.levelPool.some((q) => q.id === id && fitsDifficulty(q, 'expert'))) {
+    const seen = new Set(root.progress.seenQuoteIds);
+    const unseen = content.levelPool.filter((q) => !seen.has(q.id) && !reported.has(q.id));
+    if (unseen.length) id = unseen.reduce((a, q) => (q.length > a.length ? q : a)).id;
+  }
   return id === null ? null : { key: levelKey(id), mode: 'level', quoteId: id, dailyDate: null };
 }
 

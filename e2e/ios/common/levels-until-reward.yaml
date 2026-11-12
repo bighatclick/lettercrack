@@ -1,0 +1,16 @@
+# From Home: solves levels until one finishes all of today's goals (at most 12; the big quote at
+# level 10 is always long). Ends on that Solved screen. Fails if the reward never comes.
+appId: app.lettercrack
+---
+- evalScript: ${output.reward = false}
+- runFlow: level.yaml
+- runFlow: solve.yaml
+- runFlow: goals-reward-check.yaml
+- repeat:
+    while:
+      true: ${!output.reward}
+    times: 11
+    commands:
+      - runFlow: next.yaml
+      - runFlow: goals-reward-check.yaml
+- assertTrue: ${output.reward}

@@ -9,6 +9,8 @@ import {
   type Difficulty,
   hasPlayerEntries,
   isFilled,
+  isLetterCell,
+  isLockedCell,
   type PuzzleAction,
   puzzleReducer,
   type PuzzleState,
@@ -203,6 +205,41 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
     commit(s);
   };
 
+  // E2E builds only, like e2eSolve: single steps for flows that need a wrong or a right letter
+  // without knowing the answer. Each types through the reducer, exactly as a key tap would.
+  const e2eType = (s: PuzzleState, index: number, letter: string) =>
+    puzzleReducer(puzzleReducer(s, { type: 'select', index }), { type: 'input', letter, keyId: ++keyId.current });
+  const e2eOpen = (s: PuzzleState) => [...s.plain].map((_, i) => i).filter((i) => isLetterCell(s, i) && !isLockedCell(s, i));
+  /** A letter that is wrong in every cell (not in the answer) and not typed yet, so it makes no conflict. */
+  const e2eWrongLetter = (s: PuzzleState, index: number) =>
+    [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].find((l) => !s.plain.includes(l) && !s.entries.includes(l)) ??
+    (s.plain[index] === 'Z' ? 'Y' : 'Z');
+  /** Types a wrong letter into the first empty cell. */
+  const e2eWrong = () => {
+    const s = live.current.state;
+    const i = e2eOpen(s).find((j) => s.entries[j] === '');
+    if (i !== undefined) commit(e2eType(s, i, e2eWrongLetter(s, i)));
+  };
+  /** Types the right letter into the first cell that is wrong (or, if none, empty). */
+  const e2eRight = () => {
+    const s = live.current.state;
+    const open = e2eOpen(s);
+    const i = open.find((j) => s.entries[j] !== '' && s.entries[j] !== s.plain[j]) ?? open.find((j) => s.entries[j] === '');
+    if (i !== undefined) commit(e2eType(s, i, s.plain[i]!));
+  };
+  /** Fills the whole board with the last open letter wrong: full, but not solved. */
+  const e2eAlmost = () => {
+    let s = live.current.state;
+    const open = e2eOpen(s);
+    const last = open[open.length - 1];
+    if (last === undefined) return;
+    // Leave the last letter's cells alone: filling them right would solve the puzzle, and a
+    // solved puzzle ignores the wrong letter typed after it.
+    const held = s.plain[last];
+    for (const i of open) if (s.plain[i] !== held && s.entries[i] !== s.plain[i]) s = e2eType(s, i, s.plain[i]!);
+    commit(e2eType(s, last, e2eWrongLetter(s, last)));
+  };
+
   /** Player changed difficulty: restart this puzzle with new givens. */
   const restartWith = (d: Difficulty) => {
     const re = openPuzzle(useAppStore.getState().root!, ref, content, d);
@@ -234,5 +271,8 @@ export function usePuzzleGame(ref: PuzzleRef, content: Content, onSolved: (c: Co
     onCheck,
     restartWith,
     e2eSolve,
+    e2eWrong,
+    e2eRight,
+    e2eAlmost,
   };
 }

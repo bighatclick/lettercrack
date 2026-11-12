@@ -1,0 +1,174 @@
+# iOS end-to-end tests: one simulator build, then the Maestro suites in e2e/ios on three devices.
+# Unit checks live in ci.yml. Public repo: macOS minutes are free. Android stays local-only
+# (CLAUDE.md), so nothing here builds it. Test plan: e2e/ios/TEST_CASES_IOS.md.
+name: iOS
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      suites:
+        description: 'Suites to run (JSON list): full, tablet, small'
+        default: '["full", "tablet", "small"]'
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '24'
+  SENTRY_DISABLE_AUTO_UPLOAD: 'true'
+
+jobs:
+  build:
+    name: Build simulator app (E2E)
+    runs-on: macos-latest
+    # GitHub's ceiling for a hosted job (6 h): effectively no stop of our own.
+    timeout-minutes: 360
+    env:
+      EXPO_PUBLIC_E2E: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          node -v
+      - run: npm ci
+
+      - name: Prebuild iOS project
+        run: npx expo prebuild --platform ios --no-install --clean
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.json', 'modules/**/*.podspec') }}
+
+      - name: Pod install
+        working-directory: ios
+        run: pod install
+
+      - name: Build for simulator (Release, E2E hooks on)
+        working-directory: ios
+        run: |
+          if ! xcodebuild \
+            -workspace LetterCrack.xcworkspace \
+            -scheme LetterCrack \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            build > "$RUNNER_TEMP/xcodebuild.log" 2>&1; then
+            grep -E 'error:' "$RUNNER_TEMP/xcodebuild.log" | head -50 || true
+            tail -150 "$RUNNER_TEMP/xcodebuild.log"
+            exit 1
+          fi
+          tail -5 "$RUNNER_TEMP/xcodebuild.log"
+          test -d build/Build/Products/Release-iphonesimulator/LetterCrack.app
+
+      - name: Package app
+        run: ditto -c -k --keepParent ios/build/Build/Products/Release-iphonesimulator/LetterCrack.app "$RUNNER_TEMP/LetterCrack.app.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-sim-app
+          path: ${{ runner.temp }}/LetterCrack.app.zip
+          retention-days: 7
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: ${{ runner.temp }}/xcodebuild.log
+          retention-days: 14
+
+  e2e:
+    name: E2E ${{ matrix.suite }} (${{ matrix.device }})
+    needs: build
+    runs-on: macos-latest
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      # The iPhone suite is split in three so the run takes ~1.5 h, not ~4. Five jobs is the free
+      # plan's macOS concurrency limit. `group` is the name the workflow_dispatch input uses.
+      matrix:
+        include:
+          - suite: full-1
+            group: full
+            device: iphone
+          - suite: full-2
+            group: full
+            device: iphone
+          - suite: full-3
+            group: full
+            device: iphone
+          - suite: tablet
+            group: tablet
+            device: ipad
+          - suite: small
+            group: small
+            device: small
+    env:
+      MAESTRO_CLI_NO_ANALYTICS: '1'
+      MAESTRO_DRIVER_STARTUP_TIMEOUT: '240000'
+    steps:
+      - name: Skip suites not asked for
+        id: want
+        run: |
+          SUITES='${{ github.event.inputs.suites || '["full", "tablet", "small"]' }}'
+          if echo "$SUITES" | grep -q '"${{ matrix.group }}"'; then echo "run=1" >> "$GITHUB_OUTPUT"; fi
+      - uses: actions/checkout@v5
+        if: steps.want.outputs.run
+      - uses: actions/setup-java@v4
+        if: steps.want.outputs.run
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: actions/download-artifact@v4
+        if: steps.want.outputs.run
+        with:
+          name: ios-sim-app
+          path: ${{ runner.temp }}/app
+      - name: Unpack app
+        if: steps.want.outputs.run
+        run: |
+          ditto -x -k "$RUNNER_TEMP/app/LetterCrack.app.zip" "$RUNNER_TEMP/app"
+          echo "APP_PATH=$RUNNER_TEMP/app/LetterCrack.app" >> "$GITHUB_ENV"
+
+      - name: Install Maestro
+        if: steps.want.outputs.run
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Boot simulator and install app
+        if: steps.want.outputs.run
+        run: .github/scripts/boot-simulator.sh ${{ matrix.device }} "$APP_PATH"
+
+      - name: Maestro suite (${{ matrix.suite }})
+        if: steps.want.outputs.run
+        run: |
+          echo "Device: $SIM_NAME"
+          bash e2e/ios/run.sh ${{ matrix.suite }} "$RUNNER_TEMP/e2e-out"
+
+      - name: Upload results
+        if: always() && steps.want.outputs.run
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-e2e-${{ matrix.suite }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/e2e-out
+          if-no-files-found: ignore
+          retention-days: 14

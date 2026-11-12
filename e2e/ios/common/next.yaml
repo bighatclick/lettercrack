@@ -1,0 +1,15 @@
+# From a level's Solved screen: "Next puzzle", then solve it. Ends on Solved.
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      id: solved-next
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: solved-next
+- extendedWaitUntil:
+    visible:
+      id: board
+    timeout: 10000
+- runFlow: solve.yaml

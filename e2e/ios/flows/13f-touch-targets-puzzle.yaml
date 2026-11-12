@@ -1,0 +1,14 @@
+# J13 13.9 (part 2): leaves the app on a puzzle so the runner can measure the header buttons, hint
+# buttons, cells and keys (cells and keys: at least 44 pt tall; accepted exception D8 for width).
+appId: app.lettercrack
+tags: [a11y, smoke]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- runFlow: ../common/level.yaml
+- waitForAnimationToEnd:
+    timeout: 5000

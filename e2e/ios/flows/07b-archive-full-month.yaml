@@ -1,0 +1,85 @@
+# J7 7.6, 7.8–7.10: solve every January day from the archive on 1 Feb: Sunday regular at the 4th
+# Sunday (31 Jan), and Full month with the Gold medal at the last day.
+appId: app.lettercrack
+tags: [archive, dates, long]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: easy
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-02-01T10:00:00"
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- evalScript: ${output.day = 11; output.fullMonth = false; output.sundays = false}
+- repeat:
+    while:
+      true: ${output.day <= 31}
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: "archive-2027-01-${output.day}"
+          direction: DOWN
+          timeout: 15000
+      - tapOn:
+          id: "archive-2027-01-${output.day}"
+      - runFlow: ../common/solve.yaml
+      # 7.6: 31 Jan is a Sunday special.
+      - runFlow:
+          when:
+            true: ${output.day == 31}
+          commands:
+            - assertVisible: "Sunday special"
+      - runFlow:
+          when:
+            visible: "Full month\\. Stamp every day of a month\\."
+          commands:
+            - evalScript: ${output.fullMonth = true}
+      - runFlow:
+          when:
+            visible: "Sunday regular\\. Solve 4 Sunday specials\\."
+          commands:
+            - evalScript: ${output.sundays = true}
+      # 7.8: the last day brings Full month and the Gold medal.
+      - runFlow:
+          when:
+            true: ${output.day == 31}
+          commands:
+            - runFlow:
+                file: ../common/see.yaml
+                env:
+                  TEXT: ".*Gold medal.*"
+      - runFlow:
+          file: ../common/see.yaml
+          env:
+            TEXT: "Back to archive"
+      - tapOn: "Back to archive"
+      - evalScript: ${output.day = output.day + 1}
+# 7.9 + 7.10: the January header shows the medal; its label reads 22 of 22.
+- runFlow: ../common/top.yaml
+- assertVisible: "January 2027: 22 of 22 days stamped\\. Full month! Medal earned\\."
+- assertVisible: "22 solved"
+- runFlow: ../common/back.yaml
+# The badges are on the shelf whether or not they fit on the Solved card.
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Full month\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Sunday regular\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Time traveller\\. .* Earned .*"

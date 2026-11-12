@@ -1,0 +1,17 @@
+# From the Solved screen (or any screen with a "Home" button): back to Home.
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      text: "Home"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    text: "Home"
+    retryTapIfNoChange: true
+# Home keeps its scroll position: the settings button is at the top.
+- runFlow: top.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000

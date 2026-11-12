@@ -44,7 +44,12 @@ export function GoalsCard({
         const h = hue(i === 0 ? 4 : i === 1 ? 2 : 0);
         const label = t(`goals.${g.id}`);
         const fresh = justDone.includes(g.id);
-        const a11y = g.done ? t('goals.a11yDone', { goal: label }) : t('goals.a11y', { goal: label, value: g.value, target: g.target });
+        // The "Done!" tag is inside the row's single accessibility element, so say it in the label too.
+        const a11y = fresh
+          ? t('goals.a11yJustDone', { goal: label })
+          : g.done
+            ? t('goals.a11yDone', { goal: label })
+            : t('goals.a11y', { goal: label, value: g.value, target: g.target });
         return (
           <View key={g.id} style={styles.row} accessible accessibilityLabel={a11y}>
             <View

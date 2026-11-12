@@ -1,0 +1,5 @@
+# Hard rules 2 and 9 with ads and payments off: nothing for sale and no ad UI, on any screen.
+appId: app.lettercrack
+---
+- assertNotVisible: "(?i).*(restore purchases|remove ads|buy |shop|watch (an )?ad|advert).*"
+- assertNotVisible: '(?i).*\$\d.*'

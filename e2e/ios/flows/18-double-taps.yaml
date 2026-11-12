@@ -1,0 +1,49 @@
+# J18 (iOS regressions): a quick double tap opens a screen once. Home's tiles pushed a screen per
+# tap, so Back landed on a second copy. Each screen is opened with a double tap, then one Back
+# must be Home again.
+appId: app.lettercrack
+tags: [navigation]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+# 18.1: the daily and the next level.
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-daily
+      MARK: "Daily quote( · .*)?"
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-level
+      MARK: "Level 1"
+# 18.2: Settings, Archive, Stats, Library and the wardrobe.
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-settings
+      MARK: "(Settings|About our quotes|Send feedback)"
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-archive
+      MARK: "Archive"
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-stats
+      MARK: "Stats"
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-library
+      MARK: "Library"
+- runFlow:
+    file: ../common/double-open.yaml
+    env:
+      ID: home-wardrobe
+      MARK: "Inky's wardrobe"

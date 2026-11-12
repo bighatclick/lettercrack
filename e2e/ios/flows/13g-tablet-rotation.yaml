@@ -1,0 +1,47 @@
+# J13 13.10 (iPad only, the tablet suite): the app rotates with no letterboxing; screens stay
+# centred; rotating mid-puzzle keeps the entries.
+appId: app.lettercrack
+tags: [tablet]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- setOrientation: LANDSCAPE_LEFT
+- assertVisible: "Good morning, codebreaker!"
+- takeScreenshot: 13g-home-landscape
+- runFlow: ../common/daily.yaml
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- assertVisible: ".*guess Q.*"
+- takeScreenshot: 13g-puzzle-landscape
+- setOrientation: PORTRAIT
+- assertVisible: ".*guess Q.*"
+- takeScreenshot: 13g-puzzle-portrait
+- setOrientation: LANDSCAPE_RIGHT
+- assertVisible: ".*guess Q.*"
+- runFlow: ../common/solve.yaml
+- takeScreenshot: 13g-solved-landscape
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- takeScreenshot: 13g-stats-landscape
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-library
+    direction: DOWN
+- tapOn:
+    id: home-library
+- takeScreenshot: 13g-library-landscape
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- takeScreenshot: 13g-wardrobe-landscape
+- setOrientation: PORTRAIT

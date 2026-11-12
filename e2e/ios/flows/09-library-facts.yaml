@@ -1,0 +1,194 @@
+# J9 9.1–9.9: the Library shelves, rewards, met and unmet authors, the detail panel, finished
+# shelves and their outfits, and a "Did you know?" fact on every author's Solved card.
+# All 18 seed authors: 20 levels + the dailies of 10 Jan (Thoreau), 12 Jan (Shakespeare) and
+# 16 Jan (Franklin).
+appId: app.lettercrack
+tags: [library, long]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: easy
+      NOTIFY: unset
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About the author\\. .*Did you know\\?.*"
+- runFlow: ../common/home.yaml
+# 9.1: the Library after one author.
+- scrollUntilVisible:
+    element:
+      id: home-library
+    direction: DOWN
+- tapOn:
+    id: home-library
+- assertVisible: "Library"
+- assertVisible: "1 of 18 authors"
+- assertVisible: "Every quote you solve adds its author to your Library\\..*"
+# 9.2: the five seed shelves in order; Thinkers and Scientists have no seed authors.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Poets"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Novelists"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Playwrights"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Leaders"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Essayists"
+- assertNotVisible: "Thinkers"
+- assertNotVisible: "Scientists"
+# 9.3: unfinished shelves show their reward.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Reward: Laurel wreath"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Reward: Reading glasses"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Reward: Stage ruff"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Reward: Grand sash"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Reward: Bookshelf"
+# 9.4: unmet tiles read "An author you haven't met yet"; tapping one does nothing.
+- runFlow: ../common/top.yaml
+- tapOn:
+    text: "An author you haven't met yet"
+    index: 0
+- assertNotVisible: ".*, \\d{4}–\\d{4}\\. .*"
+# 9.5: tap the met author: the detail panel with the fact.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Henry David Thoreau"
+- tapOn: "Henry David Thoreau"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Henry David Thoreau, \\d{4}–\\d{4}\\. .+"
+- runFlow: ../common/back.yaml
+# Meet everyone: 20 levels (9.8: every Solved author card has a fact; 9.7: shelves finish).
+- repeat:
+    times: 20
+    commands:
+      - runFlow: ../common/level.yaml
+      - runFlow: ../common/solve.yaml
+      - runFlow:
+          file: ../common/see.yaml
+          env:
+            TEXT: "About the author\\. .*Did you know\\?.*"
+      - runFlow: ../common/home.yaml
+# Shakespeare (12 Jan) and Franklin (16 Jan) come from dailies.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-12T10:00:00"
+# 9.7: Shakespeare finishes Playwrights (Wilde came from the levels): Solved names the Stage ruff.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*Stage ruff.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About the author\\. William Shakespeare, .*Did you know\\?.*"
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-16T10:00:00"
+# Franklin alone finishes Leaders: the Grand sash.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*Grand sash.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About the author\\. Benjamin Franklin, .*Did you know\\?.*"
+- runFlow: ../common/home.yaml
+# 9.9: Home matches.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Library\\. 18 of 18 authors"
+- tapOn:
+    id: home-library
+- assertVisible: "18 of 18 authors"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Shelf complete · Laurel wreath"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Shelf complete · Reading glasses"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Shelf complete · Stage ruff"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Shelf complete · Grand sash"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Shelf complete · Bookshelf"
+- assertNotVisible: "An author you haven't met yet"
+# 9.6: one detail at a time: selecting another author moves the selection.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Jane Austen"
+- tapOn: "Jane Austen"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Jane Austen, \\d{4}–\\d{4}\\. .+"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Charles Dickens"
+- tapOn: "Charles Dickens"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Charles Dickens, \\d{4}–\\d{4}\\. .+"
+- assertNotVisible: "Jane Austen, \\d{4}–\\d{4}\\. .+"
+# Collecting badges.
+- runFlow: ../common/back.yaml
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Full shelf\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Bookworm\\. .* Earned .*"

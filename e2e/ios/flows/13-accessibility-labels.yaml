@@ -1,0 +1,143 @@
+# J13 13.5–13.7 (and the labels of 4.5, 7.10, 8.7, 9.4, 10.13): what VoiceOver reads. Maestro sees
+# the accessibility tree, so each label below is exactly what VoiceOver speaks for that element.
+appId: app.lettercrack
+tags: [a11y]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# 13.7: Home: goals, rank, tiles (with "New" when there is something new).
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: Rookie\\. 0 letters decoded\\. .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Inky's wardrobe\\. 1 item unlocked"
+- runFlow: ../common/top.yaml
+- assertVisible: "Settings"
+# 13.5: the puzzle: cells, givens, conflicts, wrong marks, keys, Delete, the ring and the menu.
+- runFlow: ../common/daily.yaml
+- assertVisible: "cipher [A-Z], empty"
+- assertVisible: "cipher [A-Z], guess [A-Z], given"
+- assertVisible: "Q"
+- assertVisible: "Delete"
+- assertVisible: "\\d+ of 47 letters filled"
+- assertVisible: "Report this quote"
+- assertVisible: "5 hints left"
+- assertVisible: "Back"
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- assertVisible: "cipher [A-Z], guess Q, conflict"
+- tapOn: ".*guess Q, conflict"
+- tapOn:
+    id: key-delete
+- tapOn: ".*guess Q.*"
+- tapOn:
+    id: key-delete
+- tapOn:
+    id: e2e-wrong
+- tapOn:
+    id: hint-check
+    retryTapIfNoChange: true
+- assertVisible: "cipher [A-Z], guess [A-Z], marked wrong"
+- assertVisible: "4 hints left"
+# The Difficulty chip reads its name.
+- assertVisible: "Hard"
+# 13.6: Solved: the title, each new badge and how it was earned, the author card with its fact.
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertVisible: "Cracked it!"
+- assertVisible: "First crack\\. Solve your first quote\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About the author\\. Henry David Thoreau, .*Did you know\\?.*"
+# 4.5: goal rows on Solved.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: done.*"
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Inky's wardrobe\\. 1 item unlocked"
+# 7.10: archive day and stamp labels.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-12T10:00:00"
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "(10 January|January 10), solved"
+- assertVisible: "(11 January|January 11), not solved yet"
+- assertVisible: "January 2027: 1 of 22 days stamped"
+- runFlow: ../common/back.yaml
+# 8.7: badge labels, earned and locked.
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "First crack\\. Solve your first quote\\. Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Night owl\\. Locked: Solve a quote after 10 pm\\."
+- runFlow: ../common/back.yaml
+# 9.4: Library tiles.
+- scrollUntilVisible:
+    element:
+      id: home-library
+    direction: DOWN
+- tapOn:
+    id: home-library
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "An author you haven't met yet"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Henry David Thoreau"
+- runFlow: ../common/back.yaml
+# 10.13: wardrobe items.
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Brass monocle\\. Wearing"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Painter's beret\\. Locked: Reach the Apprentice rank"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Starry sky\\. Locked: Earn the Clean solve badge"

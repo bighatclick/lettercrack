@@ -1,0 +1,24 @@
+# From Home: opens today's daily (it must be unsolved).
+appId: app.lettercrack
+---
+- runFlow: top.yaml
+# Very long Home screens (largest text, small iPhone) can still be below the card after top.yaml.
+- scrollUntilVisible:
+    element:
+      id: home-daily
+    direction: UP
+    timeout: 20000
+    optional: true
+# At the largest text sizes the Today card's button is below the fold.
+- scrollUntilVisible:
+    element:
+      id: home-daily
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: home-daily
+- extendedWaitUntil:
+    # At the largest text on a small iPhone the board can sit above the fold; the hint bar shows.
+    visible:
+      id: "(board|hint-reveal)"
+    timeout: 10000

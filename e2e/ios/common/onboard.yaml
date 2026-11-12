@@ -1,0 +1,38 @@
+# Skips the tutorial and picks a default difficulty. Ends on Home.
+# env: DIFF (easy | medium | hard | expert)
+appId: app.lettercrack
+---
+- tapOn:
+    id: onboarding-skip
+    retryTapIfNoChange: true
+# Right after a cold launch the tap can be dropped (seen on CI): while the tutorial is still
+# showing, tap Skip again.
+- repeat:
+    times: 3
+    while:
+      visible: "Try this tiny one.*"
+    commands:
+      - tapOn:
+          id: onboarding-skip
+      - waitForAnimationToEnd:
+          timeout: 3000
+# At the largest text sizes the picker scrolls.
+- scrollUntilVisible:
+    element:
+      id: onboarding-${DIFF}
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: onboarding-${DIFF}
+- scrollUntilVisible:
+    element:
+      id: onboarding-start
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: onboarding-start
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 15000

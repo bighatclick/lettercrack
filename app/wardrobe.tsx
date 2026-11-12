@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { type ReactNode, useEffect, useMemo } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -28,7 +28,9 @@ export default function WardrobeScreen() {
   const update = useAppStore((s) => s.update);
   const outfit = useOutfit();
   const facts = useMemo(() => unlockFacts(root, content), [root]);
-  const fresh = useMemo(() => new Set(unseenAwards(root, content).filter((k) => k.startsWith('item:'))), [root]);
+  // What was new when the wardrobe opened. Kept for this visit: marking it seen below must not
+  // take the "New" tags away before the player has scrolled to them.
+  const [fresh] = useState(() => new Set(unseenAwards(root, content).filter((k) => k.startsWith('item:'))));
 
   // Opening the wardrobe counts as seeing every new outfit.
   useEffect(() => {
@@ -187,7 +189,8 @@ function Tile({
   return (
     <PressScale
       accessibilityRole="button"
-      accessibilityLabel={`${label}. ${state}`}
+      // The "New" tag is inside this one accessibility element, so the label says it too.
+      accessibilityLabel={isNew ? `${label}. ${state}. ${t('home.newBadge')}` : `${label}. ${state}`}
       accessibilityState={{ selected, disabled: !!disabled }}
       disabled={disabled}
       onPress={onPress}

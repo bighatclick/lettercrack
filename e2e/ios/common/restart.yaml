@@ -1,0 +1,7 @@
+# Kills the app and launches it again (Android's "force stop" + relaunch).
+appId: app.lettercrack
+---
+- stopApp
+- launchApp
+- waitForAnimationToEnd:
+    timeout: 5000

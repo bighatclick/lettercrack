@@ -1,0 +1,17 @@
+# Closes the iOS share sheet: its Close (X) button, or a swipe down.
+appId: app.lettercrack
+---
+- runFlow:
+    when:
+      visible: "(?i)close"
+    commands:
+      - tapOn: "(?i)close"
+- runFlow:
+    when:
+      visible: "(?i)(copy|messages|mail|notes|reminders|save to files|airdrop)"
+    commands:
+      - swipe:
+          start: "50%,45%"
+          end: "50%,98%"
+- waitForAnimationToEnd:
+    timeout: 3000

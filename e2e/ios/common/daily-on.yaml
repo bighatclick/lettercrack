@@ -1,0 +1,11 @@
+# Moves the clock to AT and solves that day's daily from Home. Ends on its Solved screen.
+# env: AT
+appId: app.lettercrack
+---
+- runFlow:
+    file: clock.yaml
+    env:
+      AT: ${AT}
+- runFlow: daily.yaml
+- runFlow: solve.yaml
+- runFlow: top.yaml

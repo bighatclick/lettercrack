@@ -177,7 +177,14 @@ function Puzzle({ puzzleRef }: { puzzleRef: PuzzleRef }) {
         tip={t(`puzzle.tip${puzzleRef.quoteId % TIP_COUNT}`)}
       />
       {game.state.solved || sheet ? null : <HardwareKeys onKey={game.onHardwareKey} />}
-      {E2E && !game.state.solved ? <Button label="e2e solve" variant="ghost" onPress={game.e2eSolve} testID="e2e-solve" /> : null}
+      {E2E && !game.state.solved ? (
+        <View style={styles.e2e}>
+          <Button label="e2e solve" variant="ghost" compact onPress={game.e2eSolve} testID="e2e-solve" />
+          <Button label="e2e wrong" variant="ghost" compact onPress={game.e2eWrong} testID="e2e-wrong" />
+          <Button label="e2e right" variant="ghost" compact onPress={game.e2eRight} testID="e2e-right" />
+          <Button label="e2e almost" variant="ghost" compact onPress={game.e2eAlmost} testID="e2e-almost" />
+        </View>
+      ) : null}
       <DifficultySheet
         key={game.difficulty}
         visible={sheet}
@@ -219,4 +226,5 @@ const styles = StyleSheet.create({
   ringText: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   ringLabel: { fontSize: typeScale.overline.fontSize, lineHeight: typeScale.overline.lineHeight },
   circle: { width: 44, height: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  e2e: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
 });

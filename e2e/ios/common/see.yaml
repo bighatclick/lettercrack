@@ -1,0 +1,19 @@
+# Asserts TEXT (a regex, full match) is on the current screen, scrolling to it if needed.
+# env: TEXT
+appId: app.lettercrack
+---
+# Long screens at the largest text sizes take many slow scrolls on the CI simulator.
+- scrollUntilVisible:
+    element:
+      text: ${TEXT}
+    direction: DOWN
+    timeout: 45000
+    visibilityPercentage: 50
+    optional: true
+# A big scroll on a small screen can carry a short row past the top: look back up for it.
+- scrollUntilVisible:
+    element:
+      text: ${TEXT}
+    direction: UP
+    timeout: 30000
+    visibilityPercentage: 50

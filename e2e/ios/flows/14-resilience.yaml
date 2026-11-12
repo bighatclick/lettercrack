@@ -1,0 +1,95 @@
+# J14 14.1–14.4: backgrounding, interruptions, fast typing, and backgrounding right after a solve.
+appId: app.lettercrack
+tags: [resilience]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: expert
+      NOTIFY: unset
+- tapOn:
+    id: home-settings
+- tapOn: "Show solve time"
+- runFlow: ../common/back.yaml
+# 14.1: background mid-puzzle: the exact state on return, and the timer doesn't run meanwhile.
+- runFlow: ../common/level.yaml
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- copyTextFrom: "Time .*"
+- evalScript: ${output.time = maestro.copiedText}
+- pressKey: home
+- waitForAnimationToEnd:
+    timeout: 15000
+# Back to the app as a tap on its icon would: Maestro's plain launchApp kills it first.
+- launchApp:
+    stopApp: false
+- assertVisible: ".*guess Q.*"
+- assertVisible: "Time .*"
+- copyTextFrom: "Time .*"
+# At most a couple of seconds pass between the copy and the Home press, never the 15 s away.
+- assertTrue: ${parseInt(maestro.copiedText.split(':').pop()) - parseInt(output.time.split(':').pop()) < 8}
+# 14.2: a system interruption mid-puzzle (Notification Centre pulled down and dismissed).
+- swipe:
+    start: "50%,0%"
+    end: "50%,70%"
+- waitForAnimationToEnd
+- swipe:
+    start: "50%,95%"
+    end: "50%,10%"
+# Back without killing the app (a plain launchApp kills it).
+- launchApp:
+    stopApp: false
+- assertVisible: ".*guess Q.*"
+# 14.3: ten keys fast: one letter per tap, no dropped or doubled input.
+- tapOn:
+    id: key-W
+- tapOn:
+    id: key-E
+- tapOn:
+    id: key-R
+- tapOn:
+    id: key-T
+- tapOn:
+    id: key-Y
+- tapOn:
+    id: key-U
+- tapOn:
+    id: key-I
+- tapOn:
+    id: key-O
+- tapOn:
+    id: key-P
+- tapOn:
+    id: key-A
+- assertVisible: ".*guess W.*"
+- assertVisible: ".*guess A.*"
+# 14.4: solve, then background within a second (before Solved shows): recorded once.
+- tapOn:
+    id: e2e-solve
+- pressKey: home
+- launchApp:
+    stopApp: false
+- extendedWaitUntil:
+    visible: "(Cracked it!|.*codebreaker!)"
+    timeout: 15000
+- runFlow:
+    when:
+      visible: "Cracked it!"
+    commands:
+      - runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 1 quote solved"
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 1"
+- runFlow: ../common/back.yaml
+# No double hint either: still the 5 free hints.
+- runFlow: ../common/level.yaml
+- assertVisible: "5 hints left"

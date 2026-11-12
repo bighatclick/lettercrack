@@ -267,6 +267,7 @@
     "progress": "[{{value}}/{{target}}~~~~~~~]",
     "a11y": "[{{goal}}: {{value}} óƒ {{target}}~~~~~~~~~~~~]",
     "a11yDone": "[{{goal}}: ďóñé~~~~~]",
+    "a11yJustDone": "[{{goal}}: ďóñé ĵúšţ ñóŵ~~~~~~~~~]",
     "justDone": "[Ďóñé!~~]"
   },
   "rank": {

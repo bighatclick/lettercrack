@@ -1,0 +1,166 @@
+# J8 8.1–8.8, 8.10: Stats tiles and rows, the weekly chart, favourite authors, rank, the badge
+# shelf (labels, "New" once), and the optional solve timer.
+appId: app.lettercrack
+tags: [stats]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# Three solves: the daily (clean), a level with a Reveal (not clean), a clean level.
+- runFlow: ../common/solve-daily.yaml
+- runFlow: ../common/level.yaml
+- tapOn:
+    id: hint-reveal
+    retryTapIfNoChange: true
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/home.yaml
+- runFlow: ../common/solve-level.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: .*"
+- copyTextFrom: "Rank: .*"
+- evalScript: ${output.rank = maestro.copiedText}
+- runFlow: ../common/top.yaml
+# 8.1: the streak card (no saved-freeze line at 0).
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: 1 day\\. Best streak: 1 day.*"
+- assertNotVisible: "\\d+ saved streak freezes?"
+# 8.2: tiles and rows; no average time while the timer is off.
+# Below the badge shelf on iOS: scroll to it.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 3.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Clean solves: .*2 solved with no hints.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Daily quotes solved: 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Best streak: 1 day"
+- assertNotVisible: "Average solve time.*"
+# 8.3: the weekly chart.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved per week, oldest first: .*3"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved in each of the last 6 weeks\\."
+# 8.4: favourite authors.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Favorite authors"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*: \\d quotes?"
+# 8.5: the same rank as Home (the rank card is above the authors).
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "${output.rank}"
+# 8.6: the shelf: count and groups in order.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Badges"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "\\d+ of 36"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solving"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Skill"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Streaks"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Collecting"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Moments"
+# 8.7: earned and locked labels.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "First crack\\. Solve your first quote\\. Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Ten down\\. Locked: Solve 10 quotes\\."
+# 8.10: the timer on: the puzzle shows it, Solved shows the time, Stats the average.
+- tapOn:
+    id: home-settings
+- tapOn: "Show solve time"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/level.yaml
+- assertVisible: "Time \\d+:\\d\\d"
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertVisible: "Solved in \\d+:\\d\\d"
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Average solve time: .*"
+# Turn it off again: the average disappears.
+- runFlow: ../common/back.yaml
+- tapOn:
+    id: home-settings
+- tapOn: "Show solve time"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Favorite authors"
+- assertNotVisible: "Average solve time.*"
+# 8.8: "New" shows once. A solve's badges are celebrated (and marked seen) on Solved, so the
+# check uses badges earned another way: an old save (v2 fixture, level 43, streak 37) earns
+# them when the app opens after the update. They show "New" on the first visit only.
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v2&at=2026-12-25T10:00:00"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 60000
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".* Earned .*\\. New"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Moments"
+- runFlow: ../common/top.yaml
+- assertNotVisible: ".* Earned .*\\. New"

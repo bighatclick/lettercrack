@@ -1,0 +1,190 @@
+# J6 6.1, 6.3–6.14 and J8 8.9: the streak, milestone cards, the saved freeze from 7 days, the weekly
+# and saved freezes bridging missed days, the reset, badges kept forever, and the rewound clock.
+appId: app.lettercrack
+tags: [streak, dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+# 6.1: 11 Jan: streak 2, the reminder offer, and the teaser for 12 Jan (Shakespeare, 14 words, 1600s).
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-11T10:00:00"
+- assertVisible: "Streak: 2 days"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Want a nudge tomorrow\\?"
+- tapOn: "No thanks"
+- assertNotVisible: "Want a nudge tomorrow\\?"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "14 words from the 1600s, by an author whose name starts with W\\."
+- runFlow: ../common/home.yaml
+# 6.3: 12 Jan: the 3-day milestone card, with no freeze note; badge Warming up.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-12T10:00:00"
+- assertVisible: "Streak: 3 days"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "3-day streak!"
+- assertVisible: "Inky is proud of you\\. Come back tomorrow to keep it going\\."
+- assertNotVisible: "Inky gave you a streak freeze\\..*"
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Warming up\\. Reach a 3-day streak\\."
+- runFlow: ../common/home.yaml
+# 6.4: 13–15 Jan: streaks 4, 5, 6 with no milestone card.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-13T10:00:00"
+- assertVisible: "Streak: 4 days"
+- assertNotVisible:
+    id: solved-milestone
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-14T10:00:00"
+- assertVisible: "Streak: 5 days"
+- assertNotVisible:
+    id: solved-milestone
+- runFlow: ../common/home.yaml
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-15T10:00:00"
+- assertVisible: "Streak: 6 days"
+- assertNotVisible:
+    id: solved-milestone
+- runFlow: ../common/home.yaml
+# 6.5: 16 Jan: the 7-day milestone with a saved freeze; badge One week; the Party hat.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-16T10:00:00"
+- assertVisible: "Streak: 7 days"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "7-day streak!"
+- assertVisible: "Inky gave you a streak freeze\\. It covers a missed day when the weekly one is used up\\."
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "One week\\. Reach a 7-day streak\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".*Party hat.*"
+- runFlow: ../common/home.yaml
+# 6.6: Stats: 7, best 7, one saved freeze.
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: 7 days\\. Best streak: 7 days.*"
+- assertVisible: "1 saved streak freeze"
+- runFlow: ../common/back.yaml
+# 6.7: 17 Jan (Sunday): streak 8, Sunday special, Perfect week (Mon 11 – Sun 17 on their days).
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-17T10:00:00"
+- assertVisible: "Streak: 8 days"
+- assertVisible: "Sunday special"
+- assertNotVisible:
+    id: solved-milestone
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Perfect week\\. .* Earned .*"
+- runFlow: ../common/back.yaml
+# 6.8: 19 Jan (18 skipped): Home still shows the streak (bridgeable).
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-19T10:00:00"
+- assertVisible: "8-day streak"
+# 6.9: solve 19 Jan: the weekly freeze covered 18 Jan; the saved one is kept.
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertVisible: "Streak: 9 days"
+- assertVisible: "A streak freeze covered a missed day, so your streak is safe\\."
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- assertVisible: "1 saved streak freeze"
+- runFlow: ../common/back.yaml
+# 6.10: 21 Jan (20 skipped): the weekly freeze is used, so the saved one is spent.
+- runFlow:
+    file: ../common/daily-on.yaml
+    env:
+      AT: "2027-01-21T10:00:00"
+- assertVisible: "Streak: 10 days"
+- assertVisible: "A streak freeze covered a missed day, so your streak is safe\\."
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- assertNotVisible: "\\d+ saved streak freezes?"
+- runFlow: ../common/back.yaml
+# 6.11: 24 Jan (22 and 23 skipped): two missed days can't be bridged.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-24T10:00:00"
+- assertNotVisible: ".*-day streak"
+# 6.12: solve 24 Jan: streak 1, best stays 10.
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertVisible: "Streak: 1 day"
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: 1 day\\. Best streak: 10 days.*"
+# 8.9: badges are kept forever, streak badges included.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Warming up\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "One week\\. .* Earned .*"
+- runFlow: ../common/back.yaml
+# 6.13: the clock set back to 23 Jan: that daily can be solved, with no streak credit.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-23T10:00:00"
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertNotVisible: "Streak: .*"
+- runFlow: ../common/home.yaml
+- assertVisible: "Solved\\. A new quote arrives tomorrow\\."
+# 6.14: 30 days forward, then back to 24 Jan: Home works.
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-02-23T10:00:00"
+- assertVisible:
+    id: home-settings
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-24T10:00:00"
+- assertVisible:
+    id: home-settings
+- assertVisible: "Solved\\. A new quote arrives tomorrow\\."

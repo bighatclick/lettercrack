@@ -1,0 +1,108 @@
+# U0 + 16.6: an update finds an old save (schema v2) and migrates it; nothing is lost (hard rule 3).
+# The save is the migration fixture src/data/migrations/__fixtures__/v2.json: streak 37 (best 61),
+# 63 bought hints, level 43, a daily in progress for 2026-12-25, and non-default settings.
+appId: app.lettercrack
+tags: [upgrade]
+---
+- clearState
+- launchApp:
+    permissions:
+      notifications: unset
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v2&at=2026-12-25T10:00:00"
+- runFlow: ../common/restart.yaml
+# U.2: Home, no onboarding, no "restored from a backup" note (the migration succeeded).
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    # The first launch after an update backs up the save and migrates it: slower on CI.
+    timeout: 60000
+- assertNotVisible:
+    id: onboarding-skip
+- assertNotVisible: 'We restored your saved progress from a backup\.'
+# U.3: streak, in-progress daily, level number and the default difficulty are as they were.
+- assertVisible: "37-day streak"
+- assertVisible: '.*partway through today.s quote\.'
+- assertVisible: "Continue"
+- assertVisible: "Expert"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Continue level 43"
+# Hints: the 63 kept from the old save plus today's free ones.
+- runFlow: ../common/level.yaml
+- assertVisible: "Level 43"
+- assertVisible: "Expert"
+- assertVisible: '(6[3-9]|7\d) hints left'
+# The solve timer was on in the old save.
+- assertVisible: "Time .*"
+- runFlow: ../common/back.yaml
+# U.4: the new Home cards are there.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Today's goals"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Library\. .*'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Inky''s wardrobe\. .*'
+# U.5: badges earned from the existing progress, on the first launch.
+- runFlow: ../common/top.yaml
+- runFlow: ../common/stats.yaml
+- assertVisible: 'Current streak: 37 days\. Best streak: 61 days.*'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'First crack\. Solve your first quote\. Earned .*'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Daily decoder\. .* Earned .*'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Warming up\. .* Earned .*'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'One week\. .* Earned .*'
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'One month\. .* Earned .*'
+# U.7: milestones passed before saved freezes existed are credited once.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: '\d+ saved streak freezes?'
+- runFlow: ../common/back.yaml
+# U.6: the outfit is unchanged (monocle) and migrated unlocks are there.
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: 'Brass monocle\. Wearing'
+- takeScreenshot: 00-upgrade-wardrobe
+- runFlow: ../common/back.yaml
+# Hard rule 9: the old save's purchases don't bring back any shop UI (payments are off).
+- runFlow: ../common/no-sales.yaml
+- tapOn:
+    id: home-settings
+- runFlow: ../common/no-sales.yaml
+- takeScreenshot: 00-upgrade-settings

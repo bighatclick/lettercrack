@@ -1,0 +1,13 @@
+# Fresh install at AT, onboarding skipped with DIFF as the default. Ends on Home.
+# env: AT, DIFF, NOTIFY
+appId: app.lettercrack
+---
+- runFlow:
+    file: fresh.yaml
+    env:
+      AT: ${AT}
+      NOTIFY: ${NOTIFY}
+- runFlow:
+    file: onboard.yaml
+    env:
+      DIFF: ${DIFF}

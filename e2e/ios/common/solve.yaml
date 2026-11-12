@@ -1,0 +1,21 @@
+# Solves the open puzzle with the E2E hook and waits for the Solved screen.
+# iOS may show its "Enjoying LetterCrack?" rating prompt 1.2 s after a clean solve (app/solved.tsx,
+# F8). On a simulator it always appears when asked, and it covers the screen, so it's dismissed
+# here. 14g-review-prompt checks the prompt itself without this helper.
+appId: app.lettercrack
+---
+- tapOn:
+    id: e2e-solve
+- extendedWaitUntil:
+    visible: "(?i)not now"
+    timeout: 5000
+    optional: true
+- runFlow:
+    when:
+      visible: "(?i)not now"
+    commands:
+      - tapOn: "(?i)not now"
+# The header, not the quote: at the largest text sizes the quote starts below the fold.
+- extendedWaitUntil:
+    visible: "Cracked it!"
+    timeout: 15000

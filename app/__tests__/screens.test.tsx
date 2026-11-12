@@ -295,4 +295,25 @@ describe('Wardrobe', () => {
     await press('wardrobe-hat-none');
     expect(useAppStore.getState().root!.outfit.hat).toBeNull();
   });
+
+  it('keeps an item marked New for the whole visit, and says so to VoiceOver', async () => {
+    jest.useFakeTimers();
+    try {
+      // A clean solve unlocks Starry sky (the Clean solve badge).
+      await act(async () => {
+        useAppStore.getState().update((r) => ({ ...r, awards: { ...r.awards, earned: { ...r.awards.earned, first_clean: '2027-02-01' } } }));
+      });
+      await render(wrap(<Wardrobe />));
+      const label = () => screen.getByTestId('wardrobe-stars').props.accessibilityLabel as string;
+      expect(label()).toMatch(/\. New$/);
+      // Seen after 1.5 s, but the tag stays until the wardrobe is closed.
+      await act(async () => {
+        jest.advanceTimersByTime(2000);
+      });
+      expect(useAppStore.getState().root!.awards.seen).toContain('item:stars');
+      expect(label()).toMatch(/\. New$/);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
 });

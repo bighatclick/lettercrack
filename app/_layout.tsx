@@ -24,6 +24,11 @@ import { initCrashReporting } from '@/lib/sentry';
 import { startCloudSync } from '@/sync/cloud';
 import { fontAssets, ThemeProvider, useTheme } from '@/ui';
 
+// E2E builds only: the Maestro test clock, installed before the save loads (src/e2e/clock.ts).
+// The check is inlined at build time, so other builds drop the require.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+if (process.env.EXPO_PUBLIC_E2E === '1') require('@/e2e/clock').installE2EClock();
+
 initCrashReporting();
 applyOrientationPolicy();
 SplashScreen.preventAutoHideAsync();
@@ -76,7 +81,11 @@ export default function RootLayout() {
     onActive();
     const sub = AppState.addEventListener('change', (s) => s === 'active' && onActive());
     // iCloud KV sync (iOS only; a no-op elsewhere). Merge never removes local progress.
-    const stopSync = startCloudSync(IcloudKv, {
+    // E2E builds sync only when a flow turns it on, so one test's progress can't leak into the next.
+    const cloudKv =
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      process.env.EXPO_PUBLIC_E2E === '1' && !require('@/e2e/clock').e2eCloudOn() ? null : IcloudKv;
+    const stopSync = startCloudSync(cloudKv, {
       getRoot: () => useAppStore.getState().root,
       update: (fn) => useAppStore.getState().update(fn),
       subscribe: (cb) => useAppStore.subscribe((s) => cb(s.root)),

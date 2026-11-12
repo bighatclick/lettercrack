@@ -1,0 +1,117 @@
+# J1 1.1–1.9: fresh install, the tutorial, the difficulty picker and the new Home.
+# 10 Jan 2027 (a Sunday): the daily is Thoreau, 47 letters (src/e2e/__tests__/iosFlowFacts.test.ts).
+appId: app.lettercrack
+tags: [smoke, onboarding]
+---
+- runFlow:
+    file: ../common/fresh.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      NOTIFY: unset
+# 1.1: the tutorial, with no permission prompt, consent dialog or ad.
+- assertVisible: "Welcome to LetterCrack"
+- assertVisible: "Each puzzle is a famous quote.*"
+- assertVisible: "Try this tiny one\\. Tap a box, then type a letter\\. Hint: it.s an animal that purrs\\."
+- assertVisible:
+    id: board
+- assertVisible:
+    id: keyboard
+- assertVisible: "Skip"
+- assertNotVisible: "(?i).*would like to send you notifications.*"
+- assertNotVisible: "(?i).*(track your activity|consent|advert).*"
+# 1.2: solve A CAT (A fills both A cells; the selection moves on).
+- tapOn:
+    id: key-A
+- tapOn:
+    id: key-C
+- tapOn:
+    id: key-T
+- extendedWaitUntil:
+    visible: "You.ve got it\\."
+    timeout: 5000
+# 1.3: the difficulty picker.
+- tapOn:
+    id: onboarding-next
+- assertVisible: "How tricky should puzzles be\\?"
+- assertVisible: "You can change this on any puzzle\\."
+- assertVisible:
+    id: onboarding-easy
+- assertVisible:
+    id: onboarding-medium
+- assertVisible:
+    id: onboarding-hard
+- assertVisible:
+    id: onboarding-expert
+- assertVisible: "Start playing"
+# 1.4: Hard → Start playing → Home.
+- tapOn:
+    id: onboarding-hard
+- tapOn:
+    id: onboarding-start
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000
+- assertVisible: "Sunday, (10 January|January 10)"
+- assertVisible: "Good morning, codebreaker!"
+- assertVisible: "Today.s quote is ready\\. Let.s crack it!"
+- assertNotVisible: ".*-day streak"
+# 1.5: the Today card.
+- assertVisible: "TODAY.S QUOTE"
+- assertVisible: "Sunday special"
+- assertVisible: "Hard"
+- assertVisible: "47 letters"
+- assertVisible: "The start of today.s quote, in code"
+- assertVisible: "A new quote is waiting to be decoded\\."
+- assertVisible: "Crack it"
+# 1.6: Today's goals for 10 Jan: daily, clean, long.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Today's goals"
+- assertVisible: "0/3"
+# The rows can be below the fold on the smallest iPhone.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve one with no hints or checks: 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Finish all three for \\+1 hint"
+# 1.7: Codebreaker rank.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: Rookie\\. 0 letters decoded\\. 500 letters to Apprentice.*"
+# 1.8: Levels and the chapter strip.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Continue level 1"
+- assertVisible: "Levels"
+- assertVisible: "Level 1"
+- assertVisible: "Chapter 1 · Quill Meadow"
+- assertVisible: "Level 1 of 10"
+# 1.9: the tiles. Nothing to play in the archive on the install day; no "New" on the wardrobe.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. Every past daily quote"
+- assertVisible: "Stats\\. 0 quotes solved"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Library\\. 0 of 18 authors"
+- assertVisible: "Inky's wardrobe\\. 1 item unlocked"
+- runFlow: ../common/no-sales.yaml
+- takeScreenshot: 01-home

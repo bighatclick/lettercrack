@@ -1,0 +1,47 @@
+# J14 14.5 + J16 16.4: a daily opened at 23:59 and solved after midnight counts for its own day.
+appId: app.lettercrack
+tags: [dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      # Onboarding takes up to a minute on CI: start early enough to open the daily before midnight.
+      AT: "2027-01-10T23:58:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/daily.yaml
+- assertVisible: "Daily quote"
+# Wait past midnight with the puzzle open (the test clock keeps ticking).
+- extendedWaitUntil:
+    visible: "never-there"
+    timeout: 150000
+    optional: true
+- runFlow: ../common/solve.yaml
+# The Solved screen shows the quote (never "This puzzle isn't available."), with the streak credited.
+- assertNotVisible: "This puzzle isn.t available\\."
+- assertVisible: "Streak: 1 day"
+# Home is on the new day: a new, unsolved daily, and "Solve today's quote" not ticked.
+- runFlow: ../common/home.yaml
+- assertVisible: "Monday, (11 January|January 11)"
+- assertVisible: "Crack it"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+# No extra hint for the new day either.
+- runFlow: ../common/level.yaml
+- assertVisible: "5 hints left"
+- runFlow: ../common/back.yaml
+# Stats: streak 1 for 10 January; the Archive shows 10 January solved.
+- runFlow: ../common/stats.yaml
+- assertVisible: "Current streak: 1 day\\..*"
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- assertVisible: "(10 January|January 10), solved"
+- runFlow: ../common/back.yaml
+# A daily opened from the archive after midnight gets no streak credit (16.3 is in 16-…).

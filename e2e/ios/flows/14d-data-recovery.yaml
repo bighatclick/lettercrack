@@ -1,0 +1,58 @@
+# J14 14.7: a damaged or missing save comes back from the backup file, as it was (hard rule 3).
+appId: app.lettercrack
+tags: [resilience]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# Some progress: the daily, a level, and a revealed letter on an open level.
+- runFlow: ../common/solve-daily.yaml
+- runFlow: ../common/solve-level.yaml
+- runFlow: ../common/level.yaml
+# Solving the daily and a 60+ letter level completes all three goals: +1 hint (6), then the reveal: 5.
+- tapOn:
+    id: hint-reveal
+    retryTapIfNoChange: true
+- assertVisible: "5 hints left"
+- runFlow: ../common/back.yaml
+- assertVisible: "1-day streak"
+# The main save overwritten with junk; the backup file is kept.
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "corrupt=main"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible: "We restored your saved progress from a backup\\."
+    timeout: 15000
+- assertNotVisible:
+    id: onboarding-skip
+- assertVisible: "1-day streak"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 2 quotes solved"
+- runFlow: ../common/level.yaml
+- assertVisible: "5 hints left"
+- assertVisible: ".*, given.*"
+- runFlow: ../common/back.yaml
+# The main save deleted; the backup file is kept.
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "lose=main"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible: "We restored your saved progress from a backup\\."
+    timeout: 15000
+- assertVisible: "1-day streak"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 2 quotes solved"
+# After a normal restart the note is gone.
+- runFlow: ../common/restart.yaml
+- assertNotVisible: "We restored your saved progress from a backup\\."

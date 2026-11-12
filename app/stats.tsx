@@ -145,7 +145,11 @@ export default function StatsScreen() {
                       key={id}
                       style={[styles.badge, { width: badgeWidth }]}
                       accessible
-                      accessibilityLabel={when ? `${name}. ${how} ${t('badges.earned', { date: when })}` : `${name}. ${t('badges.locked', { how })}`}
+                      // The New tag is inside this one accessibility element, so the label says it too.
+                      accessibilityLabel={
+                        (when ? `${name}. ${how} ${t('badges.earned', { date: when })}` : `${name}. ${t('badges.locked', { how })}`) +
+                        (fresh ? `. ${t('home.newBadge')}` : '')
+                      }
                       testID={`badge-${id}`}
                     >
                       <BadgeMedal id={id} earned={!!when} />

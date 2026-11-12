@@ -1,0 +1,150 @@
+# J7 7.1–7.5, 7.7, 7.10, 7.11 and J4 4.8: the archive from the install day, the stamp book, an
+# archive day started and solved, read-only reopening, counts, and the daily wrap-around.
+appId: app.lettercrack
+tags: [archive, dates]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/solve-daily.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-24T10:00:00"
+# 7.7 (before): 10–23 Jan are past dailies; 10 Jan is solved, so 13 to play.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. 13 to play"
+# 7.1: the archive starts on the install day (10 Jan) and ends yesterday.
+- tapOn:
+    id: home-archive
+- assertVisible: "Archive"
+- assertVisible: "Every past daily quote, ready whenever you are\\."
+- assertVisible: "1 solved"
+- assertVisible: "13 to play"
+- assertVisible: "January 2027"
+- assertVisible:
+    id: archive-2027-01-10
+- assertNotVisible:
+    id: archive-2027-01-09
+- assertNotVisible:
+    id: archive-2027-01-24
+# 7.10: day labels for VoiceOver.
+- assertVisible: "(10 January|January 10), solved"
+- assertVisible: "(20 January|January 20), not solved yet"
+# 7.2: the stamp book counts the install month from the install day: 10–31 Jan = 22 days.
+- assertVisible: "January 2027: 1 of 22 days stamped"
+# 7.3: start 20 Jan, type a letter, back: in progress, "1 started".
+- tapOn:
+    id: archive-2027-01-20
+- assertVisible: "Daily quote · (20 January 2027|January 20, 2027)"
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- runFlow: ../common/back.yaml
+- assertVisible: "(20 January|January 20), in progress"
+- assertVisible: "1 started"
+# 4.8: an archive daily never counts for today's "Solve today's quote".
+- runFlow: ../common/back.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+- runFlow: ../common/top.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+# 7.4: solve 20 Jan: no streak, "Back to archive", no Share result or teaser; badge Time traveller.
+- tapOn:
+    id: archive-2027-01-20
+- assertVisible: ".*guess Q.*"
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertNotVisible: "Streak: .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Time traveller\\. Solve a past daily from the archive\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Back to archive"
+- assertNotVisible: "Share result"
+- assertNotVisible: "Tomorrow's quote"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+- tapOn: "Back to archive"
+- assertVisible: "(20 January|January 20), solved"
+- assertVisible: "January 2027: 2 of 22 days stamped"
+# 7.5: a solved day reopens read-only.
+- tapOn:
+    id: archive-2027-01-20
+- extendedWaitUntil:
+    visible:
+      id: solved-quote
+    timeout: 10000
+- assertNotVisible: "New badges?!"
+- assertNotVisible: "Today's goals"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Back to archive"
+- tapOn: "Back to archive"
+# 7.11: 11 and 21 Jan share a quote but are separate days.
+- tapOn:
+    id: archive-2027-01-11
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Back to archive"
+- tapOn: "Back to archive"
+- assertVisible: "(11 January|January 11), solved"
+- assertVisible: "(21 January|January 21), not solved yet"
+# Letters for that quote count once: the rank XP doesn't change when 21 Jan is solved.
+- runFlow: ../common/back.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: .*"
+- copyTextFrom: "Rank: .*"
+- evalScript: ${output.rank = maestro.copiedText}
+- runFlow: ../common/top.yaml
+- scrollUntilVisible:
+    element:
+      id: home-archive
+    direction: DOWN
+- tapOn:
+    id: home-archive
+- tapOn:
+    id: archive-2027-01-21
+- runFlow: ../common/solve.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Back to archive"
+- tapOn: "Back to archive"
+- assertVisible: "(21 January|January 21), solved"
+- runFlow: ../common/back.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: .*"
+- copyTextFrom: "Rank: .*"
+- assertTrue: ${maestro.copiedText == output.rank}
+# 7.7 (after): 10 to play (10, 11, 20 and 21 solved); the hero streak is unchanged (none today).
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Archive\\. 10 to play"
+- runFlow: ../common/top.yaml
+- assertNotVisible: ".*-day streak"

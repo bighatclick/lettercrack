@@ -1,0 +1,20 @@
+# On a Solved screen: scrolls to the goals card and sets output.reward if THIS solve finished all
+# of today's goals. The card says "All done today" for the rest of the day, so it also needs a goal
+# that this solve just finished ("…: done just now", the row's VoiceOver label).
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      id: solved-goals
+    direction: DOWN
+    timeout: 20000
+    visibilityPercentage: 100
+- runFlow:
+    when:
+      visible: "All done today\\. You earned \\+1 hint!"
+    commands:
+      - runFlow:
+          when:
+            visible: ".*: done just now"
+          commands:
+            - evalScript: ${output.reward = true}

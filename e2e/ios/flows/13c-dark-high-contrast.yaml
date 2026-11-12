@@ -1,0 +1,59 @@
+# J1 1.12 and J13 13.12: iOS dark mode (set by the runner) with High contrast on. Every state must
+# stay distinguishable: screenshots of Home, a puzzle with given/conflict/wrong cells, Solved and
+# the Wardrobe, for review.
+appId: app.lettercrack
+tags: [a11y]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T19:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- takeScreenshot: 13c-home-dark
+- tapOn:
+    id: home-settings
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "High contrast"
+- tapOn: "High contrast"
+- takeScreenshot: 13c-settings-dark-hc
+- runFlow: ../common/back.yaml
+- takeScreenshot: 13c-home-dark-hc
+- runFlow: ../common/daily.yaml
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- assertVisible: ".*, conflict"
+- tapOn:
+    id: e2e-wrong
+- tapOn:
+    id: hint-check
+    retryTapIfNoChange: true
+- assertVisible: ".*, marked wrong"
+- assertVisible: ".*, given.*"
+- takeScreenshot: 13c-puzzle-states-dark-hc
+- runFlow: ../common/solve.yaml
+- takeScreenshot: 13c-solved-dark-hc
+- runFlow: ../common/home.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- takeScreenshot: 13c-wardrobe-dark-hc
+# The in-app "Light" choice wins over the device's dark mode.
+- runFlow: ../common/back.yaml
+- tapOn:
+    id: home-settings
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Light"
+- tapOn: "Light"
+- takeScreenshot: 13c-settings-light-over-dark

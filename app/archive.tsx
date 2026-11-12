@@ -7,6 +7,7 @@ import { content } from '@/content/quotes';
 import type { Root } from '@/data/schema';
 import { useAppStore } from '@/data/store';
 import { type ArchiveDay, archiveMonths, dailyStart } from '@/game/archive';
+import { pushOnce } from '@/game/nav';
 import { solvedDailyDates, stampBook } from '@/game/awards';
 import { dailyKey } from '@/game/session';
 import { today } from '@/game/today';
@@ -73,7 +74,11 @@ export default function ArchiveScreen() {
               {stamps.get(m.month) ? (
                 <View
                   accessible
-                  accessibilityLabel={t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days })}
+                  // The medal tag is inside this one accessibility element, so the label says it too.
+                  accessibilityLabel={
+                    t('stamps.label', { month: monthName(m.month), stamped: stamps.get(m.month)!.stamps, count: stamps.get(m.month)!.days }) +
+                    (stamps.get(m.month)!.medal ? `. ${t('stamps.medal')}` : '')
+                  }
                   testID={`stamps-${m.month}`}
                 >
                   {stamps.get(m.month)!.medal ? (
@@ -132,8 +137,8 @@ function Day({ day, column, root }: { day: ArchiveDay; column: number; root: Roo
   });
   const open = () =>
     day.status === 'solved'
-      ? router.push({ pathname: '/solved', params: { key: dailyKey(day.date), from: 'archive' } })
-      : router.push(`/puzzle/${encodeURIComponent(dailyKey(day.date))}`);
+      ? pushOnce({ pathname: '/solved', params: { key: dailyKey(day.date), from: 'archive' } })
+      : pushOnce(`/puzzle/${encodeURIComponent(dailyKey(day.date))}`);
   const solved = day.status === 'solved';
   const started = day.status === 'inProgress';
   return (

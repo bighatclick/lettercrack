@@ -1,0 +1,7 @@
+# The round Back button in a screen's header (iOS has no system Back).
+appId: app.lettercrack
+---
+- runFlow: top.yaml
+- tapOn: "Back"
+# The screen underneath keeps its scroll position: start each check from its top.
+- runFlow: top.yaml

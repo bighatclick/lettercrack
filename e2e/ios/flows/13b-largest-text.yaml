@@ -1,0 +1,122 @@
+# J13 13.1–13.4 (CLAUDE.md: respect the text-size setting everywhere, including the share card).
+# The runner sets iOS Dynamic Type to its largest accessibility size first; this flow adds the
+# in-app Size 4. Every screen must still show its content (scrolling), with screenshots for review.
+appId: app.lettercrack
+tags: [a11y, smoke]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- tapOn:
+    id: home-settings
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Size 4"
+- tapOn:
+    id: setting-textsize-3
+- takeScreenshot: 13b-settings
+- runFlow: ../common/back.yaml
+# 13.2: Home: the greeting, goals, rank, chapter strip and tiles are all reachable.
+- assertVisible: "Good morning, codebreaker!"
+- takeScreenshot: 13b-home-top
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Rank: .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Chapter 1 · Quill Meadow"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Inky's wardrobe\\. .*"
+- takeScreenshot: 13b-home-bottom
+# 13.1: the puzzle: the board scrolls, the keyboard keeps its height, the hint bar wraps.
+- runFlow: ../common/daily.yaml
+- assertVisible:
+    id: key-Q
+- assertVisible:
+    id: key-delete
+- assertVisible:
+    id: hint-reveal
+- assertVisible:
+    id: hint-check
+- takeScreenshot: 13b-puzzle
+- scrollUntilVisible:
+    element:
+      id: cell-0
+    direction: UP
+    timeout: 10000
+# 13.3: Solved with awards, goals and teaser cards.
+- runFlow: ../common/solve.yaml
+- runFlow: ../common/top.yaml
+- assertVisible: "Cracked it!"
+- takeScreenshot: 13b-solved-top
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About the author\\. .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Tomorrow's quote"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Share result"
+- takeScreenshot: 13b-solved-bottom
+# The share card (rendered at the current text size).
+- scrollUntilVisible:
+    element:
+      id: solved-share
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: solved-share
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: 13b-share-sheet
+- runFlow: ../common/dismiss-share.yaml
+- runFlow: ../common/home.yaml
+# 13.4: Stats badge shelf, Library and Wardrobe reflow.
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Moments"
+- takeScreenshot: 13b-stats-badges
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-library
+    direction: DOWN
+    timeout: 45000
+- tapOn:
+    id: home-library
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Essayists"
+- takeScreenshot: 13b-library
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+    timeout: 45000
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Backdrops"
+- takeScreenshot: 13b-wardrobe

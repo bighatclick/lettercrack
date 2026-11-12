@@ -1,0 +1,34 @@
+# J14 14.6 (best-effort): the App Store review prompt after a clean solve, at least 2 days after
+# install, and not again within 30 days. The simulator shows StoreKit's prompt for local builds only
+# sometimes, so this flow is reported but never fails the run.
+appId: app.lettercrack
+tags: [best-effort]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: medium
+      NOTIFY: unset
+- runFlow: ../common/solve-level.yaml
+- runFlow:
+    file: ../common/clock.yaml
+    env:
+      AT: "2027-01-12T10:00:00"
+- runFlow: ../common/solve-level.yaml
+- runFlow: ../common/level.yaml
+# Not common/solve.yaml: that one dismisses the prompt this flow is checking.
+- tapOn:
+    id: e2e-solve
+- extendedWaitUntil:
+    visible: "(?i)(enjoying .*|not now|rate .*)"
+    timeout: 6000
+- takeScreenshot: 14g-review-prompt
+- tapOn: "(?i)not now"
+# Not again on the next clean solve.
+- runFlow: ../common/next.yaml
+- extendedWaitUntil:
+    visible: "(?i)(enjoying .*|not now)"
+    timeout: 4000
+    optional: true
+- assertNotVisible: "(?i)(enjoying .*|not now)"

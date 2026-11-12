@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { HardwareKeys, type HardwareKey } from '@modules/hardware-keys';
@@ -54,53 +54,56 @@ export default function Onboarding() {
         <StatusBar style="light" />
         <Gradient name="night" direction="vertical" glows={[{ x: 50, y: 20, r: 60, color: '#FFC93C', opacity: 0.3 }, { x: 0, y: 90, r: 50, color: '#FF7EB6', opacity: 0.3 }]} />
         <FloatingLetters colors={['#FFC93C', '#FF7EB6', '#20C3AF', '#FFFFFF']} />
-        <SafeAreaView style={styles.pick}>
-          <Enter kind="pop" style={styles.center}>
-            <Inky pose="cheer" size={140} />
-          </Enter>
-          <Enter index={1}>
-            <Text variant="display" color="#FFFFFF" accessibilityRole="header" style={styles.centerText}>
-              {t('onboarding.pick')}
-            </Text>
-          </Enter>
-          <Enter index={2}>
-            <Text color="#E4DCFF" style={styles.centerText}>
-              {t('onboarding.pickHint')}
-            </Text>
-          </Enter>
-          <View style={styles.levels} accessibilityRole="radiogroup">
-            {DIFFICULTIES.map((d, i) => {
-              const h = hue(DIFF_HUE[d]);
-              const on = difficulty === d;
-              return (
-                <Enter key={d} index={3 + i} style={styles.levelWrap}>
-                  <PressScale
-                    accessibilityRole="radio"
-                    accessibilityLabel={t(`difficulty.${d}`)}
-                    accessibilityState={{ selected: on, checked: on }}
-                    onPress={() => setDifficulty(d)}
-                    testID={`onboarding-${d}`}
-                    style={[
-                      styles.level,
-                      { backgroundColor: on ? h.solid : 'rgba(255,255,255,0.12)', borderColor: on ? '#FFFFFF' : 'rgba(255,255,255,0.3)', borderBottomColor: on ? shade(h.solid) : 'rgba(255,255,255,0.3)' },
-                    ]}
-                  >
-                    <View style={styles.dots}>
-                      {[0, 1, 2, 3].map((k) => (
-                        <View key={k} style={[styles.dot, { backgroundColor: k <= i ? (on ? h.on : h.solid) : 'rgba(255,255,255,0.3)' }]} />
-                      ))}
-                    </View>
-                    <Text variant="label" color={on ? h.on : '#FFFFFF'}>
-                      {t(`difficulty.${d}`)}
-                    </Text>
-                  </PressScale>
-                </Enter>
-              );
-            })}
-          </View>
-          <Enter index={8}>
-            <Button label={t('onboarding.start')} variant="sunny" icon="play" onPress={() => finish(difficulty)} testID="onboarding-start" />
-          </Enter>
+        <SafeAreaView style={styles.pickArea}>
+          {/* Scrolls so Hard, Expert and Start stay reachable at the largest text sizes. */}
+          <ScrollView contentContainerStyle={styles.pick}>
+            <Enter kind="pop" style={styles.center}>
+              <Inky pose="cheer" size={140} />
+            </Enter>
+            <Enter index={1}>
+              <Text variant="display" color="#FFFFFF" accessibilityRole="header" style={styles.centerText}>
+                {t('onboarding.pick')}
+              </Text>
+            </Enter>
+            <Enter index={2}>
+              <Text color="#E4DCFF" style={styles.centerText}>
+                {t('onboarding.pickHint')}
+              </Text>
+            </Enter>
+            <View style={styles.levels} accessibilityRole="radiogroup">
+              {DIFFICULTIES.map((d, i) => {
+                const h = hue(DIFF_HUE[d]);
+                const on = difficulty === d;
+                return (
+                  <Enter key={d} index={3 + i} style={styles.levelWrap}>
+                    <PressScale
+                      accessibilityRole="radio"
+                      accessibilityLabel={t(`difficulty.${d}`)}
+                      accessibilityState={{ selected: on, checked: on }}
+                      onPress={() => setDifficulty(d)}
+                      testID={`onboarding-${d}`}
+                      style={[
+                        styles.level,
+                        { backgroundColor: on ? h.solid : 'rgba(255,255,255,0.12)', borderColor: on ? '#FFFFFF' : 'rgba(255,255,255,0.3)', borderBottomColor: on ? shade(h.solid) : 'rgba(255,255,255,0.3)' },
+                      ]}
+                    >
+                      <View style={styles.dots}>
+                        {[0, 1, 2, 3].map((k) => (
+                          <View key={k} style={[styles.dot, { backgroundColor: k <= i ? (on ? h.on : h.solid) : 'rgba(255,255,255,0.3)' }]} />
+                        ))}
+                      </View>
+                      <Text variant="label" color={on ? h.on : '#FFFFFF'}>
+                        {t(`difficulty.${d}`)}
+                      </Text>
+                    </PressScale>
+                  </Enter>
+                );
+              })}
+            </View>
+            <Enter index={8}>
+              <Button label={t('onboarding.start')} variant="sunny" icon="play" onPress={() => finish(difficulty)} testID="onboarding-start" />
+            </Enter>
+          </ScrollView>
         </SafeAreaView>
       </View>
     );
@@ -161,7 +164,8 @@ const styles = StyleSheet.create({
   introRow: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   bubble: { flex: 1, padding: space.md, borderRadius: radius.lg, borderBottomLeftRadius: 4, gap: 2 },
   task: { padding: space.md, borderRadius: radius.md },
-  pick: { flex: 1, padding: space.xl, gap: space.lg, justifyContent: 'center', width: '100%', maxWidth: 560, alignSelf: 'center' },
+  pickArea: { flex: 1 },
+  pick: { flexGrow: 1, padding: space.xl, gap: space.lg, justifyContent: 'center', width: '100%', maxWidth: 560, alignSelf: 'center' },
   center: { alignItems: 'center' },
   centerText: { textAlign: 'center' },
   levels: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },

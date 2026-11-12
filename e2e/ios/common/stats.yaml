@@ -1,0 +1,14 @@
+# From Home: opens Stats.
+appId: app.lettercrack
+---
+- scrollUntilVisible:
+    element:
+      id: home-stats
+    direction: DOWN
+    # Long Home screens at the largest text sizes take many slow scrolls.
+    timeout: 45000
+- tapOn:
+    id: home-stats
+- extendedWaitUntil:
+    visible: "Stats"
+    timeout: 10000

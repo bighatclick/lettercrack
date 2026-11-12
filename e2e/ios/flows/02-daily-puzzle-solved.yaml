@@ -1,0 +1,220 @@
+# J2 2.1–2.21, 2.24: the daily puzzle (input, conflicts, Check, Reveal, "Almost!"), resume,
+# the Solved screen and Home afterwards. 10 Jan 2027: Thoreau, 47 letters; tomorrow (11 Jan) is
+# 9 words from the 1800s by H… (src/e2e/__tests__/iosFlowFacts.test.ts).
+appId: app.lettercrack
+tags: [smoke, daily]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+# 2.1: the puzzle screen.
+- runFlow: ../common/daily.yaml
+- assertVisible: "Daily quote"
+- assertVisible: "Hard"
+- assertVisible: "Back"
+- assertVisible: "Report this quote"
+- assertVisible: "\\d+ of 47 letters filled"
+- assertVisible: "Reveal"
+- assertVisible: "Check"
+- assertVisible: "5 hints left"
+# Check is disabled until a letter is typed (givens don't count).
+- assertVisible:
+    id: hint-check
+    enabled: false
+# 2.4: a given cell is locked.
+- tapOn: ".*, given.*"
+- assertVisible: ".*, given.*"
+# 2.5: typing fills every cell of that cipher letter; Check enables.
+- copyTextFrom: "cipher ., empty"
+- evalScript: ${output.k = maestro.copiedText.substring(7, 8)}
+- tapOn: "cipher ${output.k}, empty"
+- tapOn:
+    id: key-Q
+- assertVisible: "cipher ${output.k}, guess Q.*"
+- assertNotVisible: "cipher ${output.k}, empty"
+- assertVisible:
+    id: hint-check
+    enabled: true
+# 2.7: Q again for another cipher letter: both groups show conflict flags.
+- tapOn: "cipher ., empty"
+- tapOn:
+    id: key-Q
+- assertVisible: ".*guess Q, conflict"
+# 2.8: select one conflicting group, Delete: it clears everywhere, both flags go.
+- tapOn: "cipher ${output.k}, guess Q.*"
+- tapOn:
+    id: key-delete
+- assertNotVisible: ".*, conflict"
+- assertVisible: "cipher ${output.k}, empty"
+- tapOn: ".*guess Q.*"
+- tapOn:
+    id: key-delete
+- assertNotVisible: ".*guess Q.*"
+# 2.9: a wrong letter, then Check: the wrong cells are flagged, one hint used.
+- tapOn:
+    id: e2e-wrong
+- tapOn:
+    id: hint-check
+    retryTapIfNoChange: true
+- assertVisible: ".*, marked wrong"
+- assertVisible: "4 hints left"
+# 2.10: the right letter over it: the flag clears.
+- tapOn:
+    id: e2e-right
+- assertNotVisible: ".*, marked wrong"
+# 2.11: Reveal fills one letter everywhere and locks it.
+- tapOn:
+    id: hint-reveal
+    retryTapIfNoChange: true
+- assertVisible: "3 hints left"
+# 2.12: the board full with one letter wrong: a gentle note, no charge, no fail state.
+- tapOn:
+    id: e2e-almost
+- assertVisible: "Almost! The highlighted letters aren.t right yet\\."
+- assertVisible: "47 of 47 letters filled"
+- assertVisible: "3 hints left"
+- assertNotVisible:
+    id: solved-quote
+# 2.13: Back: Home shows the daily in progress; goals unchanged.
+- runFlow: ../common/back.yaml
+- assertVisible: "Your quote is waiting right where you left it\\."
+- assertVisible: "You.re partway through today.s quote\\."
+- assertVisible: "Continue"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: 0 of 1"
+# 2.14: Continue: same entries and hints.
+- runFlow: ../common/daily.yaml
+- assertVisible: "3 hints left"
+- assertVisible: "Almost! The highlighted letters aren.t right yet\\."
+# 2.15: correct the last letter: Solved replaces the puzzle. (The back swipe is checked at 2.24.)
+- tapOn:
+    id: e2e-right
+- extendedWaitUntil:
+    visible:
+      id: solved-quote
+    timeout: 15000
+- assertNotVisible:
+    id: board
+# 2.16: the header and tags. Not clean (a Check and a Reveal were used).
+- runFlow: ../common/top.yaml
+- assertVisible: "Cracked it!"
+- assertVisible: "Streak: 1 day"
+- assertVisible: "Sunday special"
+- assertVisible: "New author for your Library!"
+- assertNotVisible: "Clean solve: no hints, no checks"
+# 2.17: the awards card: First crack, Up for a challenge, Daily decoder, Sunday special (3 shown + 1).
+- assertVisible: "New badges!"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "and 1 more"
+- assertNotVisible: "New rank: .*"
+# 2.18: the quote and the author card with its "Did you know?" fact.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "SOLVED"
+- assertVisible: "Henry David Thoreau"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "About the author\\. Henry David Thoreau, .*Did you know\\?.*"
+# 2.19: the goals card: the daily goal done now, the other two not.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: done just now"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve one with no hints or checks: 0 of 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve a long quote \\(60\\+ letters\\): 0 of 1"
+# 2.20: tomorrow's teaser, with no words of the quote.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Tomorrow's quote"
+- assertVisible: "9 words from the 1800s, by an author whose name starts with H\\."
+- assertVisible: "Ready tomorrow"
+# 2.21: the buttons. No reminder offer (it needs 2 daily solves) and no ad.
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Play a level"
+- assertVisible: "Share result"
+- assertVisible: "Share"
+- assertVisible: "Home"
+- assertNotVisible: "Want a nudge tomorrow\\?"
+- runFlow: ../common/no-sales.yaml
+# 2.15 + 2.24: a back swipe from Solved goes Home (iOS's normal gesture), never back to the puzzle.
+- runFlow: ../common/top.yaml
+- swipe:
+    start: "2%,50%"
+    end: "90%,50%"
+- waitForAnimationToEnd:
+    timeout: 3000
+- runFlow: ../common/top.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000
+- assertNotVisible:
+    id: board
+- assertVisible: "1-day streak"
+- assertVisible: "Nice work today! A new quote arrives tomorrow\\."
+- assertVisible: "Solved\\. A new quote arrives tomorrow\\."
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Solve today's quote: done.*"
+- assertVisible: "1/3"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 1 quote solved"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Library\\. 1 of 18 authors"
+# "See today's quote" reopens Solved without the streak tag, awards or goals; teaser and Share result stay.
+- runFlow: ../common/top.yaml
+- tapOn: "See today's quote"
+- extendedWaitUntil:
+    visible:
+      id: solved-quote
+    timeout: 10000
+- assertNotVisible: "Streak: 1 day"
+- assertNotVisible: "New badges!"
+- assertNotVisible: "Today's goals"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Tomorrow's quote"
+- assertVisible: "Share result"
+- runFlow: ../common/home.yaml
+# The badges from this solve are all on the shelf.
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "First crack\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Up for a challenge\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Daily decoder\\. .* Earned .*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Sunday special\\. .* Earned .*"

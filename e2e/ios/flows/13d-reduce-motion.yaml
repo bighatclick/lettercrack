@@ -1,0 +1,52 @@
+# J13 13.8: Reduce Motion (set by the runner; best-effort on a simulator). No content may hide
+# behind an animation: Home tiles, Stats charts, the badge shelf and wardrobe items are all there.
+appId: app.lettercrack
+tags: [a11y]
+---
+- runFlow:
+    file: ../common/start.yaml
+    env:
+      AT: "2027-01-10T10:00:00"
+      DIFF: hard
+      NOTIFY: unset
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Continue level 1"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Stats\\. 0 quotes solved"
+- runFlow: ../common/top.yaml
+- runFlow: ../common/daily.yaml
+- runFlow: ../common/solve.yaml
+- assertVisible: "Cracked it!"
+- takeScreenshot: 13d-solved
+- runFlow: ../common/home.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved: 1.*"
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Puzzles solved per week, oldest first: .*"
+# The badge shelf is above the tiles.
+- runFlow: ../common/top.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "First crack\\. .* Earned .*"
+- runFlow: ../common/back.yaml
+- scrollUntilVisible:
+    element:
+      id: home-wardrobe
+    direction: DOWN
+- tapOn:
+    id: home-wardrobe
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Brass monocle\\. Wearing"
+- takeScreenshot: 13d-wardrobe
