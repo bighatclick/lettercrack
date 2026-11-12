@@ -1,4 +1,4 @@
-import { Redirect, router } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -14,6 +14,7 @@ import { displayStreak } from '@/engine/streak';
 import { archiveMonths, dailyStatus } from '@/game/archive';
 import { isSundaySpecial, library, rankOf, unlockFacts, unseenAwards } from '@/game/awards';
 import { needsOnboarding } from '@/game/onboarding';
+import { pushOnce } from '@/game/nav';
 import { dailyKey, nextLevelRef } from '@/game/session';
 import { solvedCounts } from '@/game/stats';
 import { useNow } from '@/game/useNow';
@@ -95,7 +96,7 @@ export default function Home() {
       gradient="night"
       overline={dateLabel}
       title={greeting}
-      action={{ icon: 'gear', label: t('home.settings'), onPress: () => router.push('/settings'), testID: 'home-settings' }}
+      action={{ icon: 'gear', label: t('home.settings'), onPress: () => pushOnce('/settings'), testID: 'home-settings' }}
       side={<Inky pose="wave" size={118} outfit={outfit} />}
     >
       <View style={styles.heroRow}>
@@ -157,13 +158,13 @@ export default function Home() {
               label={t('home.viewSolved')}
               variant="secondary"
               icon="check"
-              onPress={() => router.push({ pathname: '/solved', params: { key } })}
+              onPress={() => pushOnce({ pathname: '/solved', params: { key } })}
             />
           ) : (
             <Button
               label={inProgress ? t('home.resume') : t('home.play')}
               icon="play"
-              onPress={() => router.push(`/puzzle/${encodeURIComponent(key)}`)}
+              onPress={() => pushOnce(`/puzzle/${encodeURIComponent(key)}`)}
               testID="home-daily"
             />
           )}
@@ -201,7 +202,7 @@ export default function Home() {
               label={t('home.continueLevel', { level })}
               variant="coral"
               icon="play"
-              onPress={() => router.push(`/puzzle/${encodeURIComponent(levelRef.key)}`)}
+              onPress={() => pushOnce(`/puzzle/${encodeURIComponent(levelRef.key)}`)}
               testID="home-level"
             />
           ) : (
@@ -216,7 +217,7 @@ export default function Home() {
           icon="calendar"
           title={t('home.archive')}
           subtitle={toPlay > 0 ? t('home.archiveToPlay', { count: toPlay }) : t('home.archiveSub')}
-          onPress={() => router.push('/archive')}
+          onPress={() => pushOnce('/archive')}
           testID="home-archive"
           fitFor={tileTitles}
         />
@@ -225,7 +226,7 @@ export default function Home() {
           icon="chart"
           title={t('home.stats')}
           subtitle={t('home.statsSub', { count: solvedCounts(root, content, date).puzzles })}
-          onPress={() => router.push('/stats')}
+          onPress={() => pushOnce('/stats')}
           testID="home-stats"
           fitFor={tileTitles}
           bars
@@ -238,7 +239,7 @@ export default function Home() {
           icon="book"
           title={t('home.library')}
           subtitle={t('home.librarySub', { count: progressView.authors, total: progressView.totalAuthors })}
-          onPress={() => router.push('/library')}
+          onPress={() => pushOnce('/library')}
           testID="home-library"
           fitFor={tileTitles}
         />
@@ -247,7 +248,7 @@ export default function Home() {
           icon="shirt"
           title={t('home.wardrobe')}
           subtitle={t('home.wardrobeSub', { count: progressView.items })}
-          onPress={() => router.push('/wardrobe')}
+          onPress={() => pushOnce('/wardrobe')}
           testID="home-wardrobe"
           fitFor={tileTitles}
           dot={newItems ? t('home.newBadge') : undefined}

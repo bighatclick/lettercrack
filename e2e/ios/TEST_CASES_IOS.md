@@ -64,7 +64,8 @@ midnight (14b, 15b) to cover the no-restart path.
 | J14 Resilience, links, recovery, reinstall | 13 | 11 | 2 | 0 | 0 | 14, 14b–14g, 16b |
 | J15 Real-world scenarios | 13 | 7 | 3 | 1 | 2 | 15, 15b–15e, 17, 14 |
 | J16 Retests for the date fixes | 8 | 7 | 0 | 0 | 1 | 16, 06, 07b, 00, 14b |
-| **Total** | **211** | **179** | **16** | **4** | **12** | 45 flow files |
+| J18 iOS regressions (double taps) | 2 | 2 | 0 | 0 | 0 | 18 |
+| **Total** | **213** | **181** | **16** | **4** | **12** | 46 flow files |
 
 The four manual steps are 6.15 and 6.16 (reminder delivery), 13.11 (hardware keyboard) and 15.3
 (real phones). Parts of partly automated steps are manual too, such as 15.4's two-device iCloud
@@ -363,6 +364,15 @@ Franklin. The iOS expectations use the current calendar.
 | 16.6 | Old v2 save | ✅ | 00 |
 | 16.7 | Reopen a saved daily the next day | ✅ From the archive. 🧑 From a notification (needs a delivered reminder) | 16 |
 | 16.8 | Widget and reminder text | ➖ Widget; reminder text unit-tested |  |
+
+## J18: iOS regressions found in CI
+
+Added after the iOS runs found them. Also run on the smallest iPhone.
+
+| # | Step | iOS | Flow |
+|---|---|---|---|
+| 18.1 | Double tap the daily and the next level on Home | ✅ Opens the puzzle once; one Back is Home (Home's tiles had no tap guard) | 18 |
+| 18.2 | Double tap Settings, Archive, Stats, Library, wardrobe | ✅ Same: one screen, one Back | 18 |
 
 ---
 

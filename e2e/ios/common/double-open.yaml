@@ -1,0 +1,28 @@
+# From Home: double-taps the tile with id ID, waits for MARK (a regex on the screen it opens),
+# then taps Back once and checks Home is showing: the second tap didn't open the screen again.
+# env: ID, MARK
+appId: app.lettercrack
+---
+- runFlow: top.yaml
+- scrollUntilVisible:
+    element:
+      id: ${ID}
+    direction: UP
+    timeout: 20000
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: ${ID}
+    direction: DOWN
+    timeout: 45000
+- doubleTapOn:
+    id: ${ID}
+- extendedWaitUntil:
+    visible: ${MARK}
+    timeout: 10000
+- runFlow: back.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 10000
+- assertNotVisible: ${MARK}

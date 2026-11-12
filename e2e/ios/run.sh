@@ -66,6 +66,7 @@ case "$SUITE" in
       16-sundays-rewound-reopen
       16b-real-clock
       17-icloud-restore
+      18-double-taps
     )
     ;;
   full-1)
@@ -81,6 +82,7 @@ case "$SUITE" in
       03b-levels-goals-report
       03c-chapters-rank-expert
       04-goals-reward
+      18-double-taps
     )
     ;;
   full-2)
@@ -131,7 +133,7 @@ case "$SUITE" in
     FLOWS=(01-onboarding-home 02-daily-puzzle-solved 13g-tablet-rotation 13b-largest-text 13e-touch-targets-home)
     ;;
   small)
-    FLOWS=(01-onboarding-home 02-daily-puzzle-solved 13b-largest-text 13e-touch-targets-home 13f-touch-targets-puzzle cross-platform-01 cross-platform-02)
+    FLOWS=(01-onboarding-home 02-daily-puzzle-solved 13b-largest-text 13e-touch-targets-home 13f-touch-targets-puzzle 18-double-taps cross-platform-01 cross-platform-02)
     ;;
   *)
     echo "unknown suite $SUITE" >&2

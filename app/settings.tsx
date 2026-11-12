@@ -9,6 +9,7 @@ import { PRIVACY_URL, TERMS_URL } from '@/config/links';
 import { useAppStore } from '@/data/store';
 import type { Appearance, Difficulty } from '@/data/schema';
 import { feedbackMailto } from '@/game/report';
+import { pushOnce } from '@/game/nav';
 import { syncReminders } from '@/lib/reminderSync';
 import { restorePurchasesAvailable } from '@/iap/availability';
 import { hasReminderPermission, requestReminderPermission } from '@/lib/notifications';
@@ -122,7 +123,7 @@ export default function SettingsScreen() {
       <Enter index={3}>
       <Card>
         <Section label={t('settings.about')} hueIndex={0} />
-        <LinkRow label={t('settings.aboutQuotes')} onPress={() => router.push('/about')} testID="settings-about" />
+        <LinkRow label={t('settings.aboutQuotes')} onPress={() => pushOnce('/about')} testID="settings-about" />
         <LinkRow
           label={t('settings.feedback')}
           onPress={() => Linking.openURL(feedbackMailto(useAppStore.getState().root!, content, t('settings.feedbackSubject'), version)).catch(() => {})}
