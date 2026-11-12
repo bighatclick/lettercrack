@@ -32,6 +32,28 @@ appId: app.lettercrack
 - tapOn:
     id: onboarding-start
     retryTapIfNoChange: true
+# The floating letters keep the screen "changing", so a dropped tap isn't retried above: while
+# the picker is still showing, tap Start again.
+- repeat:
+    times: 3
+    while:
+      visible:
+        id: onboarding-start
+    commands:
+      - waitForAnimationToEnd:
+          timeout: 3000
+      - runFlow:
+          when:
+            visible:
+              id: onboarding-start
+          commands:
+            - tapOn:
+                id: onboarding-start
+      - extendedWaitUntil:
+          visible:
+            id: home-settings
+          timeout: 5000
+          optional: true
 - extendedWaitUntil:
     visible:
       id: home-settings
