@@ -20,6 +20,9 @@ appId: app.lettercrack
 - extendedWaitUntil:
     visible: ${MARK}
     timeout: 10000
+# The push animation must be over, or the Back tap can be dropped on a slow simulator.
+- waitForAnimationToEnd:
+    timeout: 5000
 - runFlow: back.yaml
 - extendedWaitUntil:
     visible:

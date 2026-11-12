@@ -51,11 +51,18 @@ tags: [a11y, smoke]
 - assertVisible:
     id: hint-check
 - takeScreenshot: 13b-puzzle
+# The board is reachable by scrolling (above or below the keyboard on a small iPhone).
 - scrollUntilVisible:
     element:
       id: cell-0
     direction: UP
     timeout: 10000
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: cell-0
+    direction: DOWN
+    timeout: 20000
 # 13.3: Solved with awards, goals and teaser cards.
 - runFlow: ../common/solve.yaml
 - runFlow: ../common/top.yaml
