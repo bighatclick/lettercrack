@@ -13,6 +13,9 @@ appId: app.lettercrack
       id: home-level
     direction: DOWN
     timeout: 20000
+    # Fully on screen can be impossible under the home indicator; mostly is enough to tap.
+    visibilityPercentage: 60
+    centerElement: true
 - tapOn:
     id: home-level
 - extendedWaitUntil:

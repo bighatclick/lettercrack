@@ -31,7 +31,10 @@ tags: [dates, smoke]
       TEXT: "Archive\\. Every past daily quote"
 - tapOn:
     id: home-archive
-- assertVisible: "Past daily quotes will appear here from tomorrow\\."
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible: "Past daily quotes will appear here from tomorrow\\."
+    timeout: 10000
 - runFlow: ../common/back.yaml
 - runFlow: ../common/stats.yaml
 - runFlow:

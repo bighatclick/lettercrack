@@ -21,7 +21,14 @@ appId: app.lettercrack
     element:
       id: onboarding-${DIFF}
     direction: DOWN
-    timeout: 20000
+    timeout: 45000
+    optional: true
+# A long scroll can carry a short picker past the choice: look back up.
+- scrollUntilVisible:
+    element:
+      id: onboarding-${DIFF}
+    direction: UP
+    timeout: 30000
 - tapOn:
     id: onboarding-${DIFF}
 - scrollUntilVisible:
