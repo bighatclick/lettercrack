@@ -15,7 +15,7 @@ tags: [navigation]
     file: ../common/double-open.yaml
     env:
       ID: home-daily
-      MARK: "Daily quote · .*"
+      MARK: "Daily quote( · .*)?"
 - runFlow:
     file: ../common/double-open.yaml
     env:

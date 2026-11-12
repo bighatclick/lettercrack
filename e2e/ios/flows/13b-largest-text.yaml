@@ -99,6 +99,7 @@ tags: [a11y, smoke]
     element:
       id: home-library
     direction: DOWN
+    timeout: 45000
 - tapOn:
     id: home-library
 - runFlow:
@@ -111,6 +112,7 @@ tags: [a11y, smoke]
     element:
       id: home-wardrobe
     direction: DOWN
+    timeout: 45000
 - tapOn:
     id: home-wardrobe
 - runFlow:

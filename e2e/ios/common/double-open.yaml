@@ -25,4 +25,5 @@ appId: app.lettercrack
     visible:
       id: home-settings
     timeout: 10000
-- assertNotVisible: ${MARK}
+# Home has no Back button: one Back left the only copy of the screen.
+- assertNotVisible: "Back"
