@@ -18,6 +18,7 @@ import { makeShiftedDate, parseLocalDateTime } from './shiftedDate';
 const RealDate = Date;
 const OFFSET_KEY = 'clockOffsetMs';
 const CLOUD_KEY = 'cloud';
+const REVIEW_KEY = 'review';
 
 let offsetMs = 0;
 let installed = false;
@@ -50,4 +51,16 @@ export const e2eCloudOn = (): boolean => store().getString(CLOUD_KEY) === 'on';
 export function setE2ECloud(on: boolean): void {
   if (on) store().set(CLOUD_KEY, 'on');
   else store().remove(CLOUD_KEY);
+}
+
+/**
+ * The App Store review prompt. StoreKit's sheet is a separate system process; while it loads on a
+ * CI simulator the app's screen can't be read, which broke unrelated flows after a clean solve.
+ * So E2E builds don't ask unless a flow turns it on (`lettercrack://e2e?review=on`, flow 14g).
+ */
+export const e2eReviewOn = (): boolean => store().getString(REVIEW_KEY) === 'on';
+
+export function setE2EReview(on: boolean): void {
+  if (on) store().set(REVIEW_KEY, 'on');
+  else store().remove(REVIEW_KEY);
 }

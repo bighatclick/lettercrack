@@ -9,6 +9,7 @@
  *   corrupt=main            overwrite the main save with junk (the backup file is kept)
  *   lose=main               delete the main save (the backup file is kept)
  *   cloud=on|off            iCloud KV sync (off by default in E2E builds; see clock.ts)
+ *   review=on|off           the App Store review prompt (off by default in E2E builds; see clock.ts)
  *
  * After a wipe, seed, corrupt or lose, saving is switched off until the restart, so the running app
  * can't write its in-memory state back over the change.
@@ -27,11 +28,11 @@ import { createMMKVStore } from '@/data/mmkv';
 import { ROOT_KEY } from '@/data/repo';
 import { useAppStore } from '@/data/store';
 
-import { setE2EClock, setE2ECloud } from './clock';
+import { setE2EClock, setE2ECloud, setE2EReview } from './clock';
 
 const FIXTURES: Record<string, unknown> = { v1, v2, v3, v4, v5 };
 
-type Params = { at?: string; real?: string; fresh?: string; seed?: string; corrupt?: string; lose?: string; cloud?: string };
+type Params = { at?: string; real?: string; fresh?: string; seed?: string; corrupt?: string; lose?: string; cloud?: string; review?: string };
 
 const wipe = (kv: KV) => {
   for (const k of kv.getAllKeys()) kv.remove(k);
@@ -75,6 +76,10 @@ function apply(p: Params): string[] {
   if (p.cloud === 'on' || p.cloud === 'off') {
     setE2ECloud(p.cloud === 'on');
     done.push(`cloud ${p.cloud}`);
+  }
+  if (p.review === 'on' || p.review === 'off') {
+    setE2EReview(p.review === 'on');
+    done.push(`review ${p.review}`);
   }
   return done;
 }

@@ -82,6 +82,9 @@ export default function SolvedScreen() {
   // F8 review prompt: only right after a fresh hint-free solve, never after an ad (ads come after Next).
   useEffect(() => {
     if (!justSolved) return;
+    // E2E builds ask only when a flow turns it on (src/e2e/clock.ts). Inlined to false elsewhere.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    if (process.env.EXPO_PUBLIC_E2E === '1' && !require('@/e2e/clock').e2eReviewOn()) return;
     const root = useAppStore.getState().root!;
     const now = Date.now();
     if (!shouldAskForReview(root, now, { cleanSolve: params.clean === '1', justShowedAd: false })) return;
