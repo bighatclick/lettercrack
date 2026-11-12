@@ -111,20 +111,6 @@ tags: [stats]
     file: ../common/see.yaml
     env:
       TEXT: "Ten down\\. Locked: Solve 10 quotes\\."
-# 8.8: "New" shows once: gone after leaving and reopening.
-- runFlow: ../common/top.yaml
-- runFlow:
-    file: ../common/see.yaml
-    env:
-      TEXT: ".* Earned .*\\. New"
-- runFlow: ../common/back.yaml
-- runFlow: ../common/stats.yaml
-- runFlow:
-    file: ../common/see.yaml
-    env:
-      TEXT: "Moments"
-- assertNotVisible: ".* Earned .*\\. New"
-- runFlow: ../common/back.yaml
 # 8.10: the timer on: the puzzle shows it, Solved shows the time, Stats the average.
 - tapOn:
     id: home-settings
@@ -153,3 +139,28 @@ tags: [stats]
     env:
       TEXT: "Favorite authors"
 - assertNotVisible: "Average solve time.*"
+# 8.8: "New" shows once. A solve's badges are celebrated (and marked seen) on Solved, so the
+# check uses badges earned another way: an old save (v2 fixture, level 43, streak 37) earns
+# them when the app opens after the update. They show "New" on the first visit only.
+- runFlow:
+    file: ../common/e2e-link.yaml
+    env:
+      QUERY: "seed=v2&at=2026-12-25T10:00:00"
+- runFlow: ../common/restart.yaml
+- extendedWaitUntil:
+    visible:
+      id: home-settings
+    timeout: 60000
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: ".* Earned .*\\. New"
+- runFlow: ../common/back.yaml
+- runFlow: ../common/stats.yaml
+- runFlow:
+    file: ../common/see.yaml
+    env:
+      TEXT: "Moments"
+- runFlow: ../common/top.yaml
+- assertNotVisible: ".* Earned .*\\. New"
