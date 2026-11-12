@@ -13,19 +13,52 @@ appId: app.lettercrack
     env:
       AT: "2027-02-16T20:00:00"
 - runFlow: ../../common/daily.yaml
+# Each Reveal costs exactly one hint. The last ones may finish the quote on their own.
+- evalScript: ${output.hintsDone = false}
 - repeat:
     times: 8
     while:
-      notVisible: "0 hints left"
+      true: ${!output.hintsDone}
     commands:
-      - tapOn:
-          id: hint-reveal
-      - waitForAnimationToEnd:
-          timeout: 2000
-- assertVisible: "0 hints left"
-- runFlow: ../../common/solve.yaml
+      - runFlow:
+          when:
+            visible: "0 hints left"
+          commands:
+            - evalScript: ${output.hintsDone = true}
+      - runFlow:
+          when:
+            true: ${!output.hintsDone}
+          commands:
+            - waitForAnimationToEnd:
+                timeout: 3000
+            - copyTextFrom: "\\d+ hints? left"
+            - evalScript: ${output.hints = parseInt(maestro.copiedText)}
+            - tapOn:
+                id: hint-reveal
+            - waitForAnimationToEnd:
+                timeout: 3000
+            - runFlow:
+                when:
+                  visible: "Cracked it!"
+                commands:
+                  - evalScript: ${output.hintsDone = true}
+            - runFlow:
+                when:
+                  notVisible: "Cracked it!"
+                commands:
+                  - copyTextFrom: "\\d+ hints? left"
+                  - assertTrue: ${parseInt(maestro.copiedText) == output.hints - 1}
+# Out of hints: finish by typing (the E2E hook).
+- runFlow:
+    when:
+      notVisible: "Cracked it!"
+    commands:
+      - assertVisible: "0 hints left"
+      - runFlow: ../../common/solve.yaml
 - runFlow: ../../common/top.yaml
 - assertVisible: "Streak: 13 days"
+# Hints were used, so this is not a clean solve.
+- assertNotVisible: "Clean solve.*"
 - runFlow: ../../common/home.yaml
 # Wed 17 Feb, 12:00: 14 days; the hints are back after midnight.
 - runFlow:
